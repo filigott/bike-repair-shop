@@ -40,16 +40,18 @@ phase C as its own step; the rest needs a decision before it needs code.
 | `autocomplete` attributes on the contact fields, which is free browser autofill | Do | C4 |
 | Theme: the default DaisyUI primary is purple. Pick a built-in theme or define brand tokens | Decide first | after D |
 | Bike brand suggestions from the brands already stored, as a `datalist` | Decide first | after D |
-| Cards instead of table rows | Recommend against | after D |
-| A multi-step guided place-order flow | Recommend against | after D |
+| A cards view beside the table, as a second presentation of the same data | Showcase, if time | after D |
+| A multi-step guided place-order flow | Dropped: two labelled groups in C2 instead | C2 |
 
-The last two are worth arguing before anyone builds them. A table is what a counter needs: many
-orders scanned at once, columns lined up, sortable later. Cards spend vertical space per order and
-lose the alignment that makes scanning work; if the driver is small screens, a table that stacks at
-narrow widths gets that without giving up the desktop view. A wizard over seven fields that fit on
-one screen adds step state, partial validation and a back path, and the brief's task is one command,
-placing an order, not a process with stages. Grouping the fields into two labelled sections gets the
-guidance without the machinery.
+Settled on 2026-09-20: the table stays the primary list, because a counter scans many orders at once
+and columns keep that readable. A cards view may be added later as a second presentation, chosen by
+the viewer, which is a better showcase than replacing the table. The place-order form stays one form
+and gains two labelled groups in C2, since placing an order is one command rather than a process with
+stages, and a wizard would buy step state and partial validation for seven fields that fit on one
+screen.
+
+Work lands on `main` for now. One later phase runs on a branch with a proper pull request, so the
+repository shows that flow too; phase D packaging is the natural candidate.
 
 ## Blockers
 

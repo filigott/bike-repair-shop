@@ -11,7 +11,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Step | Status | Notes |
 |---|---|---|
 | C1. Get, update and delete API | ⏳ | Explicit commands, not one update endpoint |
-| C2. Edit form | ⏳ | Shares the form component with B4 |
+| C2. Edit form | ⏳ | Shares the form component with B4; groups the fields under two headings |
 | C3. Delete flow | ⏳ | Smoke test: all four tasks from the brief |
 | C4. List and form polish | ⏳ | Only once C3's smoke test passes; see the roadmap's parked list |
 
@@ -27,10 +27,13 @@ None beyond the main plan yet. A decision that only this phase needs goes here.
 ## Steps
 
 **C1. Get, update and delete API.** Get by id, update and delete as a query and two commands, a
-validator on the update request, integration tests per handler.
+validator on the update request, integration tests per handler. Also makes `DueDate` nullable on the
+request shapes with `NotNull()` on the validator, so a missing date is a field error rather than the
+binder's `$.dueDate`, which the edit form would otherwise hit the same way the place form did.
 
-**C2. Edit form.** The form component from B4 serving edit through its own page route with a loader.
-Tests covering a loaded edit and a rejected submit.
+**C2. Edit form.** The form component from B4 serving edit through its own page route with a loader,
+with the fields grouped under a customer heading and a bike and service heading while it is being
+factored for reuse. Tests covering a loaded edit and a rejected submit.
 
 **C3. Delete flow.** Native `<dialog>` confirmation, fetcher submit against an intent, optimistic
 removal from the list, failure surfaced without losing the row. Ends with a smoke test of all four
