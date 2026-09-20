@@ -7,7 +7,7 @@ single-page front end that consumes it, PostgreSQL behind both, and a root `dock
 runs all three. The work goes in vertical slices, back end before front end inside each slice, with
 the order lifecycle modelled as a state machine on the entity rather than a status column anyone can
 write to. After the foundation, work goes in thin verticals that each end in a manual smoke test:
-place and list, then find, edit and delete, then packaging. Those four phases are the product; search,
+place and find, then edit and delete, then packaging. Those four phases are the product; search,
 lifecycle and hardening add depth on top of a green base. Verified by unit tests on the domain, integration tests against a real PostgreSQL
 container, component tests on the front end, and a manual pass through the running stack.
 
@@ -18,7 +18,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Phase | Plan | Issue | Status |
 |---|---|---|---|
 | A. Foundation | [plan-a-foundation.md](plan-a-foundation.md) | #7 | ✅ |
-| B. Place and list | [plan-b-place-and-list.md](plan-b-place-and-list.md) | #1 | ⏳ |
+| B. Place and find | [plan-b-place-and-list.md](plan-b-place-and-list.md) | #1 | ⏳ |
 | C. Find, edit and delete | [plan-c-find-edit-delete.md](plan-c-find-edit-delete.md) | #2 | ⏳ |
 | D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ⏳ |
 | E. Search | [plan-e-search.md](plan-e-search.md) | #4 | ⏳ |
