@@ -48,3 +48,6 @@ written, because the failures below are the kind that look like mysteries when t
   block doing the same is dead: the condition runs before the project file sets the property anyway.
 - The `postgres:18` image moved `PGDATA` to `/var/lib/postgresql/18/docker`. The compose volume mounts
   `/var/lib/postgresql`, one level up, as the image's own notes recommend for 18.
+- Vitest runs without `globals`, so Testing Library never registers its own auto-cleanup and the
+  jsdom document keeps every previous render. `afterEach(cleanup)` belongs in `test/setup.ts`, or
+  queries start finding duplicates as soon as a second test renders the same component.

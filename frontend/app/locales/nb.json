@@ -3,7 +3,8 @@
     "title": "Sykkelverkstedet"
   },
   "common": {
-    "language": "Språk"
+    "language": "Språk",
+    "loading": "Laster"
   },
   "errors": {
     "unexpected": "Noe gikk galt"
@@ -13,6 +14,37 @@
     "nb": "Norsk"
   },
   "orders": {
+    "columns": {
+      "customer": "Kunde",
+      "phone": "Telefon",
+      "bike": "Sykkelmerke",
+      "service": "Tjeneste",
+      "due": "Frist",
+      "status": "Status"
+    },
+    "empty": "Ingen ordrer funnet",
+    "overdue": "Forfalt",
+    "paging": {
+      "showing": "Viser {{from}} til {{to}} av {{total}}",
+      "previous": "Forrige",
+      "next": "Neste"
+    },
+    "search": {
+      "label": "Søk i ordrer",
+      "placeholder": "Navn, telefon eller e-post",
+      "submit": "Søk"
+    },
+    "serviceType": {
+      "WheelAdjustment": "Hjuljustering",
+      "ChainReplacement": "Kjedebytte",
+      "BrakeMaintenance": "Bremsevedlikehold"
+    },
+    "status": {
+      "Received": "Mottatt",
+      "InProgress": "Under arbeid",
+      "Completed": "Ferdig",
+      "Cancelled": "Kansellert"
+    },
     "title": "Ordrer"
   }
 }

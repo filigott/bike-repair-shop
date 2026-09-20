@@ -20,7 +20,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | B2a. Toolchain | ✅ | React Router 8 SPA, TypeScript 7, Tailwind and DaisyUI, Biome, Vitest |
 | B2b. Shell and i18n | ✅ | Header, locale switch, both locale files, render test |
 | B2c. Transport and client | ✅ | Fetch core, ActionResult, generated types, endpoint wrappers |
-| B3. Orders list page | ⏳ | Search box writing to a search param; first unit on Opus, start from the B2c wrappers |
+| B3. Orders list page | ✅ | Loader, search form, table, prev/next paging; components split per file |
 | B4. Create form | ⏳ | Smoke test: place an order, find it by name |
 
 ## Context
@@ -48,6 +48,17 @@ the scope boundary and the open questions; none of that is restated here. The do
 - **The list sorts by due date, then id.** Version-7 GUIDs are time-ordered, so the tiebreaker is
   placement order and a page boundary never duplicates or drops a row.
 
+- **Service type and status labels are locale keys, not the catalogue's `display_name`.** The
+  `service_types` table stays the one home for which services exist and in what order, and the create
+  form reads it from the API. What the staff member sees per code is a translation key, because the
+  seeded display name is English only while the UI ships in two languages. Moving the label into the
+  database later is an additive column plus a fallback, and nothing in the list page changes.
+
+- **The list page reads its state from the URL.** The search term and the page number are search
+  params the loader parses, so a search is shareable, the back button works and no component holds
+  copied state. The search box is a plain GET form rather than a debounced auto-submit, which keeps
+  the timer and the history churn out of the component.
+
 - **Validation messages leave the API in English.** Pragmatic for now; whether the UI maps error
   codes to locale keys or shows the server text is an open question for B4.
 
@@ -66,9 +77,10 @@ Biome, Vitest. The transport core with ProblemDetails normalisation, the `Action
 generated OpenAPI client and the orders endpoint wrapper. App shell with header, locale switch and
 both locale files. Verified by a render test of the shell and the tooling gates.
 
-**B3. Orders list page.** Loader reading the list endpoint, a search box writing its term to a
-search param the loader reads, a table of orders with service type, status, customer and due date,
-empty and error states. Component tests mocking the endpoint layer.
+**B3. Orders list page.** Client loader reading the list endpoint, a search box writing its term to a
+search param the loader reads, prev and next links carrying the term with them, a table of orders
+with service type, status, customer and due date, and an empty state. Component tests mocking the
+endpoint layer and driving the page through a route stub.
 
 **B4. Create form.** The order form component and its page route, service types read from the API,
 field-level error rendering from the ProblemDetails validation payload. Tests covering a successful

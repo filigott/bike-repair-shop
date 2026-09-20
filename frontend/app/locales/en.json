@@ -3,7 +3,8 @@
     "title": "Bike Repair Shop"
   },
   "common": {
-    "language": "Language"
+    "language": "Language",
+    "loading": "Loading"
   },
   "errors": {
     "unexpected": "Something went wrong"
@@ -13,6 +14,37 @@
     "nb": "Norsk"
   },
   "orders": {
+    "columns": {
+      "customer": "Customer",
+      "phone": "Phone",
+      "bike": "Bike brand",
+      "service": "Service",
+      "due": "Due date",
+      "status": "Status"
+    },
+    "empty": "No orders found",
+    "overdue": "Overdue",
+    "paging": {
+      "showing": "Showing {{from}} to {{to}} of {{total}}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "search": {
+      "label": "Search orders",
+      "placeholder": "Name, phone or email",
+      "submit": "Search"
+    },
+    "serviceType": {
+      "WheelAdjustment": "Wheel adjustment",
+      "ChainReplacement": "Chain replacement",
+      "BrakeMaintenance": "Brake maintenance"
+    },
+    "status": {
+      "Received": "Received",
+      "InProgress": "In progress",
+      "Completed": "Completed",
+      "Cancelled": "Cancelled"
+    },
     "title": "Orders"
   }
 }
