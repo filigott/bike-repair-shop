@@ -22,8 +22,14 @@ written, because the failures below are the kind that look like mysteries when t
 - `erasableSyntaxOnly` is not enabled by default in a React Router 8 project, so TypeScript `enum` is
   available and the no-magic-strings rule stands as written.
 - `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x`, and a plain `npm install` therefore
-  downgrades the project to 5.9.3 silently. Hence the `npx` route. The front-end spike's own lockfile
-  shows the downgrade, which also means TypeScript 7 itself has not run yet; B2 proves it.
+  downgrades the project to 5.9.3 silently. Hence the `npx` route.
+- TypeScript 7.0.2, the native compiler, type-checks the React Router 8.4 scaffold including the
+  `typegen` output and `rootDirs`, with no config change from the template. Proved in B2.
+- Biome 2.5 run from `frontend/` needs `vcs.root: ".."` to find the repo's `.gitignore`, uses
+  `linter.rules.preset` instead of the deprecated `recommended`, and rejects `@plugin` in CSS unless
+  `css.parser.tailwindDirectives` is on.
+- A React Router 8 build with `ssr: false` still writes `build/server/`; it is the prerender step for
+  `build/client/index.html`, and only `build/client/` is served.
 - Package pins were checked against nuget.org a second time on 2026-09-20. EF Core had been pinned at
   the Npgsql floor rather than at current stable, and `FluentValidation.AspNetCore` is retired on the
   11.x line: validation is wired through `FluentValidation.DependencyInjectionExtensions` 12 instead.

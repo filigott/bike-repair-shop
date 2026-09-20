@@ -487,7 +487,6 @@ $RECYCLE.BIN/
 node_modules/
 frontend/build/
 frontend/.react-router/
-frontend/app/**/*.generated.ts
 .env
 .env.local
 *.local
