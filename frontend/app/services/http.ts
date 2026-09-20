@@ -1,8 +1,15 @@
-import type { components } from "./openapi.generated";
+import createClient from "openapi-fetch";
+import type { components, paths } from "./openapi.generated";
 
 export type ProblemDetails = components["schemas"]["ProblemDetails"];
 export type ValidationProblemDetails =
   components["schemas"]["ValidationProblemDetails"];
+
+type FetchResult<T> = {
+  data?: T;
+  error?: unknown;
+  response: Response;
+};
 
 const REQUEST_TIMEOUT_MS = 10_000;
 
@@ -20,46 +27,28 @@ export class ApiError extends Error {
   }
 }
 
-export async function request<T>(
-  path: string,
-  init: RequestInit = {},
-): Promise<T> {
-  const response = await fetch(path, {
-    ...init,
-    headers: {
-      accept: "application/json",
-      ...(init.body ? { "content-type": "application/json" } : {}),
-      ...init.headers,
-    },
-    signal: init.signal ?? AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-  });
+// The client builds an absolute Request, so the same-origin base has to be explicit.
+const baseUrl =
+  typeof window === "undefined" ? "http://localhost" : window.location.origin;
 
+export const apiClient = createClient<paths>({
+  baseUrl,
+  headers: { accept: "application/json" },
+  // Resolved per call so each request gets its own deadline, and so tests can stub fetch.
+  fetch: (request) =>
+    fetch(request, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) }),
+});
+
+export async function unwrap<T>(call: Promise<FetchResult<T>>): Promise<T> {
+  const { data, error, response } = await call;
   if (!response.ok) {
-    throw new ApiError(response.status, await readProblem(response));
+    throw new ApiError(response.status, toProblem(error, response));
   }
-
-  return response.status === 204
-    ? (undefined as T)
-    : ((await response.json()) as T);
+  return data as T;
 }
 
-export function toQueryString(
-  params: Record<string, string | number | undefined>,
-): string {
-  const query = new URLSearchParams();
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== "") {
-      query.set(key, String(value));
-    }
-  }
-  const text = query.toString();
-  return text ? `?${text}` : "";
-}
-
-async function readProblem(response: Response): Promise<ProblemDetails> {
-  try {
-    return (await response.json()) as ProblemDetails;
-  } catch {
-    return { status: response.status, title: response.statusText };
-  }
+function toProblem(error: unknown, response: Response): ProblemDetails {
+  return error && typeof error === "object"
+    ? (error as ProblemDetails)
+    : { status: response.status, title: response.statusText };
 }

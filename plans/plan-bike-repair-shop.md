@@ -184,11 +184,13 @@ phase table is now read against: nothing from E, F or G until the product phases
   would be a second source of freshness that every route has to pick between. Data arrives through a
   loader, changes go through an action, and the loader reruns.
 
-- **The transport stays small and typed from the schema.** One fetch core with a timeout and
-  ProblemDetails normalisation, one action envelope, one wrapper file per API controller as the mock
-  seam for tests. The candidate for replacing the hand-written core is `openapi-fetch`, which types
-  paths, parameters and bodies from the committed schema; the wrappers stay either way, because they
-  are what tests mock and where the response is unwrapped.
+- **The transport stays small and typed from the schema.** `openapi-fetch` over the committed
+  schema, a per-call timeout, one `unwrap` that turns its `{ data, error }` result into a value or a
+  throwing `ApiError`, one action envelope, and one wrapper file per API controller as the mock seam
+  for tests. The hand-written fetch core it replaced already took its parameter types from the
+  schema, so the gain is the path literal and the query shape: with parameterised routes arriving in
+  phase C, a drifted route is a compile error instead of a runtime 404. The wrappers stay, because
+  they are what tests mock and where the response is unwrapped.
 
 - **Delete is a real delete.** The brief asks for delete, and `Cancelled` already covers the case
   where the order should be kept for the record. Two mechanisms for going away would need a reason.

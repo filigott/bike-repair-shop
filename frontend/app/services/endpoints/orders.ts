@@ -1,4 +1,4 @@
-import { request, toQueryString } from "../http";
+import { apiClient, unwrap } from "../http";
 import type { components, paths } from "../openapi.generated";
 
 export type MaintenanceOrderSummary =
@@ -17,14 +17,11 @@ export type ServiceType = components["schemas"]["ServiceType"];
 export function listOrders(
   params: ListOrdersParams = {},
 ): Promise<PagedOrders> {
-  return request<PagedOrders>(`/api/orders${toQueryString(params)}`);
+  return unwrap(apiClient.GET("/api/orders", { params: { query: params } }));
 }
 
 export function placeOrder(
   order: PlaceOrderRequest,
 ): Promise<MaintenanceOrderResponse> {
-  return request<MaintenanceOrderResponse>("/api/orders", {
-    method: "POST",
-    body: JSON.stringify(order),
-  });
+  return unwrap(apiClient.POST("/api/orders", { body: order }));
 }

@@ -19,7 +19,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | B2. Front-end scaffold | ✅ | One commit per row below |
 | B2a. Toolchain | ✅ | React Router 8 SPA, TypeScript 7, Tailwind and DaisyUI, Biome, Vitest |
 | B2b. Shell and i18n | ✅ | Header, locale switch, both locale files, render test |
-| B2c. Transport and client | ✅ | Fetch core, ActionResult, generated types, endpoint wrappers |
+| B2c. Transport and client | ✅ | openapi-fetch client, ActionResult, generated types, endpoint wrappers |
 | B3. Orders list page | ✅ | Loader, search form, table, prev/next paging; components split per file |
 | B4. Create form | ⏳ | Smoke test: place an order, find it by name |
 
@@ -73,8 +73,8 @@ the brief. It is paged from the start with a deterministic tiebreaker. Integrati
 asserting persisted state from a fresh read, and a failing test first for the search match.
 
 **B2. Front-end scaffold.** React Router 8 project with `ssr: false`, Tailwind v4 and DaisyUI v5,
-Biome, Vitest. The transport core with ProblemDetails normalisation, the `ActionResult` envelope, the
-generated OpenAPI client and the orders endpoint wrapper. App shell with header, locale switch and
+Biome, Vitest. The transport core over `openapi-fetch` with ProblemDetails normalisation, the
+`ActionResult` envelope, the generated schema types and the orders endpoint wrapper. App shell with header, locale switch and
 both locale files. Verified by a render test of the shell and the tooling gates.
 
 **B3. Orders list page.** Client loader reading the list endpoint, a search box writing its term to a

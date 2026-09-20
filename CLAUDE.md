@@ -29,7 +29,7 @@ AutoFixture 5 are at release candidate and are deliberately not used.
 | Language | TypeScript, the native compiler | 7.0 |
 | Styling | Tailwind CSS plus DaisyUI, semantic colour tokens only | 4.3, DaisyUI 5.7 |
 | i18n | i18next plus react-i18next, typed resources | 26, 17 |
-| API contract | OpenAPI, browsed with Scalar, typed client from `openapi-typescript` | Scalar 2.17 |
+| API contract | OpenAPI, browsed with Scalar, types from `openapi-typescript`, calls through `openapi-fetch` | Scalar 2.17, openapi-fetch 0.17 |
 | Backend tests | xUnit v3, Testcontainers, AwesomeAssertions, AutoFixture, Respawn | 4.0, 4.15, 9.6 |
 | Front-end tests | Vitest plus Testing Library | 5.0, RTL 16.3 |
 | Tooling | Biome for the front end, `dotnet format` for the back end | Biome 2.5 |
@@ -121,11 +121,13 @@ in `app/types/intents/`, namespaced so two slices on one route cannot collide.
 consumers narrow with `isActionFailure`. No `success` or `message` keys. ProblemDetails mapping is a
 single shared helper: 5xx rethrows to the error boundary, 4xx becomes a typed failure the form renders.
 
-**Transport is one core module** with a timeout and ProblemDetails normalisation, wrapped by one file
-per API controller under `app/services/endpoints/`. Those wrappers are the only callers of the client.
-Types come from the generated OpenAPI schema and are aliased in the wrapper; that alias line is the
-whole seam. Generate types and hand-write the wrapper, or generate the client and write no wrapper,
-never both, or the wrapper becomes a pass-through with nothing in it.
+**Transport is `openapi-fetch` typed by the generated `paths`.** One core module owns the client, a
+per-call timeout and `unwrap`, which turns the `{ data, error }` result into a value or an `ApiError`
+carrying ProblemDetails, so the rest of the app keeps a throwing seam. One wrapper file per API
+controller under `app/services/endpoints/` is the only caller of the client: it names the operation,
+aliases the schema types and is what tests mock. The wrapper is not a pass-through, because the path
+literal, the query shape and the body are checked against the committed schema at the call, and a
+renamed route or parameter is a compile error rather than a 404.
 
 **`openapi-typescript` is invoked through `npx`, pinned, and is not a project dependency.** It needs
 the TypeScript 5 JavaScript compiler API at runtime, and the `typescript@7` package ships only the
