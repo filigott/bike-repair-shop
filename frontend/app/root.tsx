@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   isRouteErrorResponse,
   Links,
@@ -6,13 +7,17 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
 import type { Route } from "./+types/root";
+import { AppHeader } from "./components/app-header";
+import { useLocale } from "./hooks/use-locale";
+import "./i18n";
 import "./app.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { locale } = useLocale();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -30,16 +35,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <main className="container mx-auto p-4">
-      <Outlet />
-    </main>
+    <>
+      <AppHeader />
+      <main className="container mx-auto p-4">
+        <Outlet />
+      </main>
+    </>
   );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  const { t } = useTranslation();
   const message = isRouteErrorResponse(error)
     ? `${error.status} ${error.statusText}`
-    : "Something went wrong";
+    : t("errors.unexpected");
   const details =
     import.meta.env.DEV && error instanceof Error ? error.stack : undefined;
 

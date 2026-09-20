@@ -11,10 +11,13 @@
     "codefix": "biome check --write ."
   },
   "dependencies": {
+    "i18next": "26.4.2",
+    "i18next-browser-languagedetector": "8.2.1",
+    "isbot": "5.2.2",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "react-router": "8.4.0",
-    "isbot": "^5"
+    "react-i18next": "17.0.14",
+    "react-router": "8.4.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",

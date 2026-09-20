@@ -1,0 +1,18 @@
+{
+  "app": {
+    "title": "Sykkelverkstedet"
+  },
+  "common": {
+    "language": "Språk"
+  },
+  "errors": {
+    "unexpected": "Noe gikk galt"
+  },
+  "locale": {
+    "en": "English",
+    "nb": "Norsk"
+  },
+  "orders": {
+    "title": "Ordrer"
+  }
+}

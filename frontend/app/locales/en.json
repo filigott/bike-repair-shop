@@ -1,0 +1,18 @@
+{
+  "app": {
+    "title": "Bike Repair Shop"
+  },
+  "common": {
+    "language": "Language"
+  },
+  "errors": {
+    "unexpected": "Something went wrong"
+  },
+  "locale": {
+    "en": "English",
+    "nb": "Norsk"
+  },
+  "orders": {
+    "title": "Orders"
+  }
+}
