@@ -77,9 +77,11 @@ plus a `<Slice>ServiceCollectionExtensions.cs` with a single `Add<Slice>()`. Con
 Body reads: fetch with includes, check policy, call a domain method, save. Commands and queries are
 bare records. Controllers stay thin and take the handler per action via `[FromServices]`.
 
-**Entities are rich.** Private parameterless constructor for EF, a static `Create()` that validates,
-`private set` on anything a domain method owns, `init` on `Id` and immutable foreign keys. Every
-mutator guards the lifecycle. An order's status moves only through domain methods.
+**Entities are rich.** Private parameterless constructor for EF, a static factory named for the
+business action (`MaintenanceOrder.Place()`) that validates, `private set` on anything a domain method
+owns, `init` on `Id` and immutable foreign keys. Mutators are named for the task (`Reschedule`,
+`CorrectDetails`), never a bare `Update`, and every one guards the lifecycle. An order's status moves
+only through domain methods, and the transition matrix lives in exactly one place.
 
 **Exception types match the layer.** `ArgumentException` for bad method input. `DomainException` and
 its subtypes (`BusinessRuleViolationException`, `InvalidStateTransitionException`) for invariants.
@@ -174,6 +176,7 @@ role, text or label.
 # Backend
 dotnet build backend/BikeRepairShop.sln
 dotnet test  backend/BikeRepairShop.sln
+dotnet test  backend/BikeRepairShop.Tests.Unit/BikeRepairShop.Tests.Unit.csproj -- --filter-method "*Reopen*"
 dotnet ef migrations add <Name> --project backend/BikeRepairShop.Database --startup-project backend/BikeRepairShop.Api
 
 # Front end

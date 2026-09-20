@@ -116,6 +116,13 @@ written, because the failures below are the kind that look like mysteries when t
   edit form therefore covers the details an order can always carry, and lifecycle moves are buttons
   driven by the transitions the API projects onto the response.
 
+- **An enum with behaviour in an extension block when the cases carry no data, a record union when
+  they do.** `OrderStatus` stays a real enum, so EF stores a string, JSON emits a string, OpenAPI
+  emits an enum and the generated TypeScript gets a union, all for free. Its behaviour sits in a C# 14
+  `extension` block in the same file, so it reads as members without paying a converter at every
+  boundary. A smart-enum class or a record hierarchy would cost exactly those converters and buy
+  nothing for four data-less statuses; the record union is reserved for shapes that carry data.
+
 - **Email and phone number are value objects, bike brand and notes are not.** The first two carry a
   format invariant worth parsing once at the boundary and trusting afterwards. The other two are free
   text with a length cap, and wrapping them would be pattern application for its own sake. For an
@@ -290,6 +297,10 @@ invalidated.
   so adding a login would be scenery.
 - Customers as an entity. An order carries contact details as stated; deduplicating customers is a
   different product.
+- A bike brand catalogue. The brief lists the brand as a field the customer states, staff type it, and
+  a lookup table would need an admin flow and an "other" escape hatch to be honest. It stays a capped
+  string; if misspellings become a problem, an autocomplete over the distinct values already stored
+  needs no schema change, and a real catalogue later is an additive table plus a backfill.
 - Scheduling, mechanic assignment, capacity and pricing.
 - Notification of any kind.
 - Deployment beyond local compose.
