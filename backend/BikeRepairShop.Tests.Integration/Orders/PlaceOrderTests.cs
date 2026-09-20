@@ -48,7 +48,7 @@ public class PlaceOrderTests(DatabaseFixture database) : IntegrationTest(databas
     {
         // Arrange
         using var client = Database.Factory.CreateClient();
-        var request = PlaceOrderRequests.Valid(Clock) with { CustomerName = "", PhoneNumber = "12", Email = "kari" };
+        var request = PlaceOrderRequests.Valid(Clock) with { CustomerName = "", PhoneNumber = "12", Email = "kari", BikeBrand = null! };
 
         // Act
         var response = await client.PostAsJsonAsync("/api/orders", request, Json.Options, TestContext.Current.CancellationToken);
@@ -56,7 +56,7 @@ public class PlaceOrderTests(DatabaseFixture database) : IntegrationTest(databas
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(Json.Options, TestContext.Current.CancellationToken);
-        problem!.Errors.Keys.Should().BeEquivalentTo("customerName", "phoneNumber", "email");
+        problem!.Errors.Keys.Should().BeEquivalentTo("customerName", "phoneNumber", "email", "bikeBrand");
         problem.Errors.Values.Should().AllSatisfy(messages => messages.Should().ContainSingle());
     }
 

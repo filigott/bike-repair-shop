@@ -7,6 +7,7 @@ using BikeRepairShop.Database;
 using BikeRepairShop.Domain;
 using BikeRepairShop.Domain.Orders;
 using BikeRepairShop.Tests.Integration.Fixtures;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BikeRepairShop.Tests.Integration.Orders;
@@ -70,6 +71,8 @@ public class ListOrdersTests(DatabaseFixture database) : IntegrationTest(databas
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(Json.Options, TestContext.Current.CancellationToken);
+        problem!.Errors.Keys.Should().BeEquivalentTo("pageSize");
     }
 
     private async Task SeedAsync(params MaintenanceOrder[] orders)

@@ -13,7 +13,12 @@ var connectionString = builder.Configuration.GetConnectionString("BikeRepairShop
     ?? throw new InvalidOperationException("Connection string 'BikeRepairShop' is not configured.");
 
 // HTTP surface: controllers, enums as strings on the wire, request validation, ProblemDetails, OpenAPI
-builder.Services.AddControllers(options => options.Filters.Add<RequestValidationFilter>())
+builder.Services.AddControllers(options =>
+    {
+        options.Filters.Add<RequestValidationFilter>();
+        // Every field rule lives in FluentValidation; MVC's implicit required would answer first with its own keys.
+        options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+    })
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
