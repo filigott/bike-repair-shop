@@ -1,6 +1,8 @@
 using BikeRepairShop.Api.Features.Orders.Commands;
 using BikeRepairShop.Api.Features.Orders.Handlers;
 using BikeRepairShop.Api.Features.Orders.Models;
+using BikeRepairShop.Api.Features.Orders.Queries;
+using BikeRepairShop.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeRepairShop.Api.Controllers;
@@ -10,6 +12,17 @@ namespace BikeRepairShop.Api.Controllers;
 [Produces("application/json")]
 public sealed class OrdersController : ControllerBase
 {
+    [HttpGet]
+    [ProducesResponseType<PagedResponse<MaintenanceOrderSummary>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PagedResponse<MaintenanceOrderSummary>>> List(
+        [FromServices] ListOrdersHandler handler,
+        [FromQuery] ListOrdersRequest request,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(ListOrdersQuery.From(request), cancellationToken);
+    }
+
     [HttpPost]
     [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]

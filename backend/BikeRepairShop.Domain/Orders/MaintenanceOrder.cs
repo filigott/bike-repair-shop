@@ -34,6 +34,11 @@ public sealed class MaintenanceOrder
 
     public IReadOnlyList<OrderStatus> AllowedTransitions => Status.AllowedTransitions;
 
+    public bool IsOverdueOn(DateOnly today)
+    {
+        return Status.IsOpen && DueDate < today;
+    }
+
     public static MaintenanceOrder Place(
         string customerName,
         PhoneNumber phoneNumber,

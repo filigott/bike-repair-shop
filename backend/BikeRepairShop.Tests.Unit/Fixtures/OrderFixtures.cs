@@ -50,4 +50,16 @@ public static class OrderFixtures
         order.Cancel();
         return order;
     }
+
+    public static MaintenanceOrder InStatus(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.Received => Placed(),
+            OrderStatus.InProgress => InProgress(),
+            OrderStatus.Completed => Completed(),
+            OrderStatus.Cancelled => Cancelled(),
+            _ => throw new ArgumentOutOfRangeException(nameof(status)),
+        };
+    }
 }

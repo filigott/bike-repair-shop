@@ -262,6 +262,33 @@ public class MaintenanceOrderTests
         result.Should().BeEquivalentTo([OrderStatus.InProgress]);
     }
 
+    [Theory]
+    [InlineData(OrderStatus.Received, true)]
+    [InlineData(OrderStatus.InProgress, true)]
+    [InlineData(OrderStatus.Completed, false)]
+    [InlineData(OrderStatus.Cancelled, false)]
+    public void IsOverdueOn_is_true_only_for_an_open_order_past_its_due_date(OrderStatus status, bool expected)
+    {
+        // Arrange
+        var order = OrderFixtures.InStatus(status);
+
+        // Act
+        var overdue = order.IsOverdueOn(order.DueDate.AddDays(1));
+
+        // Assert
+        overdue.Should().Be(expected);
+    }
+
+    [Fact]
+    public void IsOverdueOn_is_false_on_the_due_date_itself()
+    {
+        // Arrange
+        var order = OrderFixtures.Placed();
+
+        // Act & Assert
+        order.IsOverdueOn(order.DueDate).Should().BeFalse();
+    }
+
     #endregion
 
     #region Editing

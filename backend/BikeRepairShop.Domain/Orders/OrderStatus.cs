@@ -25,7 +25,9 @@ public static class OrderStatusExtensions
     {
         public IReadOnlyList<OrderStatus> AllowedTransitions => Transitions[status];
 
-        public bool IsEditable => status is OrderStatus.Received or OrderStatus.InProgress;
+        public bool IsOpen => status is OrderStatus.Received or OrderStatus.InProgress;
+
+        public bool IsEditable => status.IsOpen;
 
         public bool CanTransitionTo(OrderStatus next)
         {
