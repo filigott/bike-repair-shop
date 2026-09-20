@@ -162,9 +162,11 @@ with nothing in it gets no marker, and `// Act & Assert` labels a single express
 Integration tests assert persisted state from a fresh read: clear the change tracker or open a new
 scope, re-query, then assert. Never assert on the entity the handler returned.
 
-The integration harness runs one `postgres:18` Testcontainer per process with a migrated template
-database that each collection clones, and resets rows between tests. Fixtures, mutators and factories
-live in a `Fixtures/` folder of the test project that owns them, never as private helpers inside a test
+The integration harness runs one `postgres:18` Testcontainer per run, migrated once through the API's
+own startup path, with every integration class in one xunit collection and Respawn wiping rows before
+each test. The seeded catalogue and the migration history survive the reset. Test classes derive from
+`IntegrationTest` and reach the host through `DatabaseFixture`. Fixtures, mutators and factories live
+in a `Fixtures/` folder of the test project that owns them, never as private helpers inside a test
 class.
 
 Front-end tests are co-located `*.test.tsx`, mock the endpoint layer rather than `fetch`, and query by

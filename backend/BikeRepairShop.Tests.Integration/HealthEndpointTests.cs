@@ -4,14 +4,13 @@ using BikeRepairShop.Tests.Integration.Fixtures;
 
 namespace BikeRepairShop.Tests.Integration;
 
-public class HealthEndpointTests
+public class HealthEndpointTests(DatabaseFixture database) : IntegrationTest(database)
 {
     [Fact]
     public async Task Health_endpoint_reports_healthy()
     {
         // Arrange
-        await using var factory = new ApiFactory();
-        using var client = factory.CreateClient();
+        using var client = Database.Factory.CreateClient();
 
         // Act
         var response = await client.GetAsync("/health", TestContext.Current.CancellationToken);

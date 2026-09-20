@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace BikeRepairShop.Tests.Integration.Fixtures;
 
-public sealed class ApiFactory : WebApplicationFactory<Program>
+public sealed class ApiFactory(string connectionString) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting(MigrationStartupExtensions.SettingName, "false");
+        builder.UseSetting("ConnectionStrings:BikeRepairShop", connectionString);
+        builder.UseSetting(MigrationStartupExtensions.SettingName, "true");
     }
 }
