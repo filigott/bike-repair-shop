@@ -14,8 +14,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | B1a. TryParse on value objects | ✅ | Feeds the request validators |
 | B1b. API plumbing | ✅ | JSON enums, validation filter, ProblemDetails, OpenAPI with Scalar |
 | B1c. Place command | ✅ | Validator, handler, controller, integration tests |
-| B1d. List query | 🟡 | Search term, offset paging, tiebreaker |
-| B1e. Service catalogue read | ⏳ | Needed by the create form in B4 |
+| B1d. List query | ✅ | Search term, offset paging, tiebreaker |
+| B1e. Service catalogue read | 🟡 | Needed by the create form in B4 |
 | B2. Front-end scaffold | ⏳ | Router, styling, generated client, i18n from day one |
 | B3. Orders list page | ⏳ | Search box writing to a search param |
 | B4. Create form | ⏳ | Smoke test: place an order, find it by name |

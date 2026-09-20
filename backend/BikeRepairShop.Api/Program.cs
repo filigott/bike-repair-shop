@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using BikeRepairShop.Api.Configuration;
 using BikeRepairShop.Api.Exceptions;
 using BikeRepairShop.Api.Features.Orders;
+using BikeRepairShop.Api.Features.ServiceTypes;
 using BikeRepairShop.Database;
 using FluentValidation;
 using Scalar.AspNetCore;
@@ -27,6 +28,7 @@ builder.Services.AddShopClock(builder.Configuration);
 
 // Feature slices
 builder.Services.AddOrders();
+builder.Services.AddServiceTypes();
 
 var app = builder.Build();
 
