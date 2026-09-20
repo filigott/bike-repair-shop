@@ -178,7 +178,7 @@ role, text or label.
 ```bash
 # Backend (the API needs the compose database: docker compose up -d db)
 dotnet build backend/BikeRepairShop.sln
-dotnet run   --project backend/BikeRepairShop.Api    # http://localhost:5260/health
+dotnet run   --project backend/BikeRepairShop.Api    # http://localhost:5260/health, /scalar for the API reference
 dotnet test  backend/BikeRepairShop.sln
 dotnet test  backend/BikeRepairShop.Tests.Unit/BikeRepairShop.Tests.Unit.csproj -- --filter-method "*Reopen*"
 dotnet ef migrations add <Name> --project backend/BikeRepairShop.Database --startup-project backend/BikeRepairShop.Api -- --environment Development

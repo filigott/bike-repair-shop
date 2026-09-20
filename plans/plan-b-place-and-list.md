@@ -10,7 +10,12 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| B1. Place and list API | 🟡 | Place, list with search and paging, service catalogue read; one commit each |
+| B1. Place and list API | 🟡 | One commit per row below |
+| B1a. TryParse on value objects | ✅ | Feeds the request validators |
+| B1b. API plumbing | ⏳ | JSON enums, validation filter, ProblemDetails, OpenAPI with Scalar |
+| B1c. Place command | ⏳ | Validator, handler, controller, integration tests |
+| B1d. List query | ⏳ | Search term, offset paging, tiebreaker |
+| B1e. Service catalogue read | ⏳ | Needed by the create form in B4 |
 | B2. Front-end scaffold | ⏳ | Router, styling, generated client, i18n from day one |
 | B3. Orders list page | ⏳ | Search box writing to a search param |
 | B4. Create form | ⏳ | Smoke test: place an order, find it by name |
@@ -22,7 +27,18 @@ the scope boundary and the open questions; none of that is restated here. The do
 
 ## Design decisions
 
-None beyond the main plan yet. A decision that only this phase needs goes here.
+- **Domain exceptions map to two status codes.** `InvalidStateTransitionException` is a 409, every
+  other `DomainException` a 422, with the exception message as the ProblemDetails `detail`. Anything
+  else stays a 500 through the default handler, so a validator gap surfaces as a bug instead of
+  hiding as a client error.
+
+- **Validation runs in one action filter.** FluentValidation has no ASP.NET Core hook on the 12.x line,
+  so a filter resolves the validator for each bound argument and short-circuits with the same
+  `ValidationProblemDetails` shape MVC uses for binding errors. Keys are camelCased to match the
+  JSON, so the form can render them per field.
+
+- **Validation messages leave the API in English.** Pragmatic for now; whether the UI maps error
+  codes to locale keys or shows the server text is an open question for B4.
 
 ## Steps
 
