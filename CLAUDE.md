@@ -25,14 +25,14 @@ AutoFixture 5 are at release candidate and are deliberately not used.
 | API | ASP.NET Core controllers, feature-sliced CQRS handlers | 10.0 |
 | Data | PostgreSQL, EF Core with Npgsql, code-first migrations | 18, EF 10.0 |
 | Front end | React Router framework mode with `ssr: false`, Vite, React | 8.4, Vite 8, React 19 |
-| Language | TypeScript | see `frontend/package.json` |
+| Language | TypeScript, the native compiler | 7.0 |
 | Styling | Tailwind CSS plus DaisyUI, semantic colour tokens only | 4.3, DaisyUI 5.7 |
 | i18n | i18next plus react-i18next, typed resources | 26, 17 |
 | API contract | OpenAPI, browsed with Scalar, typed client from `openapi-typescript` | Scalar 2.17 |
 | Backend tests | xUnit v3, Testcontainers, AwesomeAssertions, AutoFixture, Respawn | 4.0, 4.15, 9.6 |
 | Front-end tests | Vitest plus Testing Library | 5.0, RTL 16.3 |
 | Tooling | Biome for the front end, `dotnet format` for the back end | Biome 2.5 |
-| Packaging | Multi-stage Dockerfiles, one `docker-compose.yml` at the repo root | Node 24 LTS, nginx stable |
+| Packaging | Multi-stage Dockerfiles, one `docker-compose.yml` at the repo root | Node 24 LTS, Caddy 2 |
 
 ## Layout
 
@@ -54,6 +54,19 @@ docs/                             topical reference docs, updated with the code 
 ```
 
 `Domain` references nothing framework-specific. `Database` references `Domain`. `Api` references both.
+
+There are two test projects, not three. A shared-fixture project earns its keep only once both of the
+others consume it.
+
+Package versions are central: `backend/Directory.Packages.props` lists every version, and a
+`PackageReference` in a project carries no `Version`. Build properties shared by all six projects
+live in `backend/Directory.Build.props`.
+
+Two settings are load-bearing and were established by running them, not by reading docs:
+
+- `global.json` sets `"test": { "runner": "Microsoft.Testing.Platform" }`. Without it `dotnet test`
+  fails outright on the .NET 10 SDK with xunit v3, because the VSTest target is gone.
+- EF Core is pinned to 10.0.4. Npgsql 10.0.3 floors it there, and 10.0.0 fails restore with NU1605.
 
 ## Backend conventions
 
@@ -77,10 +90,20 @@ ProblemDetails by one middleware. "Not found" is never a domain exception.
 **DTO names carry the shape**: `Response`, `Request`, `Summary`, `Item`, `View`. Never a bare `Dto`.
 Mapping is a static factory: `MaintenanceOrderSummary.From(order)`.
 
-**EF rules.** One configuration file per entity. Enums stored as strings via `HasConversion<string>()`
+**EF rules.** Identifiers are snake_case through `UseSnakeCaseNamingConvention()`, decided before the
+first migration because changing it later is a full-table rename. One configuration file per entity. Enums stored as strings via `HasConversion<string>()`
 with a `HasMaxLength`. Value objects via `HasConversion` or `OwnsOne`. Queries reference mapped
 properties only, because computed getters do not translate to SQL. Migrations auto-apply in
 Development only. Reference data is seeded in a migration.
+
+**Migrations apply on start behind an explicit `RunMigrationsOnStartup` setting**, not behind the
+environment name, so the composed stack creates its schema without also switching on the developer
+exception page.
+
+**Optimistic concurrency is a `version` field on the DTO**, backed by the PostgreSQL `xmin` system
+column. The update request carries it back and a mismatch is a 409. Deliberately not an ETag with
+`If-Match`: that requires strong comparison, and a strong validator asserts byte-identical
+representations, which stops being true as soon as a response varies.
 
 **Modern C#**: file-scoped namespaces, `var`, target-typed `new()`, collection expressions, `is null`,
 injected `TimeProvider` rather than `DateTime.UtcNow`.
@@ -97,7 +120,18 @@ single shared helper: 5xx rethrows to the error boundary, 4xx becomes a typed fa
 
 **Transport is one core module** with a timeout and ProblemDetails normalisation, wrapped by one file
 per API controller under `app/services/endpoints/`. Those wrappers are the only callers of the client.
-Request and response types come from the generated OpenAPI client, never hand-written twice.
+Types come from the generated OpenAPI schema and are aliased in the wrapper; that alias line is the
+whole seam. Generate types and hand-write the wrapper, or generate the client and write no wrapper,
+never both, or the wrapper becomes a pass-through with nothing in it.
+
+**`openapi-typescript` is invoked through `npx`, pinned, and is not a project dependency.** It
+declares `peerDependencies.typescript: "^5.x"`, so listing it silently downgrades the project to
+TypeScript 5.9.3 with no warning. It is a one-shot generator whose output is committed, so it belongs
+outside the dependency tree.
+
+**The UI never recomputes a server rule.** `allowedTransitions`, `isOverdue` and `isReopened` are
+projected onto the response by the API. Computing overdue in the browser lets the viewer's device
+timezone decide whether an order is late.
 
 **UI rules.** Signals of intent over booleans: native `<dialog>` with `showModal()` for modals, with
 the parent holding `selected: T | null`. DaisyUI semantic tokens only (`primary`, `base-100`, `error`

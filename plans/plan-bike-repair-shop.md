@@ -17,7 +17,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Step | Status | Notes |
 |---|---|---|
 | A1a. Conventions and plan | ✅ | CLAUDE.md, plans, versions checked against registries |
-| A1b. Solution scaffold | ⏳ | Projects, health endpoint, compose service for the database |
+| A1b. Toolchain pins | ✅ | global.json, central packages, editorconfig, build props |
+| A1c. Solution scaffold | ⏳ | Five projects, health endpoint, compose service for the database |
 | A2. Domain model and state machine | ⏳ | TDD |
 | A3. Persistence and test harness | ⏳ | EF, migration, seeded services, Testcontainers |
 | B1. Orders API slice | ⏳ | CRUD handlers, validators, ProblemDetails, OpenAPI |
@@ -46,6 +47,27 @@ components are required on the front end. Those constraints are fixed; everythin
 choice made here.
 
 Conventions for both halves are in [CLAUDE.md](../CLAUDE.md) and are not restated below.
+
+### Verified on this machine, not assumed
+
+Both stacks were built and run on throwaway scaffolds before any of this repository's code was
+written, because the failures below are the kind that look like mysteries when they surface mid-unit.
+
+- `dotnet test` fails outright on the .NET 10 SDK with xunit v3 unless `global.json` opts into
+  `Microsoft.Testing.Platform`. The VSTest target is gone. The opt-in is repo-wide, not per project.
+- Npgsql 10.0.3 floors EF Core at 10.0.4. Pinning 10.0.0 fails restore with NU1605.
+- PostgreSQL 18 with Npgsql 10, EF 10 and Testcontainers 4.15 was exercised end to end with a real
+  container and a real save-and-reload. No compatibility issue, no readiness-probe issue.
+- `Testcontainers.PostgreSql` 4.15 has obsoleted the parameterless `PostgreSqlBuilder()`. Pass the
+  image: `new PostgreSqlBuilder("postgres:18")`.
+- A `Database` project with no composition root needs an `IDesignTimeDbContextFactory`, or the `Api`
+  project passed as `--startup-project`, for `dotnet ef migrations add` to work.
+- React Router 8 with `ssr: false` produces a genuine SPA build, and Tailwind v4 with DaisyUI v5 in the
+  CSS-first form survives it.
+- `erasableSyntaxOnly` is not enabled by default in a React Router 8 project, so TypeScript `enum` is
+  available and the no-magic-strings rule stands as written.
+- `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x`, and a plain `npm install` therefore
+  downgrades the project to 5.9.3 silently. Hence the `npx` route.
 
 ## Design decisions
 
@@ -89,6 +111,41 @@ Conventions for both halves are in [CLAUDE.md](../CLAUDE.md) and are not restate
   purpose: .NET stays on 10 LTS with 11 at RC, and AutoFixture stays on 4 with 5 at RC. The one
   choice with real risk is TypeScript 7, the native compiler, so it is proved out on a throwaway
   scaffold before the front-end unit starts rather than discovered mid-route.
+
+- **Optimistic concurrency is a `version` field, not an ETag.** `If-Match` requires strong comparison
+  under RFC 9110, so a weak validator never matches and a strong one asserts byte-identical
+  representations that a varying response cannot honour. A `version` on the response and a required
+  `version` on the update request gives the same guarantee, appears in the OpenAPI document so the
+  generated types carry it, and is testable in four lines. PostgreSQL `xmin` backs it.
+
+- **Caddy serves the bundle and proxies `/api`.** Same-origin deletes the CORS policy, the build-time
+  base URL and the one-image-per-environment problem together. The cost is a Caddyfile and a matching
+  Vite dev proxy so local development and the composed stack behave identically.
+
+- **The order carries a human-readable reference alongside its id.** Staff on the phone say "order
+  1042", not a GUID prefix. One identity column now; a migration and a backfill later.
+
+- **Four statuses, with reopen as a transition rather than a fifth state.** `Completed` back to
+  `InProgress` is allowed so a mis-click is recoverable, and `Received` straight to `Completed` is
+  allowed because a counter-side adjustment should not need a trip through a state nobody was in. The
+  UI distinguishes rework through an `isReopened` flag derived from the history, which keeps the
+  transition matrix, the locale keys and the test cases from multiplying for a distinction the history
+  already records.
+
+- **The transition matrix is expressed exactly once**, as a static map that every transition method,
+  `CanTransitionTo` and `AllowedTransitions` read from. Two copies of the same matrix is the bug this
+  whole design exists to prevent.
+
+- **snake_case identifiers, decided before the first migration.** EF's PascalCase defaults need
+  quoting in every hand-written query and every `psql` session, and switching afterwards is a
+  full-table rename.
+
+- **Migrations apply behind an explicit setting, not the environment name.** Tying schema creation to
+  the same switch that turns on the developer exception page means the composed stack has to run as
+  Development to get a schema.
+
+- **`openapi-typescript` runs through `npx` and stays out of `package.json`.** Its `^5.x` peer range
+  silently downgrades the project to TypeScript 5.9.3, with no warning, on a plain `npm install`.
 
 - **Docker packaging lands at the end of phase C, before any extra.** It is a hard requirement, so it
   is finished while there is room, not squeezed in at the end.
@@ -193,13 +250,23 @@ invalidated.
 
 ## Open questions
 
-Each carries the assumption the work proceeds on, so nothing is blocked.
+All four opened with this plan are resolved.
 
-1. **Does an order hold one service or several?** (Assumption: one, since the brief lists the service
-   type as a single field. A line-item collection would change the entity, the table and the form.)
-2. **Is the expected due date a date or a timestamp?** (Assumption: date only, mapped to `DateOnly`,
-   since a workshop promises a day.)
-3. **Should the list be paged from the start?** (Assumption: yes, a page and size parameter from A1,
-   because retrofitting paging into a loader and a table costs more than including it.)
-4. **Is there a rule about due dates in the past?** (Assumption: rejected on create, allowed to remain
-   on an existing order, so an overdue order can still be edited.)
+1. **Does an order hold one service or several?** RESOLVED: one. The brief lists the service type as a
+   single field, and a line-item collection would change the entity, the table and the form.
+2. **Is the expected due date a date or a timestamp?** RESOLVED: `DateOnly`. A workshop promises a day.
+3. **Should the list be paged from the start?** RESOLVED: yes, offset paging with a total count and a
+   deterministic tiebreaker on the sort, because without the tiebreaker a page boundary silently
+   duplicates and drops rows whenever two orders share a due date.
+4. **Is there a rule about due dates in the past?** RESOLVED: rejected on create, allowed to remain on
+   an existing order, so an overdue order stays editable.
+
+Resolved later, during the design pass:
+
+5. **Concurrency token.** RESOLVED: a `version` field on the DTO over an ETag with `If-Match`.
+6. **Browser to API.** RESOLVED: Caddy serves the bundle and reverse-proxies `/api`. No CORS policy.
+7. **Reopening a completed order.** RESOLVED: allowed, as a transition back to `InProgress`, with a
+   derived `isReopened` flag on the response rather than a fifth status.
+8. **Quick complete.** RESOLVED: `Received` straight to `Completed` is allowed.
+9. **Migration application.** RESOLVED: an explicit `RunMigrationsOnStartup` setting.
+10. **TypeScript version.** RESOLVED: 7.0.2, with `openapi-typescript` kept out of the dependency tree.
