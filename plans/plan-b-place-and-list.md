@@ -12,8 +12,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|---|---|
 | B1. Place and list API | 🟡 | One commit per row below |
 | B1a. TryParse on value objects | ✅ | Feeds the request validators |
-| B1b. API plumbing | ⏳ | JSON enums, validation filter, ProblemDetails, OpenAPI with Scalar |
-| B1c. Place command | ⏳ | Validator, handler, controller, integration tests |
+| B1b. API plumbing | ✅ | JSON enums, validation filter, ProblemDetails, OpenAPI with Scalar |
+| B1c. Place command | 🟡 | Validator, handler, controller, integration tests |
 | B1d. List query | ⏳ | Search term, offset paging, tiebreaker |
 | B1e. Service catalogue read | ⏳ | Needed by the create form in B4 |
 | B2. Front-end scaffold | ⏳ | Router, styling, generated client, i18n from day one |

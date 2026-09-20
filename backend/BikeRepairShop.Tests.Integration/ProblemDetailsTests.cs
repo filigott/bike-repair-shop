@@ -34,7 +34,7 @@ public class ProblemDetailsTests(DatabaseFixture database) : IntegrationTest(dat
         var scalar = await client.GetAsync("/scalar", TestContext.Current.CancellationToken);
 
         // Assert
-        document.Should().Contain("\"openapi\"");
+        document.Should().Contain("/api/orders");
         scalar.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

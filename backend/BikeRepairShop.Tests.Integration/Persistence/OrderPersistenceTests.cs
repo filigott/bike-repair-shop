@@ -15,7 +15,7 @@ public class OrderPersistenceTests(DatabaseFixture database) : IntegrationTest(d
     {
         // Arrange
         var clock = Database.Factory.Services.GetRequiredService<IShopClock>();
-        var order = Orders.Place(clock, email: "Kari.Nordmann@Example.com", phoneNumber: "+47 912 34 567");
+        var order = OrderFixtures.Place(clock, email: "Kari.Nordmann@Example.com", phoneNumber: "+47 912 34 567");
         order.Start();
         await using (var scope = Database.CreateScope())
         {

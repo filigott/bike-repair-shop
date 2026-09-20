@@ -3,7 +3,7 @@ using BikeRepairShop.Domain.Orders;
 
 namespace BikeRepairShop.Tests.Integration.Fixtures;
 
-public static class Orders
+public static class OrderFixtures
 {
     public static MaintenanceOrder Place(
         IShopClock clock,

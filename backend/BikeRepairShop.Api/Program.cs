@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using BikeRepairShop.Api.Configuration;
 using BikeRepairShop.Api.Exceptions;
+using BikeRepairShop.Api.Features.Orders;
 using BikeRepairShop.Database;
 using FluentValidation;
 using Scalar.AspNetCore;
@@ -23,6 +24,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddDatabase(connectionString);
 builder.Services.AddHealthChecks().AddDbContextCheck<BikeRepairShopDbContext>();
 builder.Services.AddShopClock(builder.Configuration);
+
+// Feature slices
+builder.Services.AddOrders();
 
 var app = builder.Build();
 
