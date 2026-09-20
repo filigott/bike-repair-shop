@@ -128,6 +128,12 @@ declares `peerDependencies.typescript: "^5.x"`, so listing it silently downgrade
 TypeScript 5.9.3 with no warning. It is a one-shot generator whose output is committed, so it belongs
 outside the dependency tree.
 
+**Actions are explicit tasks, on the API and in the UI alike.** The API exposes intention-revealing
+commands (place, reschedule, start, complete, cancel), and the UI presents them as actions that appear
+only when the current state allows them. A status dropdown or a generic edit-anything form puts the
+state machine in the user's head; a "Complete order" button that the API's capability flags switch on
+keeps it in the code.
+
 **The UI never recomputes a server rule.** `allowedTransitions`, `isOverdue` and `isReopened` are
 projected onto the response by the API. Computing overdue in the browser lets the viewer's device
 timezone decide whether an order is late.

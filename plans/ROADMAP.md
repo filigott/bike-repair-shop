@@ -10,13 +10,14 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 scaffolding |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 domain model next |
 
 ## Delivery line
 
-Phases A through C are the product: a working application, packaged and runnable with one command.
-Phases D through F are depth on top of it, taken in order and only while the earlier phases stay
-green. The split exists so there is always a shippable state.
+Phases A through D are the product: a working application, packaged and runnable with one command.
+Phases E through G are depth on top of it, taken in order and only while the earlier phases stay
+green. From phase B on, each phase is a thin vertical through API and front end that ends in a
+manual smoke test, so there is always a shippable state and something to try by hand.
 
 ## Blockers
 

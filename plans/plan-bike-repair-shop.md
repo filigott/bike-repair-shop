@@ -6,8 +6,9 @@ Build the bicycle workshop's maintenance-order application: a .NET domain and HT
 single-page front end that consumes it, PostgreSQL behind both, and a root `docker-compose.yml` that
 runs all three. The work goes in vertical slices, back end before front end inside each slice, with
 the order lifecycle modelled as a state machine on the entity rather than a status column anyone can
-write to. Phases A through C deliver a complete, runnable product; D through F add depth on top of a
-green base. Verified by unit tests on the domain, integration tests against a real PostgreSQL
+write to. After the foundation, work goes in thin verticals that each end in a manual smoke test:
+place and list, then find, edit and delete, then packaging. Those four phases are the product; search,
+lifecycle and hardening add depth on top of a green base. Verified by unit tests on the domain, integration tests against a real PostgreSQL
 container, component tests on the front end, and a manual pass through the running stack.
 
 ## Progress
@@ -21,19 +22,24 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | A1c. Solution scaffold | ✅ | Five projects, health endpoint, compose service for the database |
 | A2. Domain model and state machine | ⏳ | TDD |
 | A3. Persistence and test harness | ⏳ | EF, migration, seeded services, Testcontainers |
-| B1. Orders API slice | ⏳ | CRUD handlers, validators, ProblemDetails, OpenAPI |
+| B1. Create and list API | ⏳ | Handlers, validators, ProblemDetails, OpenAPI |
 | B2. Front-end scaffold | ⏳ | Router, styling, generated client, i18n from day one |
-| B3. Orders list route | ⏳ | |
-| B4. Create and edit route | ⏳ | |
-| B5. Delete flow | ⏳ | |
-| C1. Docker and compose | ⏳ | Hard requirement, done before the extras |
-| D1. Search API | ⏳ | TDD on the filter composition |
-| D2. Search UI | ⏳ | Driven by search params |
-| E1. Status transitions and history | ⏳ | |
-| E2. Status UI | ⏳ | |
-| F1. Optimistic concurrency | ⏳ | `version` field backed by `xmin` |
-| F2. CI workflow | ⏳ | Unit and integration on push |
-| F3. README and docs pass | ⏳ | |
+| B3. Orders list page | ⏳ | |
+| B4. Create form | ⏳ | Smoke test: place an order, see it listed |
+| C1. Get, update and delete API | ⏳ | |
+| C2. Edit form | ⏳ | Shares the form component with B4 |
+| C3. Delete flow | ⏳ | Smoke test: all four tasks from the brief |
+| D1. Docker and compose | ⏳ | Hard requirement, done before the extras |
+| E1. Search API | ⏳ | TDD on the filter composition |
+| E2. Search UI | ⏳ | Driven by search params |
+| F1. Status transitions and history | ⏳ | |
+| F2. Status UI | ⏳ | |
+| G1. Optimistic concurrency | ⏳ | `version` field backed by `xmin` |
+| G2. CI workflow | ⏳ | Unit and integration on push |
+| G3. README and docs pass | ⏳ | |
+
+Each phase from B on is one GitHub issue, and its last step ends in a manual smoke test through the
+running API and front end before the phase is called done.
 
 ## Context
 
@@ -102,6 +108,13 @@ written, because the failures below are the kind that look like mysteries when t
   is the main piece of real domain logic in an otherwise CRUD-shaped problem, and it is where TDD
   earns its place.
 
+- **Task-based actions end to end, not CRUD.** Every change to an order is a named command on the API
+  (place, reschedule, start, complete, cancel, correct the contact details) and a matching action in
+  the UI, shown only when the order's state allows it. A single update endpoint plus a form with a
+  status dropdown would leave the lifecycle rules to be remembered by whoever is at the counter. The
+  edit form therefore covers the details an order can always carry, and lifecycle moves are buttons
+  driven by the transitions the API projects onto the response.
+
 - **Email and phone number are value objects, bike brand and notes are not.** The first two carry a
   format invariant worth parsing once at the boundary and trusting afterwards. The other two are free
   text with a length cap, and wrapping them would be pattern application for its own sake.
@@ -161,7 +174,7 @@ written, because the failures below are the kind that look like mysteries when t
 - **`openapi-typescript` runs through `npx` and stays out of `package.json`.** Its `^5.x` peer range
   silently downgrades the project to TypeScript 5.9.3, with no warning, on a plain `npm install`.
 
-- **Docker packaging lands at the end of phase C, before any extra.** It is a hard requirement, so it
+- **Docker packaging lands at the end of phase D, before any extra.** It is a hard requirement, so it
   is finished while there is room, not squeezed in at the end.
 
 - **Delete is a real delete.** The brief asks for delete, and `Cancelled` already covers the case
@@ -192,65 +205,76 @@ initial migration, the `service_types` table seeded with its metadata, migration
 the explicit setting. The Testcontainers harness with the template-database clone and per-test reset, plus
 one integration test proving a saved order reloads with its status and value objects intact.
 
-### Phase B: orders slice
+### Phase B: place and list
 
-**B1. Orders API slice.** Create, get by id, list, update and delete as commands, queries and handlers
-under `Features/Orders`. FluentValidation validators on the request models. A thin `OrdersController`.
-Global exception middleware mapping domain and API exceptions to ProblemDetails. OpenAPI with Scalar
-for browsing. Integration tests per handler asserting persisted state from a fresh read.
+**B1. Create and list API.** Create and list as a command and a query with handlers under
+`Features/Orders`, a FluentValidation validator on the create request, a thin `OrdersController`,
+global exception middleware mapping domain and API exceptions to ProblemDetails, and OpenAPI with
+Scalar for browsing. The list is paged from the start with a deterministic tiebreaker. Integration
+tests per handler asserting persisted state from a fresh read.
 
 **B2. Front-end scaffold.** React Router 8 project with `ssr: false`, Tailwind v4 and DaisyUI v5,
 Biome, Vitest. The transport core with ProblemDetails normalisation, the `ActionResult` envelope, the
 generated OpenAPI client and the orders endpoint wrapper. App shell with header, locale switch and
 both locale files. Verified by a render test of the shell and the tooling gates.
 
-**B3. Orders list route.** Loader reading the list endpoint, a table of orders with service type,
+**B3. Orders list page.** Loader reading the list endpoint, a table of orders with service type,
 status, customer and due date, empty and error states. Component tests mocking the endpoint layer.
 
-**B4. Create and edit route.** One form component serving both, a page route each, field-level error
-rendering from the ProblemDetails validation payload. Tests covering a successful submit and a
-rejected one.
+**B4. Create form.** The order form component and its page route, service types read from the API,
+field-level error rendering from the ProblemDetails validation payload. Tests covering a successful
+submit and a rejected one. Ends with the first manual smoke test: place an order and see it listed.
 
-**B5. Delete flow.** Native `<dialog>` confirmation, fetcher submit against an intent, optimistic
-removal from the list, failure surfaced without losing the row.
+### Phase C: find, edit and delete
 
-### Phase C: packaging
+**C1. Get, update and delete API.** Get by id, update and delete as a query and two commands, a
+validator on the update request, integration tests per handler.
 
-**C1. Docker and compose.** Multi-stage Dockerfile for the API (SDK to ASP.NET runtime, non-root) and
+**C2. Edit form.** The form component from B4 serving edit through its own page route with a loader.
+Tests covering a loaded edit and a rejected submit.
+
+**C3. Delete flow.** Native `<dialog>` confirmation, fetcher submit against an intent, optimistic
+removal from the list, failure surfaced without losing the row. Ends with a smoke test of all four
+tasks from the brief.
+
+### Phase D: packaging
+
+**D1. Docker and compose.** Multi-stage Dockerfile for the API (SDK to ASP.NET runtime, non-root) and
 for the front end (node build to Caddy, which serves the bundle and proxies `/api`). Root
-`docker-compose.yml` with database, API and web, health checks and dependency ordering. The shop's
-timezone comes from configuration, and the runtime image has to carry tz data, which the Alpine
-variants do not by default: "today" computed in UTC wrongly rejects an order placed at 01:30 local
-in summer. Verified by a clean `docker compose up --build` and a manual pass through the four tasks.
+`docker-compose.yml` with database, API and web, health checks and dependency ordering, credentials
+moved to `.env`. The shop's timezone comes from configuration, and the runtime image has to carry tz
+data, which the Alpine variants do not by default: "today" computed in UTC wrongly rejects an order
+placed at 01:30 local in summer. Verified by a clean `docker compose up --build` and a manual pass
+through the four tasks.
 
-### Phase D: search
+### Phase E: search
 
-**D1. Search API.** Extend the list query with filters on customer name, phone, email, service type,
-status and a due-date range, plus sorting and paging, composed with specifications. Failing tests
-first for filter composition and for the empty-filter case.
+**E1. Search API.** Extend the list query with filters on customer name, phone, email, service type,
+status and a due-date range, plus sorting, composed with specifications. Failing tests first for
+filter composition and for the empty-filter case.
 
-**D2. Search UI.** A filter bar writing to search params, with the loader reading them and a
+**E2. Search UI.** A filter bar writing to search params, with the loader reading them and a
 revalidation guard so typing is not one request per keystroke.
 
-### Phase E: lifecycle
+### Phase F: lifecycle
 
-**E1. Status transitions and history.** Transition endpoints calling the domain methods, and a status
+**F1. Status transitions and history.** Transition endpoints calling the domain methods, and a status
 history row written per transition with the timestamp and the previous status. Illegal transitions
 return a mapped conflict. Tests cover history rows written in order.
 
-**E2. Status UI.** Status actions on the order view, offering only the transitions the current status
+**F2. Status UI.** Status actions on the order view, offering only the transitions the current status
 allows, driven by a capability flag the API projects onto the response rather than a client-side rule.
 
-### Phase F: hardening
+### Phase G: hardening
 
-**F1. Optimistic concurrency.** PostgreSQL `xmin` as the concurrency token, exposed as a `version`
+**G1. Optimistic concurrency.** PostgreSQL `xmin` as the concurrency token, exposed as a `version`
 field on the order response, required on the update request, and a mismatch mapped to a conflict the
 edit form explains. Integration test driving two writers against one row.
 
-**F2. CI workflow.** GitHub Actions running the build, unit tests and integration tests on push, with
+**G2. CI workflow.** GitHub Actions running the build, unit tests and integration tests on push, with
 the front-end gates alongside.
 
-**F3. README and docs pass.** Root README with the one-command run, the architecture in a paragraph
+**G3. README and docs pass.** Root README with the one-command run, the architecture in a paragraph
 and a diagram, and the API tour. A sweep over `docs/` and `CLAUDE.md` for anything the code
 invalidated.
 
@@ -288,9 +312,9 @@ Resolved later, during the design pass:
 9. **Migration application.** RESOLVED: an explicit `RunMigrationsOnStartup` setting.
 10. **TypeScript version.** RESOLVED: 7.0.2, with `openapi-typescript` kept out of the dependency tree.
 11. **Where service metadata lives.** RESOLVED: in the `service_types` table only. The enum is the key.
-12. **Shop timezone.** OPEN until C1: the due-date rule needs a configured timezone and an image with
-    tz data. Does not block phases A and B.
-13. **Compose credentials.** OPEN until C1: the database credentials are literal dev values in the
+12. **Shop timezone.** OPEN until D1: the due-date rule needs a configured timezone and an image with
+    tz data. Does not block phases A to C.
+13. **Compose credentials.** OPEN until D1: the database credentials are literal dev values in the
     compose file. They move to a committed `.env.example` plus an ignored `.env` when the API service
     joins and needs the same values. The compose project name is pinned and the host port is 5433 so
     the other compose stacks on this machine never collide with it.
