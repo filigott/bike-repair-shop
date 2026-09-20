@@ -15,32 +15,18 @@ container, component tests on the front end, and a manual pass through the runni
 
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
-| Step | Status | Notes |
-|---|---|---|
-| A1a. Conventions and plan | ✅ | CLAUDE.md, plans, versions checked against registries |
-| A1b. Toolchain pins | ✅ | global.json, central packages, editorconfig, build props |
-| A1c. Solution scaffold | ✅ | Five projects, health endpoint, compose service for the database |
-| A2. Domain model and state machine | ✅ | TDD, #7 |
-| A3. Persistence and test harness | 🟡 | EF, migration, seeded services, Testcontainers, #7 |
-| B1. Create and list API | ⏳ | Handlers, validators, ProblemDetails, OpenAPI |
-| B2. Front-end scaffold | ⏳ | Router, styling, generated client, i18n from day one |
-| B3. Orders list page | ⏳ | |
-| B4. Create form | ⏳ | Smoke test: place an order, see it listed |
-| C1. Get, update and delete API | ⏳ | |
-| C2. Edit form | ⏳ | Shares the form component with B4 |
-| C3. Delete flow | ⏳ | Smoke test: all four tasks from the brief |
-| D1. Docker and compose | ⏳ | Hard requirement, done before the extras |
-| E1. Search API | ⏳ | TDD on the filter composition |
-| E2. Search UI | ⏳ | Driven by search params |
-| F1. Status transitions and history | ⏳ | |
-| F2. Status UI | ⏳ | |
-| G1. Optimistic concurrency | ⏳ | `version` field backed by `xmin` |
-| G2. CI workflow | ⏳ | Unit and integration on push |
-| G3. README and docs pass | ⏳ | |
+| Phase | Plan | Issue | Status |
+|---|---|---|---|
+| A. Foundation | [plan-a-foundation.md](plan-a-foundation.md) | #7 | ✅ |
+| B. Place and list | [plan-b-place-and-list.md](plan-b-place-and-list.md) | #1 | ⏳ |
+| C. Find, edit and delete | [plan-c-find-edit-delete.md](plan-c-find-edit-delete.md) | #2 | ⏳ |
+| D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ⏳ |
+| E. Search | [plan-e-search.md](plan-e-search.md) | #4 | ⏳ |
+| F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ⏳ |
+| G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ⏳ |
 
-Each phase is one GitHub issue: A2 and A3 are #7, then B is #1, C is #2, D is #3, E is #4, F is #5
-and G is #6. From B on, the last step of a phase ends in a manual smoke test through the running API
-and front end before the phase is called done.
+Each phase plan carries its own step table. From B on, the last step of a phase ends in a manual
+smoke test through the running API and front end before the phase is called done.
 
 ## Context
 
@@ -57,37 +43,9 @@ Conventions for both halves are in [CLAUDE.md](../CLAUDE.md) and are not restate
 
 ### Verified on this machine, not assumed
 
-Both stacks were built and run on throwaway scaffolds before any of this repository's code was
-written, because the failures below are the kind that look like mysteries when they surface mid-unit.
-
-- `dotnet test` fails outright on the .NET 10 SDK with xunit v3 unless `global.json` opts into
-  `Microsoft.Testing.Platform`. The VSTest target is gone. The opt-in is repo-wide, not per project.
-- Npgsql 10.0.3 floors EF Core at 10.0.4. Pinning 10.0.0 fails restore with NU1605.
-- PostgreSQL 18 with Npgsql 10, EF 10 and Testcontainers 4.15 was exercised end to end with a real
-  container and a real save-and-reload. No compatibility issue, no readiness-probe issue.
-- `Testcontainers.PostgreSql` 4.15 has obsoleted the parameterless `PostgreSqlBuilder()`. Pass the
-  image: `new PostgreSqlBuilder("postgres:18")`.
-- A `Database` project with no composition root needs an `IDesignTimeDbContextFactory`, or the `Api`
-  project passed as `--startup-project`, for `dotnet ef migrations add` to work.
-- React Router 8 with `ssr: false` produces a genuine SPA build, and Tailwind v4 with DaisyUI v5 in the
-  CSS-first form survives it.
-- `erasableSyntaxOnly` is not enabled by default in a React Router 8 project, so TypeScript `enum` is
-  available and the no-magic-strings rule stands as written.
-- `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x`, and a plain `npm install` therefore
-  downgrades the project to 5.9.3 silently. Hence the `npx` route. The front-end spike's own lockfile
-  shows the downgrade, which also means TypeScript 7 itself has not run yet; B2 proves it.
-- Package pins were checked against nuget.org a second time on 2026-09-20. EF Core had been pinned at
-  the Npgsql floor rather than at current stable, and `FluentValidation.AspNetCore` is retired on the
-  11.x line: validation is wired through `FluentValidation.DependencyInjectionExtensions` 12 instead.
-- The SDK's built-in `dotnet new xunit` template still produces an xunit v2 project. Test projects are
-  written by hand against `xunit.v3`.
-- Under the `Microsoft.Testing.Platform` runner, `xunit.v3` 4.0 needs neither `Microsoft.NET.Test.Sdk`
-  nor `xunit.runner.visualstudio`. A test project is an `Exe` with `IsTestProject` set and the one
-  package; both VSTest packages were dropped from the central pins after a green run without them.
-- The SDK sets `IsPackable` to false for `IsTestProject` on its own, so a `Directory.Build.props`
-  block doing the same is dead: the condition runs before the project file sets the property anyway.
-- The `postgres:18` image moved `PGDATA` to `/var/lib/postgresql/18/docker`. The compose volume mounts
-  `/var/lib/postgresql`, one level up, as the image's own notes recommend for 18.
+Toolchain and library behaviour established by running it lives in
+[reference/verified-on-this-machine.md](reference/verified-on-this-machine.md). Read it before
+touching packages, the test harness or the front-end toolchain.
 
 ## Design decisions
 
@@ -220,102 +178,8 @@ written, because the failures below are the kind that look like mysteries when t
 
 ## Steps
 
-### Phase A: foundation
-
-**A1a. Conventions and plan.** `CLAUDE.md`, `plans/README.md`, `plans/ROADMAP.md` and this file.
-Versions checked against the package registries rather than carried over. No code.
-
-**A1b. Toolchain pins.** `global.json`, `.gitignore`, `.editorconfig`, `Directory.Build.props` and
-`Directory.Packages.props` with every version checked against the registries, plus a local tool
-manifest for `dotnet-ef`.
-
-**A1c. Solution scaffold.** The backend solution with `Domain`, `Database`, `Api`, `Tests.Unit` and
-`Tests.Integration` wired up, a health endpoint, and a compose service for PostgreSQL 18 so there is a
-database to develop against. Verified by a build and a passing placeholder test run.
-
-**A2. Domain model and state machine.** `ServiceType` and `OrderStatus` enums with behaviour in
-extensions, `EmailAddress` and `PhoneNumber` value objects, the `MaintenanceOrder` entity with a
-static `Create()`, private setters, and transition methods. Domain exception hierarchy. Failing tests
-first for every transition, legal and illegal, and for value-object parsing. No persistence yet.
-
-**A3. Persistence and test harness.** `BikeRepairShopDbContext`, one configuration per entity, the
-initial migration, the `service_types` table seeded with its metadata, migration apply-on-start behind
-the explicit setting. The Testcontainers harness with one migrated database and per-test row reset,
-plus one integration test proving a saved order reloads with its status, value objects and placed-at
-stamp intact, and the database health check.
-
-### Phase B: place and list
-
-**B1. Create and list API.** Create and list as a command and a query with handlers under
-`Features/Orders`, a FluentValidation validator on the create request, a thin `OrdersController`,
-global exception middleware mapping domain and API exceptions to ProblemDetails, and OpenAPI with
-Scalar for browsing. The list is paged from the start with a deterministic tiebreaker. Integration
-tests per handler asserting persisted state from a fresh read.
-
-**B2. Front-end scaffold.** React Router 8 project with `ssr: false`, Tailwind v4 and DaisyUI v5,
-Biome, Vitest. The transport core with ProblemDetails normalisation, the `ActionResult` envelope, the
-generated OpenAPI client and the orders endpoint wrapper. App shell with header, locale switch and
-both locale files. Verified by a render test of the shell and the tooling gates.
-
-**B3. Orders list page.** Loader reading the list endpoint, a table of orders with service type,
-status, customer and due date, empty and error states. Component tests mocking the endpoint layer.
-
-**B4. Create form.** The order form component and its page route, service types read from the API,
-field-level error rendering from the ProblemDetails validation payload. Tests covering a successful
-submit and a rejected one. Ends with the first manual smoke test: place an order and see it listed.
-
-### Phase C: find, edit and delete
-
-**C1. Get, update and delete API.** Get by id, update and delete as a query and two commands, a
-validator on the update request, integration tests per handler.
-
-**C2. Edit form.** The form component from B4 serving edit through its own page route with a loader.
-Tests covering a loaded edit and a rejected submit.
-
-**C3. Delete flow.** Native `<dialog>` confirmation, fetcher submit against an intent, optimistic
-removal from the list, failure surfaced without losing the row. Ends with a smoke test of all four
-tasks from the brief.
-
-### Phase D: packaging
-
-**D1. Docker and compose.** Multi-stage Dockerfile for the API (SDK to ASP.NET runtime, non-root) and
-for the front end (node build to Caddy, which serves the bundle and proxies `/api`). Root
-`docker-compose.yml` with database, API and web, health checks and dependency ordering, credentials
-moved to `.env`. The shop's timezone comes from configuration, and the runtime image has to carry tz
-data, which the Alpine variants do not by default: "today" computed in UTC wrongly rejects an order
-placed at 01:30 local in summer. Verified by a clean `docker compose up --build` and a manual pass
-through the four tasks.
-
-### Phase E: search
-
-**E1. Search API.** Extend the list query with filters on customer name, phone, email, service type,
-status and a due-date range, plus sorting, composed with specifications. Failing tests first for
-filter composition and for the empty-filter case.
-
-**E2. Search UI.** A filter bar writing to search params, with the loader reading them and a
-revalidation guard so typing is not one request per keystroke.
-
-### Phase F: lifecycle
-
-**F1. Status transitions and history.** Transition endpoints calling the domain methods, and a status
-history row written per transition with the timestamp and the previous status. Illegal transitions
-return a mapped conflict. Tests cover history rows written in order.
-
-**F2. Status UI.** Status actions on the order view, offering only the transitions the current status
-allows, driven by a capability flag the API projects onto the response rather than a client-side rule.
-
-### Phase G: hardening
-
-**G1. Optimistic concurrency.** PostgreSQL `xmin` as the concurrency token, exposed as a `version`
-field on the order response, required on the update request, and a mismatch mapped to a conflict the
-edit form explains. Integration test driving two writers against one row.
-
-**G2. CI workflow.** GitHub Actions running the build, unit tests and integration tests on push, with
-the front-end gates alongside.
-
-**G3. README and docs pass.** Root README with the one-command run, the architecture in a paragraph
-and a diagram, and the API tour. A sweep over `docs/` and `CLAUDE.md` for anything the code
-invalidated.
+One plan per phase, linked from the Progress table above. Phases A through D are the product;
+E through G add depth on a green base, taken in order.
 
 ## Out of scope
 

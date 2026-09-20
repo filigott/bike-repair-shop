@@ -1,0 +1,38 @@
+> **Reference doc: load only when working in this area**
+> - **Covers:** toolchain and library behaviour verified by running it on this machine
+> - **Used by:** every phase plan; read before touching the toolchain, packages or the harness
+> - **Updated:** 2026-09-20
+
+# Verified on this machine, not assumed
+
+Both stacks were built and run on throwaway scaffolds before any of this repository's code was
+written, because the failures below are the kind that look like mysteries when they surface mid-unit.
+
+- `dotnet test` fails outright on the .NET 10 SDK with xunit v3 unless `global.json` opts into
+  `Microsoft.Testing.Platform`. The VSTest target is gone. The opt-in is repo-wide, not per project.
+- Npgsql 10.0.3 floors EF Core at 10.0.4. Pinning 10.0.0 fails restore with NU1605.
+- PostgreSQL 18 with Npgsql 10, EF 10 and Testcontainers 4.15 was exercised end to end with a real
+  container and a real save-and-reload. No compatibility issue, no readiness-probe issue.
+- `Testcontainers.PostgreSql` 4.15 has obsoleted the parameterless `PostgreSqlBuilder()`. Pass the
+  image: `new PostgreSqlBuilder("postgres:18")`.
+- A `Database` project with no composition root needs an `IDesignTimeDbContextFactory`, or the `Api`
+  project passed as `--startup-project`, for `dotnet ef migrations add` to work.
+- React Router 8 with `ssr: false` produces a genuine SPA build, and Tailwind v4 with DaisyUI v5 in the
+  CSS-first form survives it.
+- `erasableSyntaxOnly` is not enabled by default in a React Router 8 project, so TypeScript `enum` is
+  available and the no-magic-strings rule stands as written.
+- `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x`, and a plain `npm install` therefore
+  downgrades the project to 5.9.3 silently. Hence the `npx` route. The front-end spike's own lockfile
+  shows the downgrade, which also means TypeScript 7 itself has not run yet; B2 proves it.
+- Package pins were checked against nuget.org a second time on 2026-09-20. EF Core had been pinned at
+  the Npgsql floor rather than at current stable, and `FluentValidation.AspNetCore` is retired on the
+  11.x line: validation is wired through `FluentValidation.DependencyInjectionExtensions` 12 instead.
+- The SDK's built-in `dotnet new xunit` template still produces an xunit v2 project. Test projects are
+  written by hand against `xunit.v3`.
+- Under the `Microsoft.Testing.Platform` runner, `xunit.v3` 4.0 needs neither `Microsoft.NET.Test.Sdk`
+  nor `xunit.runner.visualstudio`. A test project is an `Exe` with `IsTestProject` set and the one
+  package; both VSTest packages were dropped from the central pins after a green run without them.
+- The SDK sets `IsPackable` to false for `IsTestProject` on its own, so a `Directory.Build.props`
+  block doing the same is dead: the condition runs before the project file sets the property anyway.
+- The `postgres:18` image moved `PGDATA` to `/var/lib/postgresql/18/docker`. The compose volume mounts
+  `/var/lib/postgresql`, one level up, as the image's own notes recommend for 18.

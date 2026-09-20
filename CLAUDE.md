@@ -9,7 +9,8 @@ it, and PostgreSQL behind both, packaged so `docker compose up` runs the whole s
 
 1. This file.
 2. `plans/ROADMAP.md` for what is in flight and what is blocked.
-3. The active plan under `plans/`, its At a glance and Progress sections first.
+3. `plans/plan-bike-repair-shop.md` for the design decisions and the phase table, then the active
+   phase plan it points to, its At a glance and Progress sections first.
 
 Plans and this file are committed on purpose. They are the record of how the solution was designed
 and built, not scratch notes.

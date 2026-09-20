@@ -10,7 +10,7 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 domain model next |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phase A done, phase B next |
 
 ## Delivery line
 

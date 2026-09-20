@@ -13,10 +13,11 @@ labelled `Step N`, or phase-prefixed (`A1`, `B2`) once there are more than about
 A step is marked in progress before any code is touched, and done only after its commit lands. One
 step is one commit. The plan is updated first, then the code, so the plan never trails reality.
 
-One plan file covers one track. `plan-bike-repair-shop.md` is the main one and stays the entry
-point for the application as a whole; a track that grows its own design decisions and its own run of
-steps moves out into a sibling file rather than swelling the main plan. Supporting material that
-outgrows an inline section becomes a folder with its own index.
+`plan-bike-repair-shop.md` is the entry point for the application as a whole: the design decisions,
+the scope boundary, the open questions and a phase-level progress table. Each phase has its own
+`plan-<letter>-<name>.md` with the step table and the step descriptions, tied to one GitHub issue.
+Supporting material that outgrows an inline section lives under `reference/` with its own index and a
+header that says what it covers, so a session skips it unless it is working in that area.
 
 `ROADMAP.md` is the cross-plan entry point: what is in flight, what is next, what is blocked. It is
 a status view, not a session log.
