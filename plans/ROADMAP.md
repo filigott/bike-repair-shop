@@ -19,6 +19,12 @@ Phases E through G are depth on top of it, taken in order and only while the ear
 green. From phase B on, each phase is a thin vertical through API and front end that ends in a
 manual smoke test, so there is always a shippable state and something to try by hand.
 
+## Pace
+
+Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). The
+foundation is done and none of the four staff tasks is usable end to end yet, so phases E through G
+stay untouched until `docker compose up` serves all four.
+
 ## Blockers
 
 None.

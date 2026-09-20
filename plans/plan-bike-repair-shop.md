@@ -47,6 +47,12 @@ Toolchain and library behaviour established by running it lives in
 [reference/verified-on-this-machine.md](reference/verified-on-this-machine.md). Read it before
 touching packages, the test harness or the front-end toolchain.
 
+### What the build has cost so far
+
+Hours spent, commits landed and the distance still left to the brief are recorded in
+[reference/time-and-scope.md](reference/time-and-scope.md). It also holds the scope correction the
+phase table is now read against: nothing from E, F or G until the product phases run.
+
 ## Design decisions
 
 - **Feature-sliced CQRS over a service layer.** Each operation is a command or query with its own

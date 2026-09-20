@@ -6,3 +6,5 @@ session can skip it unless it is working in that area.
 
 - [verified-on-this-machine.md](verified-on-this-machine.md): toolchain and library behaviour
   established by running it, not by reading docs. Read before touching packages or the harness.
+- [time-and-scope.md](time-and-scope.md): where the build hours went and how far the result is from
+  the brief. Read before adding a phase or a design decision.
