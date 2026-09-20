@@ -5,22 +5,24 @@ export enum ActionResultKind {
 
 export type ActionSuccess<T> = { kind: ActionResultKind.Success; data: T };
 
-export type ActionFailure = {
+export type ActionFailure<TField extends string = string> = {
   kind: ActionResultKind.Failure;
   status: number;
   title: string;
   detail?: string;
-  fieldErrors: Record<string, string[]>;
+  fieldErrors: Partial<Record<TField, string[]>>;
 };
 
-export type ActionResult<T> = ActionSuccess<T> | ActionFailure;
+export type ActionResult<T, TField extends string = string> =
+  | ActionSuccess<T>
+  | ActionFailure<TField>;
 
 export function actionSuccess<T>(data: T): ActionSuccess<T> {
   return { kind: ActionResultKind.Success, data };
 }
 
-export function isActionFailure<T>(
-  result: ActionResult<T>,
-): result is ActionFailure {
+export function isActionFailure<T, TField extends string>(
+  result: ActionResult<T, TField>,
+): result is ActionFailure<TField> {
   return result.kind === ActionResultKind.Failure;
 }

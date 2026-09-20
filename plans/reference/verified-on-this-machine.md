@@ -56,3 +56,6 @@ written, because the failures below are the kind that look like mysteries when t
 - `openapi-fetch` builds an absolute `Request` before calling fetch, so a relative base URL throws
   `Failed to parse URL` under Node and jsdom. The client is given `window.location.origin`, which is
   the same-origin path the dev proxy and Caddy both serve.
+- SPA mode permits `HydrateFallback` on the root route only, and an invalid route export fails in the
+  Vite plugin at dev or build time. Neither `tsc` nor Vitest sees it, because both import the module
+  directly, so `npm run build` is the gate that catches it.

@@ -16,14 +16,14 @@ const REQUEST_TIMEOUT_MS = 10_000;
 export class ApiError extends Error {
   constructor(
     readonly status: number,
-    readonly problem: ProblemDetails,
+    readonly problem: ProblemDetails | ValidationProblemDetails,
   ) {
     super(problem.title ?? `Request failed with status ${status}`);
     this.name = "ApiError";
   }
 
   get fieldErrors(): Record<string, string[]> {
-    return (this.problem as ValidationProblemDetails).errors ?? {};
+    return "errors" in this.problem ? (this.problem.errors ?? {}) : {};
   }
 }
 

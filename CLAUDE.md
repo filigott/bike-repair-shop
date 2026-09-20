@@ -113,6 +113,11 @@ injected `TimeProvider` rather than `DateTime.UtcNow`.
 
 ## Front-end conventions
 
+**Route module exports are validated by the build, not by the type checker.** `npm run build` runs
+the React Router Vite plugin, which is the only gate that rejects an export a route may not have, and
+in SPA mode `HydrateFallback` belongs on the root route alone. `npm run verify` chains all four, and is
+the gate a front-end commit passes.
+
 **Routes split by purpose.** A page route per form, each with its own loader. Inline mutations share
 one route action that switches on an `intent` value read from `FormData`. The intent set is an enum
 in `app/types/intents/`, namespaced so two slices on one route cannot collide.
@@ -188,6 +193,7 @@ dotnet ef migrations add <Name> --project backend/BikeRepairShop.Database --star
 
 # Front end
 npm --prefix frontend run dev          # started by the developer, never by the agent
+npm --prefix frontend run verify         # lint, typecheck, test and build: the gate before a commit
 npm --prefix frontend run codefix
 npm --prefix frontend run typecheck
 npm --prefix frontend run test

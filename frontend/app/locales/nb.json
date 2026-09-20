@@ -3,6 +3,7 @@
     "title": "Sykkelverkstedet"
   },
   "common": {
+    "cancel": "Avbryt",
     "language": "Språk",
     "loading": "Laster"
   },
@@ -23,11 +24,25 @@
       "status": "Status"
     },
     "empty": "Ingen ordrer funnet",
+    "fields": {
+      "customerName": "Kundenavn",
+      "phoneNumber": "Telefonnummer",
+      "email": "E-post",
+      "bikeBrand": "Sykkelmerke",
+      "serviceType": "Tjeneste",
+      "dueDate": "Frist",
+      "notes": "Notater"
+    },
     "overdue": "Forfalt",
     "paging": {
       "showing": "Viser {{from}} til {{to}} av {{total}}",
       "previous": "Forrige",
       "next": "Neste"
+    },
+    "place": {
+      "title": "Registrer ordre",
+      "action": "Registrer ordre",
+      "submit": "Registrer"
     },
     "search": {
       "label": "Søk i ordrer",

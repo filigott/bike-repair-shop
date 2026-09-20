@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { OrderSearchForm } from "~/components/orders/order-search-form";
 import { OrdersPager } from "~/components/orders/orders-pager";
 import { OrdersTable } from "~/components/orders/orders-table";
@@ -20,18 +21,18 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   return { orders, search, page };
 }
 
-export function HydrateFallback() {
-  const { t } = useTranslation();
-  return <p className="p-4">{t("common.loading")}</p>;
-}
-
 export default function Orders({ loaderData }: Route.ComponentProps) {
   const { orders, search, page } = loaderData;
   const { t } = useTranslation();
 
   return (
     <section className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{t("orders.title")}</h1>
+      <div className="flex items-center gap-4">
+        <h1 className="text-2xl font-bold">{t("orders.title")}</h1>
+        <Link to="/orders/place" className="btn btn-primary btn-sm ml-auto">
+          {t("orders.place.action")}
+        </Link>
+      </div>
       <OrderSearchForm search={search} />
       {orders.items.length === 0 ? (
         <p className="text-base-content/70">{t("orders.empty")}</p>

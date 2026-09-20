@@ -21,7 +21,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | B2b. Shell and i18n | ✅ | Header, locale switch, both locale files, render test |
 | B2c. Transport and client | ✅ | openapi-fetch client, ActionResult, generated types, endpoint wrappers |
 | B3. Orders list page | ✅ | Loader, search form, table, prev/next paging; components split per file |
-| B4. Create form | ⏳ | Smoke test: place an order, find it by name |
+| B4. Create form | ✅ | Place-order page, service types from the API, field errors; manual smoke test closes the phase |
 
 ## Context
 
@@ -59,8 +59,21 @@ the scope boundary and the open questions; none of that is restated here. The do
   copied state. The search box is a plain GET form rather than a debounced auto-submit, which keeps
   the timer and the history churn out of the component.
 
-- **Validation messages leave the API in English.** Pragmatic for now; whether the UI maps error
-  codes to locale keys or shows the server text is an open question for B4.
+- **Validation messages leave the API in English, and the form shows them as they arrive.** Mapping
+  them to locale keys needs the API to emit a stable error code per rule, since FluentValidation's
+  own codes name the validator rather than the rule, plus a key per code in both locales and a
+  fallback for anything unmapped. Worth doing when the API stops being the only writer of these
+  strings; not worth it for one form. Field labels, buttons and every other string are keys as usual.
+
+- **Field errors are keyed by the generated request type.** `ActionFailure<TField>` carries
+  `Partial<Record<TField, string[]>>`, and the place-order form asks for
+  `ActionFailure<keyof PlaceOrderRequest>`, so a field renamed in the API breaks the form at compile
+  time instead of silently rendering nothing. The envelope keeps a plain string default for actions
+  that have no single request type.
+
+- **The create action redirects on success.** Staff land back on the list with the new order in it,
+  and the loader reruns on its own, so the action returns a failure or nothing. `useActionData` is
+  therefore only ever a failure on this route.
 
 ## Steps
 
@@ -82,6 +95,8 @@ search param the loader reads, prev and next links carrying the term with them, 
 with service type, status, customer and due date, and an empty state. Component tests mocking the
 endpoint layer and driving the page through a route stub.
 
-**B4. Create form.** The order form component and its page route, service types read from the API,
-field-level error rendering from the ProblemDetails validation payload. Tests covering a successful
-submit and a rejected one. Ends with the first manual smoke test: place an order, find it by name.
+**B4. Create form.** The place-order page at `/orders/place` with its form component, the service
+catalogue read from the API for the select, and field-level error rendering from the ProblemDetails
+validation payload. A link from the list page, and a redirect back to it on success. Tests covering
+the command sent, the redirect and a rejected field. Ends with the first manual smoke test: place an
+order, find it by name.

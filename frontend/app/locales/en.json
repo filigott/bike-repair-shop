@@ -3,6 +3,7 @@
     "title": "Bike Repair Shop"
   },
   "common": {
+    "cancel": "Cancel",
     "language": "Language",
     "loading": "Loading"
   },
@@ -23,11 +24,25 @@
       "status": "Status"
     },
     "empty": "No orders found",
+    "fields": {
+      "customerName": "Customer name",
+      "phoneNumber": "Phone number",
+      "email": "Email",
+      "bikeBrand": "Bike brand",
+      "serviceType": "Service",
+      "dueDate": "Due date",
+      "notes": "Notes"
+    },
     "overdue": "Overdue",
     "paging": {
       "showing": "Showing {{from}} to {{to}} of {{total}}",
       "previous": "Previous",
       "next": "Next"
+    },
+    "place": {
+      "title": "Place an order",
+      "action": "Place an order",
+      "submit": "Place order"
     },
     "search": {
       "label": "Search orders",

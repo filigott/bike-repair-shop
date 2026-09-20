@@ -44,6 +44,12 @@ export default function App() {
   );
 }
 
+// SPA mode allows a hydrate fallback on the root route only; it covers every route's client loader.
+export function HydrateFallback() {
+  const { t } = useTranslation();
+  return <p className="container mx-auto p-4">{t("common.loading")}</p>;
+}
+
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   const { t } = useTranslation();
   const message = isRouteErrorResponse(error)
