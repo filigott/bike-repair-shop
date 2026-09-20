@@ -43,7 +43,6 @@ backend/
   BikeRepairShop.Api/             Controllers/, Features/<Slice>/, Exceptions/, Configuration/
   BikeRepairShop.Tests.Unit/
   BikeRepairShop.Tests.Integration/
-  BikeRepairShop.Tests.Shared/
 frontend/
   app/routes/                     one route per page, resource routes are action-only
   app/services/endpoints/         one wrapper file per API controller
@@ -155,8 +154,9 @@ Integration tests assert persisted state from a fresh read: clear the change tra
 scope, re-query, then assert. Never assert on the entity the handler returned.
 
 The integration harness runs one `postgres:18` Testcontainer per process with a migrated template
-database that each collection clones, and resets rows between tests. Shared fixtures, mutators and
-factories live in `Tests.Shared`, never as private helpers inside a test class.
+database that each collection clones, and resets rows between tests. Fixtures, mutators and factories
+live in a `Fixtures/` folder of the test project that owns them, never as private helpers inside a test
+class.
 
 Front-end tests are co-located `*.test.tsx`, mock the endpoint layer rather than `fetch`, and query by
 role, text or label.

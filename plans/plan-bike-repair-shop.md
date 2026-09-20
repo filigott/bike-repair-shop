@@ -18,7 +18,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|---|---|
 | A1a. Conventions and plan | ✅ | CLAUDE.md, plans, versions checked against registries |
 | A1b. Toolchain pins | ✅ | global.json, central packages, editorconfig, build props |
-| A1c. Solution scaffold | ⏳ | Five projects, health endpoint, compose service for the database |
+| A1c. Solution scaffold | 🟡 | Five projects, health endpoint, compose service for the database |
 | A2. Domain model and state machine | ⏳ | TDD |
 | A3. Persistence and test harness | ⏳ | EF, migration, seeded services, Testcontainers |
 | B1. Orders API slice | ⏳ | CRUD handlers, validators, ProblemDetails, OpenAPI |
@@ -31,7 +31,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | D2. Search UI | ⏳ | Driven by search params |
 | E1. Status transitions and history | ⏳ | |
 | E2. Status UI | ⏳ | |
-| F1. Optimistic concurrency | ⏳ | ETag and If-Match |
+| F1. Optimistic concurrency | ⏳ | `version` field backed by `xmin` |
 | F2. CI workflow | ⏳ | Unit and integration on push |
 | F3. README and docs pass | ⏳ | |
 
@@ -67,7 +67,13 @@ written, because the failures below are the kind that look like mysteries when t
 - `erasableSyntaxOnly` is not enabled by default in a React Router 8 project, so TypeScript `enum` is
   available and the no-magic-strings rule stands as written.
 - `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x`, and a plain `npm install` therefore
-  downgrades the project to 5.9.3 silently. Hence the `npx` route.
+  downgrades the project to 5.9.3 silently. Hence the `npx` route. The front-end spike's own lockfile
+  shows the downgrade, which also means TypeScript 7 itself has not run yet; B2 proves it.
+- Package pins were checked against nuget.org a second time on 2026-09-20. EF Core had been pinned at
+  the Npgsql floor rather than at current stable, and `FluentValidation.AspNetCore` is retired on the
+  11.x line: validation is wired through `FluentValidation.DependencyInjectionExtensions` 12 instead.
+- The SDK's built-in `dotnet new xunit` template still produces an xunit v2 project. Test projects are
+  written by hand against `xunit.v3`.
 
 ## Design decisions
 
@@ -76,11 +82,12 @@ written, because the failures below are the kind that look like mysteries when t
   The application is small enough that a mediator library would be ceremony, so handlers are resolved
   straight from DI and injected per controller action.
 
-- **Service type is an enum in the domain plus a seeded reference table.** The enum is the single
-  source of truth and carries its behaviour (display name, estimated duration) through extension
-  methods. The table exists so the database can enforce the foreign key and so service metadata has a
-  home when pricing or duration becomes editable. The alternative, a table alone, would put a
-  business rule where no test can reach it.
+- **Service type is a seeded reference table keyed by a domain enum.** The brief asks for a database
+  hosting the shop's services and their metadata, so `service_types` is the requirement, not
+  decoration. The table owns the metadata (code, display name, sort order), seeded in a migration,
+  and the create form reads it from the API rather than from a hard-coded list. The enum is the typed
+  key the entity and the foreign key use, and nothing else: metadata has exactly one home. A rule that
+  branches on service type, if one ever appears, lives on the domain and is tested there.
 
 - **Order status is a state machine on the entity.** `Received`, `InProgress`, `Completed`,
   `Cancelled`, with transitions exposed as domain methods that throw a typed domain exception on an
@@ -94,7 +101,7 @@ written, because the failures below are the kind that look like mysteries when t
 
 - **Single-page front end, not server rendering.** React Router 8 in framework mode with `ssr: false`
   keeps route modules, loaders, actions and the typed action envelope, while the deliverable stays a
-  bundle of static files that nginx serves. The API is then genuinely consumed over HTTP from the
+  bundle of static files that Caddy serves. The API is then genuinely consumed over HTTP from the
   browser, which is what the brief asks for, and the compose topology stays three plain services.
 
 - **The front-end client is generated from the OpenAPI document.** Request and response types are not
@@ -160,11 +167,13 @@ written, because the failures below are the kind that look like mysteries when t
 **A1a. Conventions and plan.** `CLAUDE.md`, `plans/README.md`, `plans/ROADMAP.md` and this file.
 Versions checked against the package registries rather than carried over. No code.
 
-**A1b. Solution scaffold.** `.gitignore`, `.editorconfig` and a
-`Directory.Build.props` pinning language version and nullable settings. The backend solution with
-`Domain`, `Database`, `Api` and the three test projects wired up, plus a health endpoint and a compose
-service for PostgreSQL so there is a database to develop against. Verified by a build and a passing
-placeholder test run.
+**A1b. Toolchain pins.** `global.json`, `.gitignore`, `.editorconfig`, `Directory.Build.props` and
+`Directory.Packages.props` with every version checked against the registries, plus a local tool
+manifest for `dotnet-ef`.
+
+**A1c. Solution scaffold.** The backend solution with `Domain`, `Database`, `Api`, `Tests.Unit` and
+`Tests.Integration` wired up, a health endpoint, and a compose service for PostgreSQL 18 so there is a
+database to develop against. Verified by a build and a passing placeholder test run.
 
 **A2. Domain model and state machine.** `ServiceType` and `OrderStatus` enums with behaviour in
 extensions, `EmailAddress` and `PhoneNumber` value objects, the `MaintenanceOrder` entity with a
@@ -172,8 +181,8 @@ static `Create()`, private setters, and transition methods. Domain exception hie
 first for every transition, legal and illegal, and for value-object parsing. No persistence yet.
 
 **A3. Persistence and test harness.** `BikeRepairShopDbContext`, one configuration per entity, the
-initial migration, the `service_types` table seeded from the enum, development-only migration
-apply-on-start. The Testcontainers harness with the template-database clone and per-test reset, plus
+initial migration, the `service_types` table seeded with its metadata, migration apply-on-start behind
+the explicit setting. The Testcontainers harness with the template-database clone and per-test reset, plus
 one integration test proving a saved order reloads with its status and value objects intact.
 
 ### Phase B: orders slice
@@ -201,10 +210,11 @@ removal from the list, failure surfaced without losing the row.
 ### Phase C: packaging
 
 **C1. Docker and compose.** Multi-stage Dockerfile for the API (SDK to ASP.NET runtime, non-root) and
-for the front end (node build to nginx). Root `docker-compose.yml` with database, API and web, health
-checks and dependency ordering, CORS configured for the compose origin, environment configuration for
-the API base URL at build time. Verified by a clean `docker compose up --build` and a manual pass
-through the four tasks.
+for the front end (node build to Caddy, which serves the bundle and proxies `/api`). Root
+`docker-compose.yml` with database, API and web, health checks and dependency ordering. The shop's
+timezone comes from configuration, and the runtime image has to carry tz data, which the Alpine
+variants do not by default: "today" computed in UTC wrongly rejects an order placed at 01:30 local
+in summer. Verified by a clean `docker compose up --build` and a manual pass through the four tasks.
 
 ### Phase D: search
 
@@ -226,8 +236,8 @@ allows, driven by a capability flag the API projects onto the response rather th
 
 ### Phase F: hardening
 
-**F1. Optimistic concurrency.** PostgreSQL `xmin` as the concurrency token, exposed as an ETag on the
-order response, required as `If-Match` on update, and a concurrency failure mapped to a conflict the
+**F1. Optimistic concurrency.** PostgreSQL `xmin` as the concurrency token, exposed as a `version`
+field on the order response, required on the update request, and a mismatch mapped to a conflict the
 edit form explains. Integration test driving two writers against one row.
 
 **F2. CI workflow.** GitHub Actions running the build, unit tests and integration tests on push, with
@@ -270,3 +280,6 @@ Resolved later, during the design pass:
 8. **Quick complete.** RESOLVED: `Received` straight to `Completed` is allowed.
 9. **Migration application.** RESOLVED: an explicit `RunMigrationsOnStartup` setting.
 10. **TypeScript version.** RESOLVED: 7.0.2, with `openapi-typescript` kept out of the dependency tree.
+11. **Where service metadata lives.** RESOLVED: in the `service_types` table only. The enum is the key.
+12. **Shop timezone.** OPEN until C1: the due-date rule needs a configured timezone and an image with
+    tz data. Does not block phases A and B.
