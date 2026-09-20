@@ -1,4 +1,4 @@
-# Maintenance orders end to end (#TBD)
+# Maintenance orders end to end (#1 to #7)
 
 ## At a glance
 
@@ -20,8 +20,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | A1a. Conventions and plan | ✅ | CLAUDE.md, plans, versions checked against registries |
 | A1b. Toolchain pins | ✅ | global.json, central packages, editorconfig, build props |
 | A1c. Solution scaffold | ✅ | Five projects, health endpoint, compose service for the database |
-| A2. Domain model and state machine | ⏳ | TDD |
-| A3. Persistence and test harness | ⏳ | EF, migration, seeded services, Testcontainers |
+| A2. Domain model and state machine | 🟡 | TDD, #7 |
+| A3. Persistence and test harness | ⏳ | EF, migration, seeded services, Testcontainers, #7 |
 | B1. Create and list API | ⏳ | Handlers, validators, ProblemDetails, OpenAPI |
 | B2. Front-end scaffold | ⏳ | Router, styling, generated client, i18n from day one |
 | B3. Orders list page | ⏳ | |
@@ -38,8 +38,9 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | G2. CI workflow | ⏳ | Unit and integration on push |
 | G3. README and docs pass | ⏳ | |
 
-Each phase from B on is one GitHub issue, and its last step ends in a manual smoke test through the
-running API and front end before the phase is called done.
+Each phase is one GitHub issue: A2 and A3 are #7, then B is #1, C is #2, D is #3, E is #4, F is #5
+and G is #6. From B on, the last step of a phase ends in a manual smoke test through the running API
+and front end before the phase is called done.
 
 ## Context
 
