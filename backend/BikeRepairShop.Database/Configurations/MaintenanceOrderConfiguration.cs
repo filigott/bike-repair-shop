@@ -17,13 +17,15 @@ public sealed class MaintenanceOrderConfiguration : IEntityTypeConfiguration<Mai
         builder.Property(o => o.CustomerName)
             .HasMaxLength(MaintenanceOrder.CustomerNameMaxLength);
 
-        builder.Property(o => o.PhoneNumber)
-            .HasConversion(p => p.Value, v => PhoneNumber.Parse(v))
-            .HasMaxLength(PhoneNumber.MaxLength);
+        builder.ComplexProperty(o => o.PhoneNumber, phone => phone
+            .Property(p => p.Value)
+            .HasColumnName("phone_number")
+            .HasMaxLength(PhoneNumber.MaxLength));
 
-        builder.Property(o => o.Email)
-            .HasConversion(e => e.Value, v => EmailAddress.Parse(v))
-            .HasMaxLength(EmailAddress.MaxLength);
+        builder.ComplexProperty(o => o.Email, email => email
+            .Property(e => e.Value)
+            .HasColumnName("email")
+            .HasMaxLength(EmailAddress.MaxLength));
 
         builder.Property(o => o.BikeBrand)
             .HasMaxLength(MaintenanceOrder.BikeBrandMaxLength);

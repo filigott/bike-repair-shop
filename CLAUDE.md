@@ -41,7 +41,7 @@ AutoFixture 5 are at release candidate and are deliberately not used.
 backend/
   BikeRepairShop.Domain/          entities, enums, value objects, policies, domain exceptions
   BikeRepairShop.Database/        DbContext, Configurations/, Specifications/, Migrations/
-  BikeRepairShop.Api/             Controllers/, Features/<Slice>/, Exceptions/, Configuration/
+  BikeRepairShop.Api/             Controllers/, Features/<Slice>/, Models/ (shared shapes), Exceptions/, Configuration/
   BikeRepairShop.Tests.Unit/
   BikeRepairShop.Tests.Integration/
 frontend/
@@ -94,8 +94,9 @@ Mapping is a static factory: `MaintenanceOrderSummary.From(order)`.
 
 **EF rules.** Identifiers are snake_case through `UseSnakeCaseNamingConvention()`, decided before the
 first migration because changing it later is a full-table rename. One configuration file per entity. Enums stored as strings via `HasConversion<string>()`
-with a `HasMaxLength`. Value objects via `HasConversion` or `OwnsOne`. Queries reference mapped
-properties only, because computed getters do not translate to SQL. Reference data is seeded in a
+with a `HasMaxLength`. Value objects are complex types (`ComplexProperty`) with an explicit column
+name, so their `Value` is a queryable column; a `HasConversion` value object cannot be searched with
+`LIKE`. Queries reference mapped properties only, because computed getters do not translate to SQL. Reference data is seeded in a
 migration. Migration files are generated code, excluded from style enforcement in `.editorconfig`.
 
 **Migrations apply on start behind an explicit `RunMigrationsOnStartup` setting**, not behind the

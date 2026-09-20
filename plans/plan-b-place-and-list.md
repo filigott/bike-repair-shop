@@ -13,8 +13,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | B1. Place and list API | 🟡 | One commit per row below |
 | B1a. TryParse on value objects | ✅ | Feeds the request validators |
 | B1b. API plumbing | ✅ | JSON enums, validation filter, ProblemDetails, OpenAPI with Scalar |
-| B1c. Place command | 🟡 | Validator, handler, controller, integration tests |
-| B1d. List query | ⏳ | Search term, offset paging, tiebreaker |
+| B1c. Place command | ✅ | Validator, handler, controller, integration tests |
+| B1d. List query | 🟡 | Search term, offset paging, tiebreaker |
 | B1e. Service catalogue read | ⏳ | Needed by the create form in B4 |
 | B2. Front-end scaffold | ⏳ | Router, styling, generated client, i18n from day one |
 | B3. Orders list page | ⏳ | Search box writing to a search param |
@@ -36,6 +36,14 @@ the scope boundary and the open questions; none of that is restated here. The do
   so a filter resolves the validator for each bound argument and short-circuits with the same
   `ValidationProblemDetails` shape MVC uses for binding errors. Keys are camelCased to match the
   JSON, so the form can render them per field.
+
+- **Value objects are complex types, not converted scalars.** `HasConversion` makes the column
+  opaque to LINQ: an `ILIKE` on the phone or email column hands the pattern parameter the value
+  object's converter and fails at runtime. `ComplexProperty` with an explicit column name keeps the
+  same schema, so no migration, and lets `o.Email.Value` translate. Phase E filters build on this.
+
+- **The list sorts by due date, then id.** Version-7 GUIDs are time-ordered, so the tiebreaker is
+  placement order and a page boundary never duplicates or drops a row.
 
 - **Validation messages leave the API in English.** Pragmatic for now; whether the UI maps error
   codes to locale keys or shows the server text is an open question for B4.
