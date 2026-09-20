@@ -94,8 +94,8 @@ Mapping is a static factory: `MaintenanceOrderSummary.From(order)`.
 **EF rules.** Identifiers are snake_case through `UseSnakeCaseNamingConvention()`, decided before the
 first migration because changing it later is a full-table rename. One configuration file per entity. Enums stored as strings via `HasConversion<string>()`
 with a `HasMaxLength`. Value objects via `HasConversion` or `OwnsOne`. Queries reference mapped
-properties only, because computed getters do not translate to SQL. Migrations auto-apply in
-Development only. Reference data is seeded in a migration.
+properties only, because computed getters do not translate to SQL. Reference data is seeded in a
+migration. Migration files are generated code, excluded from style enforcement in `.editorconfig`.
 
 **Migrations apply on start behind an explicit `RunMigrationsOnStartup` setting**, not behind the
 environment name, so the composed stack creates its schema without also switching on the developer
@@ -173,11 +173,12 @@ role, text or label.
 ## Commands
 
 ```bash
-# Backend
+# Backend (the API needs the compose database: docker compose up -d db)
 dotnet build backend/BikeRepairShop.sln
+dotnet run   --project backend/BikeRepairShop.Api    # http://localhost:5260/health
 dotnet test  backend/BikeRepairShop.sln
 dotnet test  backend/BikeRepairShop.Tests.Unit/BikeRepairShop.Tests.Unit.csproj -- --filter-method "*Reopen*"
-dotnet ef migrations add <Name> --project backend/BikeRepairShop.Database --startup-project backend/BikeRepairShop.Api
+dotnet ef migrations add <Name> --project backend/BikeRepairShop.Database --startup-project backend/BikeRepairShop.Api -- --environment Development
 
 # Front end
 npm --prefix frontend run dev          # started by the developer, never by the agent

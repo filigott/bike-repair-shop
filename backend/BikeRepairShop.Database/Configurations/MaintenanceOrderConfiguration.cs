@@ -41,6 +41,7 @@ public sealed class MaintenanceOrderConfiguration : IEntityTypeConfiguration<Mai
 
         builder.HasOne<ServiceTypeDefinition>()
             .WithMany()
-            .HasForeignKey(o => o.ServiceType);
+            .HasForeignKey(o => o.ServiceType)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -1,6 +1,6 @@
 using System.Net;
 using AwesomeAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
+using BikeRepairShop.Tests.Integration.Fixtures;
 
 namespace BikeRepairShop.Tests.Integration;
 
@@ -10,7 +10,7 @@ public class HealthEndpointTests
     public async Task Health_endpoint_reports_healthy()
     {
         // Arrange
-        await using var factory = new WebApplicationFactory<Program>();
+        await using var factory = new ApiFactory();
         using var client = factory.CreateClient();
 
         // Act
