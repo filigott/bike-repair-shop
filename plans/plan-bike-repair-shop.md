@@ -173,6 +173,17 @@ touching packages, the test harness or the front-end toolchain.
 - **Docker packaging lands at the end of phase D, before any extra.** It is a hard requirement, so it
   is finished while there is room, not squeezed in at the end.
 
+- **React Router loaders and actions are the only data layer.** No client-side query cache such as
+  TanStack Query. Framework mode already owns loading, mutation and revalidation, so a cache on top
+  would be a second source of freshness that every route has to pick between. Data arrives through a
+  loader, changes go through an action, and the loader reruns.
+
+- **The transport stays small and typed from the schema.** One fetch core with a timeout and
+  ProblemDetails normalisation, one action envelope, one wrapper file per API controller as the mock
+  seam for tests. The candidate for replacing the hand-written core is `openapi-fetch`, which types
+  paths, parameters and bodies from the committed schema; the wrappers stay either way, because they
+  are what tests mock and where the response is unwrapped.
+
 - **Delete is a real delete.** The brief asks for delete, and `Cancelled` already covers the case
   where the order should be kept for the record. Two mechanisms for going away would need a reason.
 
