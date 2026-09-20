@@ -65,6 +65,17 @@ the scope boundary and the open questions; none of that is restated here. The do
   fallback for anything unmapped. Worth doing when the API stops being the only writer of these
   strings; not worth it for one form. Field labels, buttons and every other string are keys as usual.
 
+- **A missing due date is a binder error, not a field error.** `PlaceOrderRequest.DueDate` is a
+  non-nullable `DateOnly`, so an empty string fails model binding before the validator runs and MVC
+  answers with a key of `$.dueDate` that no field lookup matches. The date input is therefore
+  `required`, so the browser never sends an unbindable payload. Reporting it per field means a
+  nullable `DateOnly?` with `NotNull()` on the validator, which is worth doing when the edit form in
+  phase C gives that request shape a second writer.
+
+- **The email input is plain text on purpose.** `type="email"` would let the browser reject `ada@`
+  before the request leaves, hiding the API rule and its message. The server's `EmailAddress.TryParse`
+  is the authority for the format, so the field posts and renders what the API says.
+
 - **Field errors are keyed by the generated request type.** `ActionFailure<TField>` carries
   `Partial<Record<TField, string[]>>`, and the place-order form asks for
   `ActionFailure<keyof PlaceOrderRequest>`, so a field renamed in the API breaks the form at compile

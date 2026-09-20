@@ -44,7 +44,7 @@ export function PlaceOrderForm({ serviceTypes, failure }: PlaceOrderFormProps) {
         label={t("orders.fields.email")}
         errors={errors.email}
       >
-        <input id="email" name="email" type="email" className="input w-full" />
+        <input id="email" name="email" className="input w-full" />
       </FormField>
 
       <FormField
@@ -78,6 +78,7 @@ export function PlaceOrderForm({ serviceTypes, failure }: PlaceOrderFormProps) {
           id="dueDate"
           name="dueDate"
           type="date"
+          required
           className="input w-full"
         />
       </FormField>
