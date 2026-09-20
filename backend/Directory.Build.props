@@ -10,8 +10,4 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
 </Project>

@@ -18,7 +18,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|---|---|
 | A1a. Conventions and plan | ✅ | CLAUDE.md, plans, versions checked against registries |
 | A1b. Toolchain pins | ✅ | global.json, central packages, editorconfig, build props |
-| A1c. Solution scaffold | 🟡 | Five projects, health endpoint, compose service for the database |
+| A1c. Solution scaffold | ✅ | Five projects, health endpoint, compose service for the database |
 | A2. Domain model and state machine | ⏳ | TDD |
 | A3. Persistence and test harness | ⏳ | EF, migration, seeded services, Testcontainers |
 | B1. Orders API slice | ⏳ | CRUD handlers, validators, ProblemDetails, OpenAPI |
@@ -74,6 +74,13 @@ written, because the failures below are the kind that look like mysteries when t
   11.x line: validation is wired through `FluentValidation.DependencyInjectionExtensions` 12 instead.
 - The SDK's built-in `dotnet new xunit` template still produces an xunit v2 project. Test projects are
   written by hand against `xunit.v3`.
+- Under the `Microsoft.Testing.Platform` runner, `xunit.v3` 4.0 needs neither `Microsoft.NET.Test.Sdk`
+  nor `xunit.runner.visualstudio`. A test project is an `Exe` with `IsTestProject` set and the one
+  package; both VSTest packages were dropped from the central pins after a green run without them.
+- The SDK sets `IsPackable` to false for `IsTestProject` on its own, so a `Directory.Build.props`
+  block doing the same is dead: the condition runs before the project file sets the property anyway.
+- The `postgres:18` image moved `PGDATA` to `/var/lib/postgresql/18/docker`. The compose volume mounts
+  `/var/lib/postgresql`, one level up, as the image's own notes recommend for 18.
 
 ## Design decisions
 
@@ -283,3 +290,7 @@ Resolved later, during the design pass:
 11. **Where service metadata lives.** RESOLVED: in the `service_types` table only. The enum is the key.
 12. **Shop timezone.** OPEN until C1: the due-date rule needs a configured timezone and an image with
     tz data. Does not block phases A and B.
+13. **Compose credentials.** OPEN until C1: the database credentials are literal dev values in the
+    compose file. They move to a committed `.env.example` plus an ignored `.env` when the API service
+    joins and needs the same values. The compose project name is pinned and the host port is 5433 so
+    the other compose stacks on this machine never collide with it.

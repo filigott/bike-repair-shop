@@ -1,0 +1,21 @@
+name: bike-repair-shop
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: bikeshop
+      POSTGRES_PASSWORD: bikeshop
+      POSTGRES_DB: bikeshop
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bikeshop -d bikeshop"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  db-data:
