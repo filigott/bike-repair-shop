@@ -10,7 +10,7 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phase B, B1 and B2 done, B3 next |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done and smoke-tested, phase C next |
 
 ## Delivery line
 
@@ -21,9 +21,9 @@ manual smoke test, so there is always a shippable state and something to try by 
 
 ## Pace
 
-Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). The
-foundation is done and none of the four staff tasks is usable end to end yet, so phases E through G
-stay untouched until `docker compose up` serves all four.
+Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). Two of the
+four staff tasks now work end to end in a browser. Phases E through G stay untouched until
+`docker compose up` serves all four.
 
 ## Parked from the phase B smoke test
 

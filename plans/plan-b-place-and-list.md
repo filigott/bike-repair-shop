@@ -23,6 +23,9 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | B3. Orders list page | ✅ | Loader, search form, table, prev/next paging; components split per file |
 | B4. Create form | ✅ | Place-order page, service types from the API, field errors; manual smoke test closes the phase |
 
+The manual smoke test passed on 2026-09-20: place with every rejection path, find by name, phone and
+email, the empty state, the back button and both locales. What it raised is parked on the roadmap.
+
 ## Context
 
 Part of [plan-bike-repair-shop.md](plan-bike-repair-shop.md), which holds the design decisions,
