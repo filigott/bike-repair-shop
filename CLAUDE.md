@@ -154,7 +154,8 @@ validators, search filtering, mappers), no ceremony for glue and configuration.
 A test written alongside the code is shown red before it counts. Break the exact line under test,
 watch it fail, restore.
 
-Every test body carries `// Arrange`, `// Act`, `// Assert` markers.
+Test bodies carry `// Arrange`, `// Act`, `// Assert` markers for the sections they have. A section
+with nothing in it gets no marker, and `// Act & Assert` labels a single expression that does both.
 
 Integration tests assert persisted state from a fresh read: clear the change tracker or open a new
 scope, re-query, then assert. Never assert on the entity the handler returned.

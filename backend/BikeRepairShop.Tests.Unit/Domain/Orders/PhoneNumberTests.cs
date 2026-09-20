@@ -12,8 +12,6 @@ public class PhoneNumberTests
     [InlineData("+1 415 555 0123", "+14155550123")]
     public void Parse_normalises_a_valid_number(string input, string expected)
     {
-        // Arrange
-
         // Act
         var result = PhoneNumber.Parse(input);
 
@@ -32,8 +30,6 @@ public class PhoneNumberTests
     [InlineData("+")]
     public void Parse_rejects_a_malformed_number(string input)
     {
-        // Arrange
-
         // Act
         var act = () => PhoneNumber.Parse(input);
 

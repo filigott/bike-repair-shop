@@ -11,8 +11,6 @@ public class EmailAddressTests
     [InlineData("a@b.co", "a@b.co")]
     public void Parse_normalises_a_valid_address(string input, string expected)
     {
-        // Arrange
-
         // Act
         var result = EmailAddress.Parse(input);
 
@@ -33,8 +31,6 @@ public class EmailAddressTests
     [InlineData("kari nordmann@example.com")]
     public void Parse_rejects_a_malformed_address(string input)
     {
-        // Arrange
-
         // Act
         var act = () => EmailAddress.Parse(input);
 

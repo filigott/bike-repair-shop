@@ -118,7 +118,12 @@ written, because the failures below are the kind that look like mysteries when t
 
 - **Email and phone number are value objects, bike brand and notes are not.** The first two carry a
   format invariant worth parsing once at the boundary and trusting afterwards. The other two are free
-  text with a length cap, and wrapping them would be pattern application for its own sake.
+  text with a length cap, and wrapping them would be pattern application for its own sake. For an
+  application this size, plain strings behind a validator would be defensible; the value objects are
+  kept because the invariant then travels with the type instead of with a convention, the rule has
+  one home, and the reversal cost is asymmetric: collapsing to a string later is mechanical, adding
+  the type after un-normalised data exists needs a migration. The bar is per field, not per project:
+  wrap when there is a parse rule, not when there is only a length cap.
 
 - **Single-page front end, not server rendering.** React Router 8 in framework mode with `ssr: false`
   keeps route modules, loaders, actions and the typed action envelope, while the deliverable stays a
