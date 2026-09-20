@@ -8,7 +8,8 @@ it, and PostgreSQL behind both, packaged so `docker compose up` runs the whole s
 ## Read at session start
 
 1. This file.
-2. `plans/ROADMAP.md` for what is in flight and what is blocked.
+2. `plans/ROADMAP.md`, whose `Next up` section is where a session starts, plus what is in flight,
+   what is parked and what is blocked.
 3. `plans/plan-bike-repair-shop.md` for the design decisions and the phase table, then the active
    phase plan it points to, its At a glance and Progress sections first.
 

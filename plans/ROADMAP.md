@@ -12,6 +12,15 @@ running `docker compose up`. Everything currently planned lives in
 |---|---|---|
 | Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done and smoke-tested, phase C next |
 
+## Next up
+
+1. Run the backend suite unfiltered with the compose database up, then push `main`. Eight commits are
+   waiting and none has been pushed since phase A.
+2. Phase C in order: C1 the get, update and delete API including the nullable due date, C2 the edit
+   form, C3 the delete flow. Smoke test all four brief tasks before the phase is called done.
+3. Phase D packaging, on a branch with a pull request, as the one place the repository shows that
+   flow. C4 polish is last and optional.
+
 ## Delivery line
 
 Phases A through D are the product: a working application, packaged and runnable with one command.
