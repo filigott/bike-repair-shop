@@ -52,6 +52,31 @@ public class EmailAddressTests
     }
 
     [Fact]
+    public void TryParse_returns_the_normalised_address_when_valid()
+    {
+        // Act
+        var ok = EmailAddress.TryParse(" Kari@Example.com ", out var result);
+
+        // Assert
+        ok.Should().BeTrue();
+        result!.Value.Should().Be("kari@example.com");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("kari@example")]
+    public void TryParse_returns_false_without_throwing_when_malformed(string? input)
+    {
+        // Act
+        var ok = EmailAddress.TryParse(input, out var result);
+
+        // Assert
+        ok.Should().BeFalse();
+        result.Should().BeNull();
+    }
+
+    [Fact]
     public void Equality_is_by_value()
     {
         // Arrange

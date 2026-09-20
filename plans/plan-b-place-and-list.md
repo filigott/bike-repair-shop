@@ -10,7 +10,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| B1. Place and list API | ⏳ | List takes a customer search term; validators, ProblemDetails, OpenAPI |
+| B1. Place and list API | 🟡 | Place, list with search and paging, service catalogue read; one commit each |
 | B2. Front-end scaffold | ⏳ | Router, styling, generated client, i18n from day one |
 | B3. Orders list page | ⏳ | Search box writing to a search param |
 | B4. Create form | ⏳ | Smoke test: place an order, find it by name |

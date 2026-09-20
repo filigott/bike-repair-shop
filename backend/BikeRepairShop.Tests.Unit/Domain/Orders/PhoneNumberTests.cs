@@ -38,6 +38,31 @@ public class PhoneNumberTests
     }
 
     [Fact]
+    public void TryParse_returns_the_normalised_number_when_valid()
+    {
+        // Act
+        var ok = PhoneNumber.TryParse("+47 912 34 567", out var result);
+
+        // Assert
+        ok.Should().BeTrue();
+        result!.Value.Should().Be("+4791234567");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("912-34-567")]
+    public void TryParse_returns_false_without_throwing_when_malformed(string? input)
+    {
+        // Act
+        var ok = PhoneNumber.TryParse(input, out var result);
+
+        // Assert
+        ok.Should().BeFalse();
+        result.Should().BeNull();
+    }
+
+    [Fact]
     public void Equality_is_by_value()
     {
         // Arrange

@@ -18,7 +18,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Phase | Plan | Issue | Status |
 |---|---|---|---|
 | A. Foundation | [plan-a-foundation.md](plan-a-foundation.md) | #7 | ✅ |
-| B. Place and find | [plan-b-place-and-list.md](plan-b-place-and-list.md) | #1 | ⏳ |
+| B. Place and find | [plan-b-place-and-list.md](plan-b-place-and-list.md) | #1 | 🟡 |
 | C. Find, edit and delete | [plan-c-find-edit-delete.md](plan-c-find-edit-delete.md) | #2 | ⏳ |
 | D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ⏳ |
 | E. Search | [plan-e-search.md](plan-e-search.md) | #4 | ⏳ |
