@@ -28,6 +28,7 @@ public class MaintenanceOrderTests
         order.ServiceType.Should().Be(ServiceType.BrakeMaintenance);
         order.DueDate.Should().Be(dueDate);
         order.Notes.Should().Be("Squeaks when braking");
+        order.PlacedAt.Should().Be(OrderFixtures.Clock.Now);
     }
 
     [Fact]
@@ -360,7 +361,7 @@ public class MaintenanceOrderTests
         var newDueDate = OrderFixtures.Today.AddDays(10);
 
         // Act
-        order.Reschedule(newDueDate, OrderFixtures.Today);
+        order.Reschedule(newDueDate, OrderFixtures.Clock);
 
         // Assert
         order.DueDate.Should().Be(newDueDate);
@@ -374,7 +375,7 @@ public class MaintenanceOrderTests
         var originalDueDate = order.DueDate;
 
         // Act
-        var act = () => order.Reschedule(OrderFixtures.Today.AddDays(-1), OrderFixtures.Today);
+        var act = () => order.Reschedule(OrderFixtures.Today.AddDays(-1), OrderFixtures.Clock);
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>();
@@ -388,7 +389,7 @@ public class MaintenanceOrderTests
         var order = OrderFixtures.Completed();
 
         // Act
-        var act = () => order.Reschedule(OrderFixtures.Today.AddDays(10), OrderFixtures.Today);
+        var act = () => order.Reschedule(OrderFixtures.Today.AddDays(10), OrderFixtures.Clock);
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>();

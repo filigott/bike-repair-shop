@@ -1,10 +1,13 @@
+using BikeRepairShop.Domain;
 using BikeRepairShop.Domain.Orders;
 
 namespace BikeRepairShop.Tests.Unit.Fixtures;
 
 public static class OrderFixtures
 {
-    public static readonly DateOnly Today = new(2026, 9, 20);
+    public static readonly FixedShopClock Clock = new(new DateTimeOffset(2026, 9, 20, 10, 30, 0, TimeSpan.FromHours(2)));
+
+    public static DateOnly Today => Clock.Today;
 
     public static MaintenanceOrder Placed(
         string customerName = "Kari Nordmann",
@@ -14,7 +17,7 @@ public static class OrderFixtures
         ServiceType serviceType = ServiceType.BrakeMaintenance,
         DateOnly? dueDate = null,
         string? notes = "Squeaks when braking",
-        DateOnly? today = null)
+        IShopClock? clock = null)
     {
         return MaintenanceOrder.Place(
             customerName,
@@ -24,7 +27,7 @@ public static class OrderFixtures
             serviceType,
             dueDate ?? Today.AddDays(3),
             notes,
-            today ?? Today);
+            clock ?? Clock);
     }
 
     public static MaintenanceOrder InProgress()

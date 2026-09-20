@@ -152,6 +152,31 @@ written, because the failures below are the kind that look like mysteries when t
   choice with real risk is TypeScript 7, the native compiler, so it is proved out on a throwaway
   scaffold before the front-end unit starts rather than discovered mid-route.
 
+- **The domain owns its clock through `IShopClock`.** The interface declares `Now` and `Today`, where
+  `Today` is the shop's calendar day rather than the server's. `Place` stamps `PlacedAt` from it and
+  judges the due date against it, `Reschedule` does the same, and the API implements it once over
+  `TimeProvider` and the configured timezone. Dependency inversion in its plain form: the domain says
+  what it needs, the composition root supplies it, and tests pass a fixed clock. An EF interceptor
+  stamping `CreatedAt` was the first design; it kept the domain clock-free but hid the mechanism and
+  cost the domain word. `UpdatedAt` is dropped until something reads it; the status history in phase F
+  carries its own timestamps.
+
+- **The service catalogue is keyed by its text code, and orders carry a foreign key to it.**
+  `service_types(code, display_name, sort_order)` is seeded in the initial migration, `orders.service_type`
+  stores the enum name and references `code`. The database refuses an unknown service, the enum stays
+  the typed key, and `psql` reads the column without a join. An integer surrogate would make every
+  session and log line a lookup.
+
+- **One test database, one collection, rows reset per test.** One `postgres:18` container per run,
+  migrated once, every integration class in a single xunit collection so they run in sequence, and
+  Respawn wiping rows before each test. A template database cloned per collection was the first
+  design; it pays off past fifty-plus tests and is over-built for a few dozen, and can be reinstated
+  without touching a test.
+
+- **`/health` includes the database.** The EF Core health check makes the endpoint go unhealthy when
+  PostgreSQL is unreachable, so compose can gate the API on it and the integration harness exercises
+  it against the real container.
+
 - **Optimistic concurrency is a `version` field, not an ETag.** `If-Match` requires strong comparison
   under RFC 9110, so a weak validator never matches and a strong one asserts byte-identical
   representations that a varying response cannot honour. A `version` on the response and a required
@@ -215,8 +240,9 @@ first for every transition, legal and illegal, and for value-object parsing. No 
 
 **A3. Persistence and test harness.** `BikeRepairShopDbContext`, one configuration per entity, the
 initial migration, the `service_types` table seeded with its metadata, migration apply-on-start behind
-the explicit setting. The Testcontainers harness with the template-database clone and per-test reset, plus
-one integration test proving a saved order reloads with its status and value objects intact.
+the explicit setting. The Testcontainers harness with one migrated database and per-test row reset,
+plus one integration test proving a saved order reloads with its status, value objects and placed-at
+stamp intact, and the database health check.
 
 ### Phase B: place and list
 
@@ -329,8 +355,9 @@ Resolved later, during the design pass:
 9. **Migration application.** RESOLVED: an explicit `RunMigrationsOnStartup` setting.
 10. **TypeScript version.** RESOLVED: 7.0.2, with `openapi-typescript` kept out of the dependency tree.
 11. **Where service metadata lives.** RESOLVED: in the `service_types` table only. The enum is the key.
-12. **Shop timezone.** OPEN until D1: the due-date rule needs a configured timezone and an image with
-    tz data. Does not block phases A to C.
+12. **Shop timezone.** OPEN until D1 for the value; the shape is settled. `IShopClock` is implemented
+    in the API over `TimeProvider` and a configured `TimeZoneInfo`, and the runtime image has to carry
+    tz data. Development runs with a default of `Europe/Oslo`.
 13. **Compose credentials.** OPEN until D1: the database credentials are literal dev values in the
     compose file. They move to a committed `.env.example` plus an ignored `.env` when the API service
     joins and needs the same values. The compose project name is pinned and the host port is 5434,

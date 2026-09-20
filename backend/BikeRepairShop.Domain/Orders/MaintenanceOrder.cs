@@ -30,6 +30,8 @@ public sealed class MaintenanceOrder
 
     public OrderStatus Status { get; private set; }
 
+    public DateTimeOffset PlacedAt { get; private set; }
+
     public IReadOnlyList<OrderStatus> AllowedTransitions => Status.AllowedTransitions;
 
     public static MaintenanceOrder Place(
@@ -40,16 +42,19 @@ public sealed class MaintenanceOrder
         ServiceType serviceType,
         DateOnly dueDate,
         string? notes,
-        DateOnly today)
+        IShopClock clock)
     {
+        ArgumentNullException.ThrowIfNull(clock);
+
         var order = new MaintenanceOrder
         {
             Id = Guid.CreateVersion7(),
             Status = OrderStatus.Received,
+            PlacedAt = clock.Now,
         };
         order.SetDetails(customerName, phoneNumber, email, bikeBrand, notes);
         order.SetService(serviceType);
-        order.SetDueDate(dueDate, today);
+        order.SetDueDate(dueDate, clock.Today);
         return order;
     }
 
@@ -70,10 +75,11 @@ public sealed class MaintenanceOrder
         SetService(serviceType);
     }
 
-    public void Reschedule(DateOnly dueDate, DateOnly today)
+    public void Reschedule(DateOnly dueDate, IShopClock clock)
     {
+        ArgumentNullException.ThrowIfNull(clock);
         EnsureEditable();
-        SetDueDate(dueDate, today);
+        SetDueDate(dueDate, clock.Today);
     }
 
     public void Start()
