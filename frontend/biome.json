@@ -7,7 +7,12 @@
     "root": ".."
   },
   "files": {
-    "includes": ["**", "!.react-router", "!build"]
+    "includes": [
+      "**",
+      "!.react-router",
+      "!build",
+      "!app/services/openapi.generated.ts"
+    ]
   },
   "formatter": {
     "enabled": true,

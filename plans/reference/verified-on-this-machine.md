@@ -21,8 +21,14 @@ written, because the failures below are the kind that look like mysteries when t
   CSS-first form survives it.
 - `erasableSyntaxOnly` is not enabled by default in a React Router 8 project, so TypeScript `enum` is
   available and the no-magic-strings rule stands as written.
-- `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x`, and a plain `npm install` therefore
-  downgrades the project to 5.9.3 silently. Hence the `npx` route.
+- `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x` because it uses the JavaScript
+  compiler API, and `typescript@7.0.2` ships only the native `tsc` with no `typescript.js`. A plain
+  `npm install` of the generator therefore either conflicts or leaves it without its API. Through
+  `npx -y` it gets its own TypeScript 5 in the npx cache and the project stays on 7.
+- i18next 26 renamed `initImmediate` to `initAsync`; with bundled resources, `initAsync: false` keeps
+  the first render out of Suspense.
+- React Router 8's build writes `isbot` into `package.json` with a caret when no custom server entry
+  exists. Pin it exactly afterwards.
 - TypeScript 7.0.2, the native compiler, type-checks the React Router 8.4 scaffold including the
   `typegen` output and `rootDirs`, with no config change from the template. Proved in B2.
 - Biome 2.5 run from `frontend/` needs `vcs.root: ".."` to find the repo's `.gitignore`, uses

@@ -8,7 +8,8 @@
     "typecheck": "react-router typegen && tsc",
     "test": "vitest run",
     "lint": "biome check .",
-    "codefix": "biome check --write ."
+    "codefix": "biome check --write .",
+    "generate:api": "npx -y openapi-typescript@7.13.0 http://localhost:5260/openapi/v1.json -o app/services/openapi.generated.ts"
   },
   "dependencies": {
     "i18next": "26.4.2",

@@ -18,9 +18,9 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | B1e. Service catalogue read | ✅ | Needed by the create form in B4 |
 | B2. Front-end scaffold | 🟡 | One commit per row below |
 | B2a. Toolchain | ✅ | React Router 8 SPA, TypeScript 7, Tailwind and DaisyUI, Biome, Vitest |
-| B2b. Shell and i18n | 🟡 | Header, locale switch, both locale files, render test |
-| B2c. Transport and client | ⏳ | Fetch core, ActionResult, generated types, endpoint wrappers |
-| B3. Orders list page | ⏳ | Search box writing to a search param |
+| B2b. Shell and i18n | ✅ | Header, locale switch, both locale files, render test |
+| B2c. Transport and client | 🟡 | Fetch core, ActionResult, generated types, endpoint wrappers |
+| B3. Orders list page | ⏳ | Search box writing to a search param; first unit on Opus, start from the B2c wrappers |
 | B4. Create form | ⏳ | Smoke test: place an order, find it by name |
 
 ## Context

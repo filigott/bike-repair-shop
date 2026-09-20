@@ -127,10 +127,10 @@ Types come from the generated OpenAPI schema and are aliased in the wrapper; tha
 whole seam. Generate types and hand-write the wrapper, or generate the client and write no wrapper,
 never both, or the wrapper becomes a pass-through with nothing in it.
 
-**`openapi-typescript` is invoked through `npx`, pinned, and is not a project dependency.** It
-declares `peerDependencies.typescript: "^5.x"`, so listing it silently downgrades the project to
-TypeScript 5.9.3 with no warning. It is a one-shot generator whose output is committed, so it belongs
-outside the dependency tree.
+**`openapi-typescript` is invoked through `npx`, pinned, and is not a project dependency.** It needs
+the TypeScript 5 JavaScript compiler API at runtime, and the `typescript@7` package ships only the
+native `tsc`, so the two cannot share one `node_modules`. It is a one-shot generator whose output,
+`app/services/openapi.generated.ts`, is committed and excluded from Biome.
 
 **Actions are explicit tasks, on the API and in the UI alike.** The API exposes intention-revealing
 commands (place, reschedule, start, complete, cancel), and the UI presents them as actions that appear
@@ -189,6 +189,7 @@ npm --prefix frontend run dev          # started by the developer, never by the 
 npm --prefix frontend run codefix
 npm --prefix frontend run typecheck
 npm --prefix frontend run test
+npm --prefix frontend run generate:api   # regenerates the OpenAPI types; needs the API running on 5260
 
 # Whole stack
 docker compose up --build
