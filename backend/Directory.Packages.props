@@ -18,6 +18,7 @@
     <!-- FluentValidation.AspNetCore is retired on the 11.x line; validation is wired explicitly. -->
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.12" />
     <PackageVersion Include="Scalar.AspNetCore" Version="2.17.6" />
   </ItemGroup>
 
