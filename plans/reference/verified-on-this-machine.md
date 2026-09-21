@@ -1,7 +1,7 @@
 > **Reference doc: load only when working in this area**
 > - **Covers:** toolchain and library behaviour verified by running it on this machine
 > - **Used by:** every phase plan; read before touching the toolchain, packages or the harness
-> - **Updated:** 2026-09-20
+> - **Updated:** 2026-09-21
 
 # Verified on this machine, not assumed
 
@@ -25,6 +25,10 @@ written, because the failures below are the kind that look like mysteries when t
   compiler API, and `typescript@7.0.2` ships only the native `tsc` with no `typescript.js`. A plain
   `npm install` of the generator therefore either conflicts or leaves it without its API. Through
   `npx -y` it gets its own TypeScript 5 in the npx cache and the project stays on 7.
+- `FakeTimeProvider` from `Microsoft.Extensions.TimeProvider.Testing` cannot be rewound: `SetUtcNow`
+  throws `ArgumentOutOfRangeException("Cannot go back in time")`. A fixture shared by a whole xunit
+  collection therefore cannot reset it between tests, which is why the harness carries its own
+  `TestTimeProvider` instead and the package is not referenced.
 - i18next 26 renamed `initImmediate` to `initAsync`; with bundled resources, `initAsync: false` keeps
   the first render out of Suspense.
 - React Router 8's build writes `isbot` into `package.json` with a caret when no custom server entry

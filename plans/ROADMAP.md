@@ -61,6 +61,18 @@ Work lands on `main` for now and is pushed as it goes: `main` is current as of t
 One later phase runs on a branch with a proper pull request, so the repository shows that flow too;
 phase D packaging is the natural candidate.
 
+## Parked, toolchain
+
+| Item | Call | Where |
+|---|---|---|
+| Generate the OpenAPI document at build time instead of from a running API | Decide first | after D |
+
+`npm run generate:api` needs the API listening on 5260, so `openapi.generated.ts` drifts behind the
+contract for as long as a backend step runs and nothing catches it. `Microsoft.Extensions.ApiDescription.Server`
+writes the document during `dotnet build`, which would turn drift into a diff. Unverified on this
+machine, and it touches the backend build, the front-end script and phase D packaging, so it waits
+until the product phases are done.
+
 ## Blockers
 
 None.

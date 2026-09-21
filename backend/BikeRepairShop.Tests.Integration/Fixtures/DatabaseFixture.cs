@@ -29,8 +29,11 @@ public sealed class DatabaseFixture : IAsyncLifetime
         });
     }
 
+    public TestTimeProvider Time => Factory.Time;
+
     public async Task ResetAsync()
     {
+        Time.Reset();
         await using var connection = await OpenConnectionAsync();
         await respawner.ResetAsync(connection);
     }

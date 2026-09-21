@@ -12,8 +12,9 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|---|---|
 | C1. Get, update and delete API | 🟡 | Explicit commands, not one update endpoint |
 | C1a. Nullable due date on the request shapes | ✅ | A missing date is a field error, not `$.dueDate` |
-| C1b. Get by id | 🟡 | Brings `NotFoundException` and its 404 mapping |
-| C1c. The three edit commands | ⏳ | Details, service and due date, one endpoint each |
+| C1b. Get by id | ✅ | Brings `NotFoundException` and its 404 mapping |
+| C1c. The three edit commands | 🟡 | Details, service and due date, one endpoint each |
+| C1c.1 Movable clock in the harness | ✅ | Fake `TimeProvider`, so an overdue order can be tested |
 | C1d. Delete | ⏳ | A real delete, 204 on success |
 | C2. Edit form | ⏳ | Shares the form component with B4; groups the fields under two headings |
 | C3. Delete flow | ⏳ | Smoke test: all four tasks from the brief |
@@ -42,6 +43,11 @@ rejected: it weakens an invariant to serve a UI flow.
 
 **404 is an API concern.** `NotFoundException` lives in `Api/Exceptions` and is mapped alongside the
 domain exceptions, because "no row with that id" is not a broken invariant.
+
+**The integration harness owns the day.** `ShopClock` reads `TimeProvider`, so the test host swaps in
+a fake one and the suite can move the shop's calendar. Without it nothing can assert `isOverdue`, and
+the rule that an overdue order stays editable is untestable above the domain. The alternative, a
+`MaintenanceOrder` seeded with a past due date, is impossible by design: `Place` rejects one.
 
 ## Steps
 

@@ -175,7 +175,8 @@ scope, re-query, then assert. Never assert on the entity the handler returned.
 
 The integration harness runs one `postgres:18` Testcontainer per run, migrated once through the API's
 own startup path, with every integration class in one xunit collection and Respawn wiping rows before
-each test. The seeded catalogue and the migration history survive the reset. Test classes derive from
+each test. The test host also replaces `TimeProvider` with a resettable double, so a test can move the
+shop's day forward and reach rules that only fire with time, such as an overdue order. The seeded catalogue and the migration history survive the reset. Test classes derive from
 `IntegrationTest` and reach the host through `DatabaseFixture`. Fixtures, mutators and factories live
 in a `Fixtures/` folder of the test project that owns them, never as private helpers inside a test
 class.

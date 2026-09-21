@@ -53,6 +53,24 @@ public class GetOrderTests(DatabaseFixture database) : IntegrationTest(database)
     }
 
     [Fact]
+    public async Task An_order_past_its_due_date_is_overdue_and_still_editable()
+    {
+        // Arrange
+        var order = OrderFixtures.Place(Clock, dueInDays: 1);
+        await Database.SeedAsync(order);
+        Database.Time.Advance(TimeSpan.FromDays(2));
+        using var client = Database.Factory.CreateClient();
+
+        // Act
+        var body = await client.GetFromJsonAsync<MaintenanceOrderResponse>(
+            $"/api/orders/{order.Id}", Json.Options, TestContext.Current.CancellationToken);
+
+        // Assert
+        body!.IsOverdue.Should().BeTrue();
+        body.IsEditable.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task Getting_an_unknown_order_returns_a_not_found_problem()
     {
         // Arrange
