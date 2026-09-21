@@ -9,6 +9,9 @@ public static class OrdersServiceCollectionExtensions
         services.AddScoped<PlaceOrderHandler>();
         services.AddScoped<ListOrdersHandler>();
         services.AddScoped<GetOrderHandler>();
+        services.AddScoped<CorrectOrderDetailsHandler>();
+        services.AddScoped<ChangeOrderServiceHandler>();
+        services.AddScoped<RescheduleOrderHandler>();
         return services;
     }
 }

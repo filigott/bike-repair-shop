@@ -46,4 +46,46 @@ public sealed class OrdersController : ControllerBase
         var response = await handler.HandleAsync(PlaceOrderCommand.From(request), cancellationToken);
         return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
     }
+
+    [HttpPut("{id:guid}/details")]
+    [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<MaintenanceOrderResponse>> CorrectDetails(
+        [FromServices] CorrectOrderDetailsHandler handler,
+        Guid id,
+        CorrectOrderDetailsRequest request,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(CorrectOrderDetailsCommand.From(id, request), cancellationToken);
+    }
+
+    [HttpPut("{id:guid}/service")]
+    [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<MaintenanceOrderResponse>> ChangeService(
+        [FromServices] ChangeOrderServiceHandler handler,
+        Guid id,
+        ChangeOrderServiceRequest request,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(ChangeOrderServiceCommand.From(id, request), cancellationToken);
+    }
+
+    [HttpPut("{id:guid}/due-date")]
+    [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<MaintenanceOrderResponse>> Reschedule(
+        [FromServices] RescheduleOrderHandler handler,
+        Guid id,
+        RescheduleOrderRequest request,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(RescheduleOrderCommand.From(id, request), cancellationToken);
+    }
 }
