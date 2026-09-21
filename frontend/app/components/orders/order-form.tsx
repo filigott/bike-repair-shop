@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { Form, Link, useNavigation } from "react-router";
-import { FormField } from "~/components/form-field";
-import type { PlaceOrderRequest } from "~/services/endpoints/orders";
 import type { ServiceTypeItem } from "~/services/endpoints/service-types";
 import type { ActionFailure } from "~/types/action-result";
-
-export type OrderFormField = keyof PlaceOrderRequest;
+import type { OrderFormField } from "./order-fields";
+import {
+  DueDateField,
+  OrderDetailsFields,
+  ServiceTypeField,
+} from "./order-fields";
 
 type OrderFormProps = {
   serviceTypes: ServiceTypeItem[];
@@ -32,85 +34,17 @@ export function OrderForm({
 
       <fieldset className="fieldset flex flex-col gap-3">
         <legend className="fieldset-legend">
-          {t("orders.groups.customer")}
+          {t("orders.groups.details")}
         </legend>
-
-        <FormField
-          name="customerName"
-          label={t("orders.fields.customerName")}
-          errors={errors.customerName}
-        >
-          <input
-            id="customerName"
-            name="customerName"
-            className="input w-full"
-          />
-        </FormField>
-
-        <FormField
-          name="phoneNumber"
-          label={t("orders.fields.phoneNumber")}
-          errors={errors.phoneNumber}
-        >
-          <input id="phoneNumber" name="phoneNumber" className="input w-full" />
-        </FormField>
-
-        <FormField
-          name="email"
-          label={t("orders.fields.email")}
-          errors={errors.email}
-        >
-          <input id="email" name="email" className="input w-full" />
-        </FormField>
+        <OrderDetailsFields errors={errors} />
       </fieldset>
 
       <fieldset className="fieldset flex flex-col gap-3">
         <legend className="fieldset-legend">
-          {t("orders.groups.bikeAndService")}
+          {t("orders.groups.schedule")}
         </legend>
-
-        <FormField
-          name="bikeBrand"
-          label={t("orders.fields.bikeBrand")}
-          errors={errors.bikeBrand}
-        >
-          <input id="bikeBrand" name="bikeBrand" className="input w-full" />
-        </FormField>
-
-        <FormField
-          name="serviceType"
-          label={t("orders.fields.serviceType")}
-          errors={errors.serviceType}
-        >
-          <select id="serviceType" name="serviceType" className="select w-full">
-            {serviceTypes.map((service) => (
-              <option key={service.code} value={service.code}>
-                {t(`orders.serviceType.${service.code}`)}
-              </option>
-            ))}
-          </select>
-        </FormField>
-
-        <FormField
-          name="dueDate"
-          label={t("orders.fields.dueDate")}
-          errors={errors.dueDate}
-        >
-          <input
-            id="dueDate"
-            name="dueDate"
-            type="date"
-            className="input w-full"
-          />
-        </FormField>
-
-        <FormField
-          name="notes"
-          label={t("orders.fields.notes")}
-          errors={errors.notes}
-        >
-          <textarea id="notes" name="notes" className="textarea w-full" />
-        </FormField>
+        <ServiceTypeField serviceTypes={serviceTypes} errors={errors} />
+        <DueDateField errors={errors} />
       </fieldset>
 
       <div className="flex gap-2">

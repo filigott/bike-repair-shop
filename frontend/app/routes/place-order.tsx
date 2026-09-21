@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { redirect } from "react-router";
-import type { OrderFormField } from "~/components/orders/order-form";
+import type { OrderFormField } from "~/components/orders/order-fields";
 import { OrderForm } from "~/components/orders/order-form";
 import { actionFailureFrom } from "~/services/action-errors";
 import type {

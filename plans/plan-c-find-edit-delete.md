@@ -16,10 +16,10 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | C1c. The three edit commands | ✅ | Details, service and due date, one endpoint each |
 | C1c.1 Movable clock in the harness | ✅ | Fake `TimeProvider`, so an overdue order can be tested |
 | C1d. Delete | ✅ | A real delete, 204 on success |
-| C2. Edit form | 🟡 | Shares the form component with B4; groups the fields under two headings |
+| C2. Edit form | ✅ | Order detail page, one intent-driven form per command |
 | C2a. Shared form component | ✅ | Two legends, and the date input stops blocking the submit |
-| C2b. Edit route | ⏳ | Loader, prefilled form, action diffing against the three commands |
-| C3. Delete flow | ⏳ | Smoke test: all four tasks from the brief |
+| C2b. Order detail page | ✅ | One loader, one action, one form per command |
+| C3. Delete flow | 🟡 | Smoke test: all four tasks from the brief |
 | C4. List and form polish | ⏳ | Only once C3's smoke test passes; see the roadmap's parked list |
 
 ## Context
@@ -30,18 +30,21 @@ the scope boundary and the open questions; none of that is restated here. Edit i
 ## Design decisions
 
 **Edit is three endpoints, one per domain method.** `PUT /api/orders/{id}/details`, `/service` and
-`/due-date` map one to one onto `CorrectDetails`, `ChangeService` and `Reschedule`. The alternative,
-one `PUT /api/orders/{id}` carrying the whole editable shape, is a single atomic round trip, but it
-is the generic update endpoint the main plan argues against and it reschedules on every save. The
-cost taken instead: the edit form diffs what it loaded against what was submitted and issues up to
-three calls, which are not atomic. Acceptable because each call is independently valid and the form
-reloads afterwards.
+`/due-date` map one to one onto `CorrectDetails`, `ChangeService` and `Reschedule`, instead of one
+`PUT /api/orders/{id}` carrying the whole editable shape.
 
-**A past due date is only rejected when it changes.** `SetDueDate` keeps its guard, so the domain
-rule is untouched. The edit form skips the `/due-date` call when the submitted date equals the loaded
-one, which is what lets an overdue order have its phone number corrected without inventing a new
-date. Putting the exception in the domain, by allowing a past date that equals the stored one, was
-rejected: it weakens an invariant to serve a UI flow.
+**The UI matches the commands, one form each.** The first attempt was a single edit form that diffed
+what it loaded against what was submitted and fanned out to all three endpoints. That is the generic
+edit form the main plan argues against, dressed as commands: it needed a diff, a call order and a
+partial-save caveat, none of which are the user's problem. The order detail page now hosts one small
+form per command, each with its own submit and its own fetcher, all posting to one route action that
+switches on an `OrderIntent`. One gesture is one command is one atomic write, and the rule about a
+past due date never comes up, because the reschedule form is only submitted when a reschedule is
+meant. A page route per command is the next step up if a form outgrows the page; not needed yet.
+
+**A past due date stays refused, without exception.** `SetDueDate` keeps its guard and nothing in the
+UI works around it. An overdue order's contact details are corrected through the details form, which
+never touches the date.
 
 **404 is an API concern.** `NotFoundException` lives in `Api/Exceptions` and is mapped alongside the
 domain exceptions, because "no row with that id" is not a broken invariant.
@@ -59,9 +62,10 @@ handler. Starts by making `DueDate` nullable on the request shapes with `NotNull
 so a missing date is a field error rather than the binder's `$.dueDate`, which the edit form would
 otherwise hit the same way the place form did.
 
-**C2. Edit form.** The form component from B4 serving edit through its own page route with a loader,
-with the fields grouped under a customer heading and a bike and service heading while it is being
-factored for reuse. Tests covering a loaded edit and a rejected submit.
+**C2. Edit form.** An order detail page at `/orders/:id` with its own loader, hosting one form per
+edit command. The field groups are factored out of the place form so both compose the same inputs.
+Tests covering the prefill, one test per command proving it sends only its own call, and a rejected
+submit landing on the form that made it.
 
 **C3. Delete flow.** Native `<dialog>` confirmation, fetcher submit against an intent, optimistic
 removal from the list, failure surfaced without losing the row. Ends with a smoke test of all four

@@ -27,7 +27,9 @@ None beyond the main plan yet. A decision that only this phase needs goes here.
 
 **G1. Optimistic concurrency.** PostgreSQL `xmin` as the concurrency token, exposed as a `version`
 field on the order response, required on the update request, and a mismatch mapped to a conflict the
-edit form explains. Integration test driving two writers against one row.
+edit form explains. Integration test driving two writers against one row. This also covers the
+staleness the edit page has today: `isEditable` is read at load time, so an order completed elsewhere
+in the meantime is only discovered when the save comes back 422.
 
 **G2. CI workflow.** GitHub Actions running the build, unit tests and integration tests on push, with
 the front-end gates alongside.

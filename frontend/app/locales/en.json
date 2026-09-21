@@ -3,9 +3,12 @@
     "title": "Bike Repair Shop"
   },
   "common": {
+    "actions": "Actions",
+    "back": "Back",
     "cancel": "Cancel",
     "language": "Language",
-    "loading": "Loading"
+    "loading": "Loading",
+    "saving": "Saving"
   },
   "errors": {
     "unexpected": "Something went wrong"
@@ -15,6 +18,10 @@
     "nb": "Norsk"
   },
   "orders": {
+    "changeService": {
+      "legend": "Service",
+      "submit": "Change service"
+    },
     "columns": {
       "customer": "Customer",
       "phone": "Phone",
@@ -22,6 +29,15 @@
       "service": "Service",
       "due": "Due date",
       "status": "Status"
+    },
+    "correctDetails": {
+      "legend": "Customer and bike",
+      "submit": "Save details"
+    },
+    "detail": {
+      "action": "Open",
+      "placedAt": "Placed",
+      "closed": "A {{status}} order can no longer be changed."
     },
     "empty": "No orders found",
     "fields": {
@@ -34,8 +50,8 @@
       "notes": "Notes"
     },
     "groups": {
-      "customer": "Customer",
-      "bikeAndService": "Bike and service"
+      "details": "Order details",
+      "schedule": "Service and due date"
     },
     "overdue": "Overdue",
     "paging": {
@@ -47,6 +63,10 @@
       "title": "Place an order",
       "action": "Place an order",
       "submit": "Place order"
+    },
+    "reschedule": {
+      "legend": "Due date",
+      "submit": "Reschedule"
     },
     "search": {
       "label": "Search orders",

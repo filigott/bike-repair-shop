@@ -3,9 +3,12 @@
     "title": "Sykkelverkstedet"
   },
   "common": {
+    "actions": "Handlinger",
+    "back": "Tilbake",
     "cancel": "Avbryt",
     "language": "Språk",
-    "loading": "Laster"
+    "loading": "Laster",
+    "saving": "Lagrer"
   },
   "errors": {
     "unexpected": "Noe gikk galt"
@@ -15,6 +18,10 @@
     "nb": "Norsk"
   },
   "orders": {
+    "changeService": {
+      "legend": "Tjeneste",
+      "submit": "Endre tjeneste"
+    },
     "columns": {
       "customer": "Kunde",
       "phone": "Telefon",
@@ -22,6 +29,15 @@
       "service": "Tjeneste",
       "due": "Frist",
       "status": "Status"
+    },
+    "correctDetails": {
+      "legend": "Kunde og sykkel",
+      "submit": "Lagre detaljer"
+    },
+    "detail": {
+      "action": "Åpne",
+      "placedAt": "Registrert",
+      "closed": "En ordre med status {{status}} kan ikke endres."
     },
     "empty": "Ingen ordrer funnet",
     "fields": {
@@ -34,8 +50,8 @@
       "notes": "Notater"
     },
     "groups": {
-      "customer": "Kunde",
-      "bikeAndService": "Sykkel og tjeneste"
+      "details": "Ordredetaljer",
+      "schedule": "Tjeneste og frist"
     },
     "overdue": "Forfalt",
     "paging": {
@@ -47,6 +63,10 @@
       "title": "Registrer ordre",
       "action": "Registrer ordre",
       "submit": "Registrer"
+    },
+    "reschedule": {
+      "legend": "Frist",
+      "submit": "Endre frist"
     },
     "search": {
       "label": "Søk i ordrer",

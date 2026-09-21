@@ -15,6 +15,7 @@ export function OrdersTable({ items }: { items: MaintenanceOrderSummary[] }) {
           <th>{t("orders.columns.service")}</th>
           <th>{t("orders.columns.due")}</th>
           <th>{t("orders.columns.status")}</th>
+          <th>{t("common.actions")}</th>
         </tr>
       </thead>
       <tbody>

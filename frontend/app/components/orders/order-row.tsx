@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { useLocale } from "~/hooks/use-locale";
 import type { MaintenanceOrderSummary } from "~/services/endpoints/orders";
 
@@ -24,6 +25,11 @@ export function OrderRow({ order }: { order: MaintenanceOrderSummary }) {
         <span className="badge badge-ghost">
           {t(`orders.status.${order.status}`)}
         </span>
+      </td>
+      <td>
+        <Link to={`/orders/${order.id}`} className="btn btn-ghost btn-xs">
+          {t("orders.detail.action")}
+        </Link>
       </td>
     </tr>
   );
