@@ -8,6 +8,7 @@ public static class OrdersServiceCollectionExtensions
     {
         services.AddScoped<PlaceOrderHandler>();
         services.AddScoped<ListOrdersHandler>();
+        services.AddScoped<GetOrderHandler>();
         return services;
     }
 }

@@ -23,6 +23,17 @@ public sealed class OrdersController : ControllerBase
         return await handler.HandleAsync(ListOrdersQuery.From(request), cancellationToken);
     }
 
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MaintenanceOrderResponse>> Get(
+        [FromServices] GetOrderHandler handler,
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(new GetOrderQuery(id), cancellationToken);
+    }
+
     [HttpPost]
     [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
@@ -33,7 +44,6 @@ public sealed class OrdersController : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await handler.HandleAsync(PlaceOrderCommand.From(request), cancellationToken);
-        // TODO (#2): CreatedAtAction once get-by-id exists to point the Location header at.
-        return StatusCode(StatusCodes.Status201Created, response);
+        return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
     }
 }

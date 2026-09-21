@@ -4,22 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BikeRepairShop.Api.Exceptions;
 
-public sealed class DomainExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
+public sealed class ProblemDetailsExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        if (exception is not DomainException)
+        int? status = exception switch
+        {
+            NotFoundException => StatusCodes.Status404NotFound,
+            InvalidStateTransitionException => StatusCodes.Status409Conflict,
+            DomainException => StatusCodes.Status422UnprocessableEntity,
+            _ => null,
+        };
+
+        if (status is null)
         {
             return false;
         }
 
-        var status = exception switch
-        {
-            InvalidStateTransitionException => StatusCodes.Status409Conflict,
-            _ => StatusCodes.Status422UnprocessableEntity,
-        };
-
-        httpContext.Response.StatusCode = status;
+        httpContext.Response.StatusCode = status.Value;
         return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,

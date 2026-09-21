@@ -13,9 +13,11 @@ public sealed record MaintenanceOrderResponse(
     string? Notes,
     OrderStatus Status,
     DateTimeOffset PlacedAt,
+    bool IsOverdue,
+    bool IsEditable,
     IReadOnlyList<OrderStatus> AllowedTransitions)
 {
-    public static MaintenanceOrderResponse From(MaintenanceOrder order)
+    public static MaintenanceOrderResponse From(MaintenanceOrder order, DateOnly today)
     {
         return new MaintenanceOrderResponse(
             order.Id,
@@ -28,6 +30,8 @@ public sealed record MaintenanceOrderResponse(
             order.Notes,
             order.Status,
             order.PlacedAt,
+            order.IsOverdueOn(today),
+            order.Status.IsEditable,
             order.AllowedTransitions);
     }
 }

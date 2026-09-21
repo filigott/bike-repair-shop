@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using AwesomeAssertions;
 using BikeRepairShop.Api.Features.Orders.Models;
 using BikeRepairShop.Api.Models;
-using BikeRepairShop.Database;
 using BikeRepairShop.Domain;
 using BikeRepairShop.Domain.Orders;
 using BikeRepairShop.Tests.Integration.Fixtures;
@@ -23,7 +22,7 @@ public class ListOrdersTests(DatabaseFixture database) : IntegrationTest(databas
     public async Task Search_matches_name_phone_and_email_case_insensitively(string search, string expectedCustomer)
     {
         // Arrange
-        await SeedAsync(
+        await Database.SeedAsync(
             OrderFixtures.Place(Clock, customerName: "Kari Nordmann", phoneNumber: "+47 912 34 567", email: "kari@example.com"),
             OrderFixtures.Place(Clock, customerName: "Ola Hansen", phoneNumber: "98765432", email: "ola@post.no"));
         using var client = Database.Factory.CreateClient();
@@ -41,7 +40,7 @@ public class ListOrdersTests(DatabaseFixture database) : IntegrationTest(databas
     public async Task Pages_split_orders_with_the_same_due_date_without_duplicates_or_gaps()
     {
         // Arrange
-        await SeedAsync(
+        await Database.SeedAsync(
             OrderFixtures.Place(Clock, customerName: "A"),
             OrderFixtures.Place(Clock, customerName: "B"),
             OrderFixtures.Place(Clock, customerName: "C"));
@@ -73,13 +72,5 @@ public class ListOrdersTests(DatabaseFixture database) : IntegrationTest(databas
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(Json.Options, TestContext.Current.CancellationToken);
         problem!.Errors.Keys.Should().BeEquivalentTo("pageSize");
-    }
-
-    private async Task SeedAsync(params MaintenanceOrder[] orders)
-    {
-        await using var scope = Database.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<BikeRepairShopDbContext>();
-        db.Orders.AddRange(orders);
-        await db.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 }

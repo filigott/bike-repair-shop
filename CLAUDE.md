@@ -146,9 +146,10 @@ only when the current state allows them. A status dropdown or a generic edit-any
 state machine in the user's head; a "Complete order" button that the API's capability flags switch on
 keeps it in the code.
 
-**The UI never recomputes a server rule.** `allowedTransitions`, `isOverdue` and `isReopened` are
-projected onto the response by the API. Computing overdue in the browser lets the viewer's device
-timezone decide whether an order is late.
+**The UI never recomputes a server rule.** `allowedTransitions`, `isEditable`, `isOverdue` and
+`isReopened` are projected onto the response by the API. Computing overdue in the browser lets the
+viewer's device timezone decide whether an order is late, and deriving editability from the status
+puts the state machine back in the client.
 
 **UI rules.** Signals of intent over booleans: native `<dialog>` with `showModal()` for modals, with
 the parent holding `selected: T | null`. DaisyUI semantic tokens only (`primary`, `base-100`, `error`

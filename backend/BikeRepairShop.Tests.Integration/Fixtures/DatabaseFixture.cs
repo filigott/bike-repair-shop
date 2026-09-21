@@ -1,4 +1,5 @@
 using BikeRepairShop.Database;
+using BikeRepairShop.Domain.Orders;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Respawn;
@@ -37,6 +38,14 @@ public sealed class DatabaseFixture : IAsyncLifetime
     public AsyncServiceScope CreateScope()
     {
         return Factory.Services.CreateAsyncScope();
+    }
+
+    public async Task SeedAsync(params MaintenanceOrder[] orders)
+    {
+        await using var scope = CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<BikeRepairShopDbContext>();
+        db.Orders.AddRange(orders);
+        await db.SaveChangesAsync(TestContext.Current.CancellationToken);
     }
 
     public async ValueTask DisposeAsync()

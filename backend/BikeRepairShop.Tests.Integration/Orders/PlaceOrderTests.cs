@@ -29,7 +29,8 @@ public class PlaceOrderTests(DatabaseFixture database) : IntegrationTest(databas
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         var body = await response.Content.ReadFromJsonAsync<MaintenanceOrderResponse>(Json.Options, TestContext.Current.CancellationToken);
-        body!.Status.Should().Be(OrderStatus.Received);
+        response.Headers.Location!.AbsolutePath.Should().Be($"/api/orders/{body!.Id}");
+        body.Status.Should().Be(OrderStatus.Received);
         body.Email.Should().Be("kari@example.com");
         body.PhoneNumber.Should().Be("+4791234567");
         body.AllowedTransitions.Should().BeEquivalentTo([OrderStatus.InProgress, OrderStatus.Completed, OrderStatus.Cancelled]);

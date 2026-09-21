@@ -24,6 +24,6 @@ public sealed class PlaceOrderHandler(BikeRepairShopDbContext db, IShopClock clo
         await db.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Placed order {OrderId} for {ServiceType} due {DueDate}", order.Id, order.ServiceType, order.DueDate);
-        return MaintenanceOrderResponse.From(order);
+        return MaintenanceOrderResponse.From(order, clock.Today);
     }
 }
