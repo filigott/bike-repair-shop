@@ -12,6 +12,7 @@ public static class OrdersServiceCollectionExtensions
         services.AddScoped<CorrectOrderDetailsHandler>();
         services.AddScoped<ChangeOrderServiceHandler>();
         services.AddScoped<RescheduleOrderHandler>();
+        services.AddScoped<DeleteOrderHandler>();
         return services;
     }
 }

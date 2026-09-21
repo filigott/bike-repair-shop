@@ -10,13 +10,13 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| C1. Get, update and delete API | 🟡 | Explicit commands, not one update endpoint |
+| C1. Get, update and delete API | ✅ | Explicit commands, not one update endpoint |
 | C1a. Nullable due date on the request shapes | ✅ | A missing date is a field error, not `$.dueDate` |
 | C1b. Get by id | ✅ | Brings `NotFoundException` and its 404 mapping |
 | C1c. The three edit commands | ✅ | Details, service and due date, one endpoint each |
 | C1c.1 Movable clock in the harness | ✅ | Fake `TimeProvider`, so an overdue order can be tested |
-| C1d. Delete | 🟡 | A real delete, 204 on success |
-| C2. Edit form | ⏳ | Shares the form component with B4; groups the fields under two headings |
+| C1d. Delete | ✅ | A real delete, 204 on success |
+| C2. Edit form | 🟡 | Shares the form component with B4; groups the fields under two headings |
 | C3. Delete flow | ⏳ | Smoke test: all four tasks from the brief |
 | C4. List and form polish | ⏳ | Only once C3's smoke test passes; see the roadmap's parked list |
 

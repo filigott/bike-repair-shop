@@ -88,4 +88,16 @@ public sealed class OrdersController : ControllerBase
     {
         return await handler.HandleAsync(RescheduleOrderCommand.From(id, request), cancellationToken);
     }
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(
+        [FromServices] DeleteOrderHandler handler,
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        await handler.HandleAsync(new DeleteOrderCommand(id), cancellationToken);
+        return NoContent();
+    }
 }
