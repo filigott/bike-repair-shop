@@ -2,6 +2,10 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  getDemoDataStatus,
+  resetDemoData,
+} from "~/services/endpoints/demo-data";
 import type {
   MaintenanceOrderSummary,
   PagedOrders,
@@ -13,6 +17,11 @@ import Orders, { clientAction, clientLoader } from "./orders";
 vi.mock("~/services/endpoints/orders", () => ({
   listOrders: vi.fn(),
   deleteOrder: vi.fn(),
+}));
+
+vi.mock("~/services/endpoints/demo-data", () => ({
+  getDemoDataStatus: vi.fn(),
+  resetDemoData: vi.fn(),
 }));
 
 function summary(
@@ -57,6 +66,12 @@ describe("Orders", () => {
   beforeEach(() => {
     vi.mocked(listOrders).mockReset();
     vi.mocked(deleteOrder).mockReset().mockResolvedValue(undefined);
+    vi.mocked(getDemoDataStatus)
+      .mockReset()
+      .mockResolvedValue({ enabled: false, orderCount: 0 });
+    vi.mocked(resetDemoData)
+      .mockReset()
+      .mockResolvedValue({ enabled: true, orderCount: 26 });
   });
 
   it("renders a row per order", async () => {
@@ -176,6 +191,67 @@ describe("Orders", () => {
     expect(screen.getByText("Grace Hopper")).toBeInTheDocument();
     expect(deleteOrder).toHaveBeenCalledWith(doomed.id);
     finishDelete();
+  });
+
+  it("offers no way to reset while demo data is switched off", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(page([summary()]));
+
+    // Act
+    renderOrders();
+    await screen.findByText("Ada Lovelace");
+
+    // Assert
+    expect(
+      screen.queryByRole("button", { name: "Reset demo data" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("resets only once the dialog is confirmed", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(page([summary()]));
+    vi.mocked(getDemoDataStatus).mockResolvedValue({
+      enabled: true,
+      orderCount: 4,
+    });
+    renderOrders();
+    await screen.findByText("Ada Lovelace");
+
+    // Act
+    await userEvent.click(
+      screen.getByRole("button", { name: "Reset demo data" }),
+    );
+
+    // Assert
+    expect(
+      screen.getByText(
+        "Replace the 4 orders in the database with a fresh demo set? Orders you placed yourself are removed too.",
+      ),
+    ).toBeInTheDocument();
+    expect(resetDemoData).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole("button", { name: "Reset" }));
+    await waitFor(() => expect(resetDemoData).toHaveBeenCalledOnce());
+  });
+
+  it("leaves the data alone when the reset dialog is cancelled", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(page([summary()]));
+    vi.mocked(getDemoDataStatus).mockResolvedValue({
+      enabled: true,
+      orderCount: 4,
+    });
+    renderOrders();
+    await screen.findByText("Ada Lovelace");
+    await userEvent.click(
+      screen.getByRole("button", { name: "Reset demo data" }),
+    );
+
+    // Act
+    await userEvent.click(screen.getAllByRole("button", { name: "Cancel" })[0]);
+
+    // Assert
+    expect(resetDemoData).not.toHaveBeenCalled();
   });
 
   it("keeps the row and explains why when the delete is refused", async () => {

@@ -10,6 +10,12 @@
     "loading": "Laster",
     "saving": "Lagrer"
   },
+  "demoData": {
+    "action": "Nullstill demodata",
+    "title": "Nullstill demodata",
+    "confirm": "Erstatte de {{orderCount}} ordrene i databasen med et nytt demosett? Ordrer du har lagt inn selv blir også slettet.",
+    "submit": "Nullstill"
+  },
   "errors": {
     "unexpected": "Noe gikk galt"
   },

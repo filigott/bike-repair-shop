@@ -12,8 +12,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| H1. Seed fixture and the API slice | 🟡 | Setting, fixture, two endpoints, seed on startup when empty |
-| H2. Reset control in the UI | ⏳ | Button plus confirm dialog, shown only when the API says enabled |
+| H1. Seed fixture and the API slice | ✅ | Setting, fixture, two endpoints, seed on startup when empty |
+| H2. Reset control in the UI | 🟡 | Button plus confirm dialog, shown only when the API says enabled |
 
 ## Context
 

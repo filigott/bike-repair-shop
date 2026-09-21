@@ -10,6 +10,12 @@
     "loading": "Loading",
     "saving": "Saving"
   },
+  "demoData": {
+    "action": "Reset demo data",
+    "title": "Reset demo data",
+    "confirm": "Replace the {{orderCount}} orders in the database with a fresh demo set? Orders you placed yourself are removed too.",
+    "submit": "Reset"
+  },
   "errors": {
     "unexpected": "Something went wrong"
   },

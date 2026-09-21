@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useFetcher } from "react-router";
+import { ResetDemoDataDialog } from "~/components/demo-data/reset-demo-data-dialog";
 import { DeleteOrderDialog } from "~/components/orders/delete-order-dialog";
 import { OrderSearchForm } from "~/components/orders/order-search-form";
 import { OrdersPager } from "~/components/orders/orders-pager";
 import { OrdersTable } from "~/components/orders/orders-table";
 import { actionFailureFrom } from "~/services/action-errors";
+import {
+  getDemoDataStatus,
+  resetDemoData,
+} from "~/services/endpoints/demo-data";
 import type { MaintenanceOrderSummary } from "~/services/endpoints/orders";
 import { deleteOrder, listOrders } from "~/services/endpoints/orders";
 import { textOf } from "~/services/form-data";
 import { actionSuccess, isActionFailure } from "~/types/action-result";
+import { DemoDataIntent } from "~/types/intents/demo-data";
 import { OrderIntent } from "~/types/intents/orders";
 import type { Route } from "./+types/orders";
 
@@ -19,24 +25,19 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const params = new URL(request.url).searchParams;
   const search = params.get("search")?.trim() ?? "";
   const page = Math.max(1, Number(params.get("page") ?? 1) || 1);
-  const orders = await listOrders({
-    search: search || undefined,
-    page,
-    pageSize: PAGE_SIZE,
-  });
+  const [orders, demoData] = await Promise.all([
+    listOrders({ search: search || undefined, page, pageSize: PAGE_SIZE }),
+    getDemoDataStatus(),
+  ]);
 
-  return { orders, search, page };
+  return { orders, demoData, search, page };
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const form = await request.formData();
-  const intent = textOf(form, "intent");
-  if (intent !== OrderIntent.Delete) {
-    throw new Error(`Unknown order intent: ${intent}`);
-  }
 
   try {
-    await deleteOrder(textOf(form, "id"));
+    await runIntent(form);
   } catch (error) {
     return actionFailureFrom(error);
   }
@@ -45,12 +46,13 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function Orders({ loaderData }: Route.ComponentProps) {
-  const { orders, search, page } = loaderData;
+  const { orders, demoData, search, page } = loaderData;
   const { t } = useTranslation();
   const fetcher = useFetcher();
   const [selected, setSelected] = useState<MaintenanceOrderSummary | null>(
     null,
   );
+  const [resetting, setResetting] = useState(false);
 
   const deletingId = fetcher.formData?.get("id");
   const items = orders.items.filter((order) => order.id !== deletingId);
@@ -61,9 +63,20 @@ export default function Orders({ loaderData }: Route.ComponentProps) {
     <section className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
         <h1 className="text-2xl font-bold">{t("orders.title")}</h1>
-        <Link to="/orders/place" className="btn btn-primary btn-sm ml-auto">
-          {t("orders.place.action")}
-        </Link>
+        <div className="ml-auto flex items-center gap-2">
+          {demoData.enabled && (
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setResetting(true)}
+            >
+              {t("demoData.action")}
+            </button>
+          )}
+          <Link to="/orders/place" className="btn btn-primary btn-sm">
+            {t("orders.place.action")}
+          </Link>
+        </div>
       </div>
       <OrderSearchForm search={search} />
       {failure && (
@@ -97,6 +110,31 @@ export default function Orders({ loaderData }: Route.ComponentProps) {
           }}
         />
       )}
+      {resetting && (
+        <ResetDemoDataDialog
+          orderCount={Number(demoData.orderCount)}
+          onClose={() => setResetting(false)}
+          onConfirm={() => {
+            fetcher.submit(
+              { intent: DemoDataIntent.Reset },
+              { method: "post" },
+            );
+            setResetting(false);
+          }}
+        />
+      )}
     </section>
   );
+}
+
+function runIntent(form: FormData): Promise<unknown> {
+  const intent = textOf(form, "intent");
+  switch (intent) {
+    case OrderIntent.Delete:
+      return deleteOrder(textOf(form, "id"));
+    case DemoDataIntent.Reset:
+      return resetDemoData();
+    default:
+      throw new Error(`Unknown intent: ${intent}`);
+  }
 }
