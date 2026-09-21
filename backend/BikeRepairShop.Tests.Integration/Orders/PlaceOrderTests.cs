@@ -39,7 +39,7 @@ public class PlaceOrderTests(DatabaseFixture database) : IntegrationTest(databas
             .Orders.SingleAsync(o => o.Id == body.Id, TestContext.Current.CancellationToken);
         saved.CustomerName.Should().Be(request.CustomerName);
         saved.ServiceType.Should().Be(request.ServiceType);
-        saved.DueDate.Should().Be(request.DueDate);
+        saved.DueDate.Should().Be(request.DueDate!.Value);
         saved.Notes.Should().Be(request.Notes);
     }
 
@@ -58,6 +58,22 @@ public class PlaceOrderTests(DatabaseFixture database) : IntegrationTest(databas
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(Json.Options, TestContext.Current.CancellationToken);
         problem!.Errors.Keys.Should().BeEquivalentTo("customerName", "phoneNumber", "email", "bikeBrand");
         problem.Errors.Values.Should().AllSatisfy(messages => messages.Should().ContainSingle());
+    }
+
+    [Fact]
+    public async Task Placing_an_order_without_a_due_date_reports_the_field_rather_than_the_binder()
+    {
+        // Arrange
+        using var client = Database.Factory.CreateClient();
+        var request = PlaceOrderRequests.Valid(Clock) with { DueDate = null };
+
+        // Act
+        var response = await client.PostAsJsonAsync("/api/orders", request, Json.Options, TestContext.Current.CancellationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(Json.Options, TestContext.Current.CancellationToken);
+        problem!.Errors.Keys.Should().BeEquivalentTo("dueDate");
     }
 
     [Fact]

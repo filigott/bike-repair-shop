@@ -32,7 +32,7 @@ public sealed class PlaceOrderRequestValidator : AbstractValidator<PlaceOrderReq
             .IsInEnum();
 
         RuleFor(r => r.DueDate)
-            .NotEmpty();
+            .NotNull();
 
         RuleFor(r => r.Notes)
             .MaximumLength(MaintenanceOrder.NotesMaxLength);

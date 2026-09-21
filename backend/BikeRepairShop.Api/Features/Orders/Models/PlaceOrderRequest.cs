@@ -8,5 +8,5 @@ public sealed record PlaceOrderRequest(
     string Email,
     string BikeBrand,
     ServiceType ServiceType,
-    DateOnly DueDate,
+    DateOnly? DueDate,
     string? Notes);

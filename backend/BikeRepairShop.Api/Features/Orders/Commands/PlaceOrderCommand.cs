@@ -14,13 +14,15 @@ public sealed record PlaceOrderCommand(
 {
     public static PlaceOrderCommand From(PlaceOrderRequest request)
     {
+        ArgumentNullException.ThrowIfNull(request.DueDate);
+
         return new PlaceOrderCommand(
             request.CustomerName,
             PhoneNumber.Parse(request.PhoneNumber),
             EmailAddress.Parse(request.Email),
             request.BikeBrand,
             request.ServiceType,
-            request.DueDate,
+            request.DueDate.Value,
             request.Notes);
     }
 }
