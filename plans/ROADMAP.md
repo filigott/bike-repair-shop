@@ -14,27 +14,48 @@ running `docker compose up`. Everything currently planned lives in
 
 ## Next up
 
-Everything below is beyond the brief, which is met. Take them in this order.
+Everything below is beyond the brief, which is met. Reordered on 2026-09-21 after a second look at
+the priorities; the reasoning is under `Why this order` below.
 
 1. Order reference (#9). A database-generated sequential number, so an order can be read out over
-   the phone. It goes before the detail rework, which is meant to lead with it. Both manual passes
-   on 2026-09-21 had to search by customer name because nothing else identifies an order.
-2. Detail page rework (#10). The page goes read-only and each command opens a native dialog holding
-   only its own form, matching the delete confirmation already on the list. It also removes the
-   duplicated `Service` and `Due date` headings and the buried back link.
-3. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
+   the phone. First because both manual passes on 2026-09-21 had to search by customer name, and
+   because the detail page is meant to lead with it.
+2. Order lifecycle, the API half only (#5). `start`, `complete` and `cancel` as commands over HTTP,
+   calling the domain methods that already exist and are already unit-tested. No UI in this unit and
+   no history table.
+3. Detail page rework (#10). The page goes read-only and every command becomes an action: three edit
+   commands opening a dialog with their own form, and three transitions that are a confirm rather
+   than a form. Built once, with all six in hand.
+4. A status legend above the orders table. Its transitions come from the API, read off the domain's
+   matrix the way the service catalogue is, never written out in both locale files.
+5. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
    a described-by message, clearing a stale message when its input changes, a clear-search control
-   the empty state also offers, and `autocomplete` on the contact fields. The fifth, status badges
-   carrying meaning, landed in C4a.
-4. Localized validation messages from the API (#11). The only strings the front end cannot key.
-5. Order lifecycle (#5), which the status legend below depends on.
-6. A status legend above the orders table. Settled on 2026-09-21 that its transitions come from the
-   API, read off the domain's matrix the way the service catalogue is, rather than written out in
-   both locale files. Probably built as part of #5 rather than alone, because until #5 lands the
-   legend would describe transitions no button can perform.
+   the empty state also offers, and `autocomplete` on the contact fields.
+6. Localized validation messages from the API (#11). The only strings the front end cannot key.
 7. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
-   file. Settled that the values come from the database, not the loaded page or a fixed list.
-8. Search, concurrency, CI and the README (#4, #6), the remaining original phases.
+   file. The values come from the database, not the loaded page and not a fixed list.
+8. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
+   and when, plus somewhere to show it. The brief never asks for it, so it is scoped on its own
+   rather than folded into the transitions.
+9. Search, concurrency, CI and the README (#4, #6), the remaining original phases. The order
+   number from item 1 should become searchable here rather than in #9.
+
+### Why this order
+
+The state machine is the one piece of real domain logic in an otherwise CRUD-shaped problem, and
+nothing can currently reach it: the transition matrix is written and tested, `allowedTransitions` is
+projected onto every response, the status colours are on screen, and no caller exists. The demo
+seeder had to call the domain methods directly to produce a completed order. That is the largest
+functional gap left, which is why the lifecycle API moved from fifth place to second.
+
+The detail rework follows it rather than preceding it because that rework builds an action area, and
+half the actions belonging in it did not exist. They are also a different shape: a transition is a
+confirm, not a form in a dialog. Building the area for three commands and returning for the other
+three is avoidable by doing them in one pass.
+
+Splitting #5 keeps that unit reviewable. Transitions make the state machine reachable and unblock
+both the detail page and the legend; the history is a table, a migration and a view that nothing
+else waits on.
 
 Starting state at the end of 2026-09-21: `main` is clean, pushed and carries everything including
 the merged packaging pull request. The suites are green at 134 backend tests and the front-end
