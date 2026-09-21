@@ -19,14 +19,22 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|---|---|---|
 | A. Foundation | [plan-a-foundation.md](plan-a-foundation.md) | #7 | ✅ |
 | B. Place and find | [plan-b-place-and-list.md](plan-b-place-and-list.md) | #1 | ✅ |
-| C. Find, edit and delete | [plan-c-find-edit-delete.md](plan-c-find-edit-delete.md) | #2 | ⏳ |
+| C. Find, edit and delete | [plan-c-find-edit-delete.md](plan-c-find-edit-delete.md) | #2 | 🟡 |
 | D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ⏳ |
 | E. Search | [plan-e-search.md](plan-e-search.md) | #4 | ⏳ |
 | F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ⏳ |
 | G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ⏳ |
+| H. Demo data | not yet written | #8 | ⏳ |
+| I. Order reference | not yet written | #9 | ⏳ |
+| J. Detail page rework | not yet written | #10 | ⏳ |
+| K. Localized API messages | not yet written | #11 | ⏳ |
 
 Each phase plan carries its own step table. From B on, the last step of a phase ends in a manual
 smoke test through the running API and front end before the phase is called done.
+
+The letters record when a phase was identified, not the order it runs in. H through K came out of
+the phase C smoke test, and the running order is now C, H, D, I, J, the rest of C, K, then E, F, G.
+The roadmap's `Next up` is the one place that order lives.
 
 ## Context
 

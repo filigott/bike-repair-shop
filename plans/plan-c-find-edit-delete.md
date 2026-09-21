@@ -20,8 +20,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | C2a. Shared form component | ✅ | Two legends, and the date input stops blocking the submit |
 | C2b. Order detail page | ✅ | One loader, one action, one form per command |
 | C3. Delete flow | ✅ | Confirmed on the list, optimistic, restores the row on failure |
-| C3.1 Smoke test of the four brief tasks | ⏳ | Blocks calling the phase done |
-| C4. List and form polish | ⏳ | Only once C3's smoke test passes; see the roadmap's parked list |
+| C3.1 Smoke test of the four brief tasks | ✅ | Six of eight steps clean; 5 and 8 unreachable, see #8 |
+| C4. List and form polish | ⏳ | Now runs after #8, #3, #9 and #10; see the roadmap's Next up |
 
 ## Context
 
@@ -84,8 +84,9 @@ contact fields. Runs only after C3 is smoke-tested, and does not hold up phase D
 Run `docker compose up -d db`, `dotnet run --project backend/BikeRepairShop.Api`, and
 `npm --prefix frontend run dev` in separate terminals. The developer runs all three.
 
-1. **Find.** The list shows the seeded orders, the search box matches on name, phone and email, and
-   paging holds at a page size of 20.
+1. **Find.** The list shows the demo orders from #8, the search box matches on name, phone and
+   email, and paging holds at a page size of 20. Only the service catalogue is seeded by a
+   migration, so on a fresh volume without #8 this step has nothing to run against.
 2. **Place.** Place an order, leaving the due date empty: the API answers with a `dueDate` field
    error under the input rather than a page-level failure. Fill it in and the order appears in the
    list.
@@ -95,12 +96,29 @@ Run `docker compose up -d db`, `dotnet run --project backend/BikeRepairShop.Api`
    submits, and the button shows its own pending state. Change the service. Reschedule to a later
    date. Reschedule to a past date and confirm the refusal lands under the due-date form, not on the
    others.
-5. **Closed order.** No UI reaches a completed or cancelled order yet, so check this one against the
-   API directly if it matters; the page shows a notice and no forms.
+5. **Closed order.** Nothing moves an order off `Received` until #5, and no endpoint accepts a
+   status, so the only closed order is one #8 seeded. Its page shows a notice and no forms.
 6. **Delete.** Delete from the list: the dialog names the customer, Escape and the backdrop both
    cancel, and confirming removes the row.
 7. **Locale.** Switch to Norwegian and confirm every new string on the detail page, the dialog and
    the list has a translation.
 8. **Overdue.** An order whose due date has passed shows the overdue badge in the list and on the
-   detail page, and its details are still editable.
+   detail page, and its details are still editable. Only #8 can produce one: `Place` and
+   `Reschedule` both refuse a past due date, and the API runs on the system clock.
 
+### C3.1 outcome, 2026-09-21
+
+Steps 1, 2, 3, 4, 6 and 7 passed. Find, place with the empty-due-date field error, open, all three
+edit commands with the past-date refusal landing on the right form, the delete dialog, and the
+Norwegian locale all behaved as built.
+
+Step 5 and step 8 could not be run. Nothing moves an order off `Received`, so a closed order is
+unreachable, and the checklist's suggestion to reach one through the API directly is wrong: there is
+no such endpoint until #5. An overdue order cannot be produced either, because `Place` and
+`Reschedule` both refuse a past due date on purpose and the API runs on `TimeProvider.System`. Both
+are now covered by #8, and step 5 becomes real once #5 lands.
+
+What the pass raised beyond the checklist is in the roadmap under `Parked from the phase C smoke
+test` and is split across #8, #9, #10 and #11. The detail page reworking into one dialog per command
+supersedes the C2 decision below, which argued for one small form per command all visible at once:
+the shape was right, the presentation was not.
