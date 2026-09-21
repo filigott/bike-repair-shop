@@ -10,33 +10,36 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A, B, D and H done, C all but its polish, the brief met |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D and H done, C all but its polish; the brief is met and everything left is extra |
 
 ## Next up
 
-1. ✅ Demo data (#8), built in [plan-h-demo-data.md](plan-h-demo-data.md), seeded on startup into an
-   empty table and reset from the orders list.
-2. ✅ C4a visual polish (#2), pulled ahead of packaging on 2026-09-21: a colour per status, soft
-   fills on the row and header actions, and a readable form label size. It also turned up two
-   DaisyUI v4 classes that render nothing in v5 and had been silently dead in `FormField`.
-3. ✅ Phase D packaging (#3), built on `feat/3-docker-packaging` and smoke-tested from an empty
-   volume. The brief is now met end to end. What remains is the pull request and the push.
-4. Order reference (#9). A database-generated sequential number, so an order can be read out over
-   the phone. Lands before the detail rework, which displays it.
-5. Detail page rework (#10). The page goes read-only and each command opens a dialog holding only
-   its own form.
-6. C4b (#2), the five items the phase B pass raised.
-7. Localized validation messages from the API (#11).
-8. Bike brand suggestions on the place form, from the brands already on file. Needs its own issue
-   and a new endpoint; settled on 2026-09-21 that the values come from the database rather than the
-   loaded page or a fixed list.
-9. A status legend above the orders table, explaining each colour and what each status can become.
-   Needs its own issue and a new endpoint. Settled on 2026-09-21 that the transitions come from the
-   API, read off the domain's matrix the way the service catalogue is, rather than being written out
-   in both locale files where nothing catches the drift.
+Everything below is beyond the brief, which is met. Take them in this order.
 
-Starting state: `main` carries phase C and phase H, with three commits waiting to be pushed. The
-suites are green: 134 backend tests and the front-end `verify` gate.
+1. Order reference (#9). A database-generated sequential number, so an order can be read out over
+   the phone. It goes before the detail rework, which is meant to lead with it. Both manual passes
+   on 2026-09-21 had to search by customer name because nothing else identifies an order.
+2. Detail page rework (#10). The page goes read-only and each command opens a native dialog holding
+   only its own form, matching the delete confirmation already on the list. It also removes the
+   duplicated `Service` and `Due date` headings and the buried back link.
+3. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
+   a described-by message, clearing a stale message when its input changes, a clear-search control
+   the empty state also offers, and `autocomplete` on the contact fields. The fifth, status badges
+   carrying meaning, landed in C4a.
+4. Localized validation messages from the API (#11). The only strings the front end cannot key.
+5. Order lifecycle (#5), which the status legend below depends on.
+6. A status legend above the orders table. Settled on 2026-09-21 that its transitions come from the
+   API, read off the domain's matrix the way the service catalogue is, rather than written out in
+   both locale files. Probably built as part of #5 rather than alone, because until #5 lands the
+   legend would describe transitions no button can perform.
+7. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
+   file. Settled that the values come from the database, not the loaded page or a fixed list.
+8. Search, concurrency, CI and the README (#4, #6), the remaining original phases.
+
+Starting state at the end of 2026-09-21: `main` is clean, pushed and carries everything including
+the merged packaging pull request. The suites are green at 134 backend tests and the front-end
+`verify` gate. No branch is in flight. `docker compose up --build` serves all four staff tasks from
+an empty volume.
 
 ## Delivery line
 
@@ -117,9 +120,9 @@ and gains two labelled groups in C2, since placing an order is one command rathe
 stages, and a wizard would buy step state and partial validation for seven fields that fit on one
 screen.
 
-Work lands on `main` for now and is pushed as it goes: `main` is current through phase C.
-One later phase runs on a branch with a proper pull request, so the repository shows that flow too;
-phase D packaging is the natural candidate.
+Work lands on `main` and is pushed as it goes. Phase D ran on `feat/3-docker-packaging` and merged
+through pull request 12, so the repository shows that flow once; there is no need to repeat it for
+every phase.
 
 ## Parked, toolchain
 

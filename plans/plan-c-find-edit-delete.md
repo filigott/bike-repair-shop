@@ -23,7 +23,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | C3.1 Smoke test of the four brief tasks | ✅ | Six of eight steps clean; 5 and 8 unreachable, see #8 |
 | C4. List and form polish | 🟡 | Split once the visual half was pulled ahead of packaging |
 | C4a. Status colours, soft actions, readable labels | ✅ | Also fixed two DaisyUI v4 classes that render nothing in v5 |
-| C4b. The five items the phase B pass raised | ⏳ | Runs after packaging |
+| C4b. The four items left from the phase B pass | ⏳ | Status badges landed in C4a |
 
 ## Context
 
