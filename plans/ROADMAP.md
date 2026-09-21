@@ -10,16 +10,20 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done, phase C built and awaiting its smoke test |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done, phase C built and pushed, awaiting its smoke test |
 
 ## Next up
 
 1. Smoke test the four brief tasks through the running stack. The checklist is at the end of
-   `plan-c-find-edit-delete.md`. Nothing else in phase C is open until it passes.
+   `plan-c-find-edit-delete.md`. Nothing else in phase C is open until it passes. Three terminals,
+   run by the developer: `docker compose up -d db`, `dotnet run --project backend/BikeRepairShop.Api`,
+   `npm --prefix frontend run dev`.
 2. C4 polish: the five items parked below, once the smoke test is clean. It does not hold up phase D.
 3. Phase D packaging, on a branch with a pull request, as the one place the repository shows that
    flow.
-4. Push: nine commits sit unpushed on `main`, all of phase C so far.
+
+Starting state: `main` is clean and pushed through the whole of phase C, the suites are green
+(126 backend tests, the front-end `verify` gate), and no work is in flight.
 
 ## Delivery line
 
@@ -30,9 +34,10 @@ manual smoke test, so there is always a shippable state and something to try by 
 
 ## Pace
 
-Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). Two of the
-four staff tasks now work end to end in a browser. Phases E through G stay untouched until
-`docker compose up` serves all four.
+Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). 6h30 spent
+across two days. All four staff tasks now work end to end in a browser, pending the manual pass, so
+packaging is the last gap in the brief. Phases E through G stay untouched until `docker compose up`
+serves all four.
 
 ## Parked from the phase B smoke test
 
@@ -59,7 +64,7 @@ and gains two labelled groups in C2, since placing an order is one command rathe
 stages, and a wizard would buy step state and partial validation for seven fields that fit on one
 screen.
 
-Work lands on `main` for now and is pushed as it goes: `main` is current as of the phase C start.
+Work lands on `main` for now and is pushed as it goes: `main` is current through phase C.
 One later phase runs on a branch with a proper pull request, so the repository shows that flow too;
 phase D packaging is the natural candidate.
 
