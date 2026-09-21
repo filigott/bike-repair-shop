@@ -10,14 +10,16 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done and smoke-tested, phase C in progress |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done, phase C built and awaiting its smoke test |
 
 ## Next up
 
-1. Phase C in order: C1 the get, update and delete API including the nullable due date, C2 the edit
-   form, C3 the delete flow. Smoke test all four brief tasks before the phase is called done.
-2. Phase D packaging, on a branch with a pull request, as the one place the repository shows that
-   flow. C4 polish is last and optional.
+1. Smoke test the four brief tasks through the running stack. The checklist is at the end of
+   `plan-c-find-edit-delete.md`. Nothing else in phase C is open until it passes.
+2. C4 polish: the five items parked below, once the smoke test is clean. It does not hold up phase D.
+3. Phase D packaging, on a branch with a pull request, as the one place the repository shows that
+   flow.
+4. Push: nine commits sit unpushed on `main`, all of phase C so far.
 
 ## Delivery line
 

@@ -78,3 +78,29 @@ error styling on the field itself with `aria-invalid` and a described-by message
 message when its input changes without re-validating in the browser, a clear-search control that the
 empty state also offers, status badges coloured per status, and `autocomplete` attributes on the
 contact fields. Runs only after C3 is smoke-tested, and does not hold up phase D.
+
+### C3.1 smoke-test checklist
+
+Run `docker compose up -d db`, `dotnet run --project backend/BikeRepairShop.Api`, and
+`npm --prefix frontend run dev` in separate terminals. The developer runs all three.
+
+1. **Find.** The list shows the seeded orders, the search box matches on name, phone and email, and
+   paging holds at a page size of 20.
+2. **Place.** Place an order, leaving the due date empty: the API answers with a `dueDate` field
+   error under the input rather than a page-level failure. Fill it in and the order appears in the
+   list.
+3. **Open.** The row's Open link reaches `/orders/:id`, which shows the status, service, due date and
+   placed date, plus one form per command.
+4. **Edit, one command at a time.** Change the customer name and save details: only that form
+   submits, and the button shows its own pending state. Change the service. Reschedule to a later
+   date. Reschedule to a past date and confirm the refusal lands under the due-date form, not on the
+   others.
+5. **Closed order.** No UI reaches a completed or cancelled order yet, so check this one against the
+   API directly if it matters; the page shows a notice and no forms.
+6. **Delete.** Delete from the list: the dialog names the customer, Escape and the backdrop both
+   cancel, and confirming removes the row.
+7. **Locale.** Switch to Norwegian and confirm every new string on the detail page, the dialog and
+   the list has a translation.
+8. **Overdue.** An order whose due date has passed shows the overdue badge in the list and on the
+   detail page, and its details are still editable.
+
