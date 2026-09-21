@@ -2,7 +2,13 @@ import { useTranslation } from "react-i18next";
 import type { MaintenanceOrderSummary } from "~/services/endpoints/orders";
 import { OrderRow } from "./order-row";
 
-export function OrdersTable({ items }: { items: MaintenanceOrderSummary[] }) {
+export function OrdersTable({
+  items,
+  onDelete,
+}: {
+  items: MaintenanceOrderSummary[];
+  onDelete: (order: MaintenanceOrderSummary) => void;
+}) {
   const { t } = useTranslation();
 
   return (
@@ -20,7 +26,7 @@ export function OrdersTable({ items }: { items: MaintenanceOrderSummary[] }) {
       </thead>
       <tbody>
         {items.map((order) => (
-          <OrderRow key={order.id} order={order} />
+          <OrderRow key={order.id} order={order} onDelete={onDelete} />
         ))}
       </tbody>
     </table>

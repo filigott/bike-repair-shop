@@ -10,3 +10,13 @@ afterEach(cleanup);
 beforeEach(async () => {
   await i18n.changeLanguage(Locale.En);
 });
+
+// jsdom ships <dialog> without its modal behaviour, so the native methods are stubbed here.
+HTMLDialogElement.prototype.showModal = function showModal() {
+  this.open = true;
+};
+
+HTMLDialogElement.prototype.close = function close() {
+  this.open = false;
+  this.dispatchEvent(new Event("close"));
+};

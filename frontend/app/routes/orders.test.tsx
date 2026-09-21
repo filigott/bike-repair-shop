@@ -6,10 +6,14 @@ import type {
   MaintenanceOrderSummary,
   PagedOrders,
 } from "~/services/endpoints/orders";
-import { listOrders } from "~/services/endpoints/orders";
-import Orders, { clientLoader } from "./orders";
+import { deleteOrder, listOrders } from "~/services/endpoints/orders";
+import { ApiError } from "~/services/http";
+import Orders, { clientAction, clientLoader } from "./orders";
 
-vi.mock("~/services/endpoints/orders", () => ({ listOrders: vi.fn() }));
+vi.mock("~/services/endpoints/orders", () => ({
+  listOrders: vi.fn(),
+  deleteOrder: vi.fn(),
+}));
 
 function summary(
   overrides: Partial<MaintenanceOrderSummary> = {},
@@ -42,13 +46,18 @@ function renderOrders(url = "/") {
       Component: Orders,
       loader: (args) =>
         clientLoader(args as Parameters<typeof clientLoader>[0]),
+      action: (args) =>
+        clientAction(args as Parameters<typeof clientAction>[0]),
     },
   ]);
   return render(<Stub initialEntries={[url]} />);
 }
 
 describe("Orders", () => {
-  beforeEach(() => vi.mocked(listOrders).mockReset());
+  beforeEach(() => {
+    vi.mocked(listOrders).mockReset();
+    vi.mocked(deleteOrder).mockReset().mockResolvedValue(undefined);
+  });
 
   it("renders a row per order", async () => {
     // Arrange
@@ -139,5 +148,76 @@ describe("Orders", () => {
         pageSize: 20,
       }),
     );
+  });
+
+  it("drops the row while the confirmed delete is in flight", async () => {
+    // Arrange
+    const doomed = summary({ customerName: "Ada Lovelace" });
+    vi.mocked(listOrders).mockResolvedValue(
+      page([doomed, summary({ customerName: "Grace Hopper" })]),
+    );
+    let finishDelete = () => {};
+    vi.mocked(deleteOrder).mockReturnValue(
+      new Promise((resolve) => {
+        finishDelete = () => resolve();
+      }),
+    );
+    renderOrders();
+    await screen.findByText("Ada Lovelace");
+    await userEvent.click(screen.getAllByRole("button", { name: "Delete" })[0]);
+
+    // Act
+    await userEvent.click(screen.getByRole("button", { name: "Delete order" }));
+
+    // Assert
+    await waitFor(() =>
+      expect(screen.queryByText("Ada Lovelace")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByText("Grace Hopper")).toBeInTheDocument();
+    expect(deleteOrder).toHaveBeenCalledWith(doomed.id);
+    finishDelete();
+  });
+
+  it("keeps the row and explains why when the delete is refused", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(
+      page([summary({ customerName: "Ada Lovelace" })]),
+    );
+    vi.mocked(deleteOrder).mockRejectedValue(
+      new ApiError(404, {
+        title: "Not found",
+        status: 404,
+        detail: "No order with that id.",
+      }),
+    );
+    renderOrders();
+    await screen.findByText("Ada Lovelace");
+    await userEvent.click(screen.getByRole("button", { name: "Delete" }));
+
+    // Act
+    await userEvent.click(screen.getByRole("button", { name: "Delete order" }));
+
+    // Assert
+    expect(
+      await screen.findByText("No order with that id."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Ada Lovelace")).toBeInTheDocument();
+  });
+
+  it("leaves the order alone when the confirmation is cancelled", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(
+      page([summary({ customerName: "Ada Lovelace" })]),
+    );
+    renderOrders();
+    await screen.findByText("Ada Lovelace");
+    await userEvent.click(screen.getByRole("button", { name: "Delete" }));
+
+    // Act
+    await userEvent.click(screen.getAllByRole("button", { name: "Cancel" })[0]);
+
+    // Assert
+    expect(deleteOrder).not.toHaveBeenCalled();
+    expect(screen.getByText("Ada Lovelace")).toBeInTheDocument();
   });
 });

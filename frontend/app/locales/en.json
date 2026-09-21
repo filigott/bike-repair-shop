@@ -34,6 +34,12 @@
       "legend": "Customer and bike",
       "submit": "Save details"
     },
+    "delete": {
+      "action": "Delete",
+      "title": "Delete order",
+      "confirm": "Delete the order for {{customer}}? This cannot be undone.",
+      "submit": "Delete order"
+    },
     "detail": {
       "action": "Open",
       "placedAt": "Placed",

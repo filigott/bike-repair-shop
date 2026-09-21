@@ -19,7 +19,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | C2. Edit form | ✅ | Order detail page, one intent-driven form per command |
 | C2a. Shared form component | ✅ | Two legends, and the date input stops blocking the submit |
 | C2b. Order detail page | ✅ | One loader, one action, one form per command |
-| C3. Delete flow | 🟡 | Smoke test: all four tasks from the brief |
+| C3. Delete flow | ✅ | Confirmed on the list, optimistic, restores the row on failure |
+| C3.1 Smoke test of the four brief tasks | ⏳ | Blocks calling the phase done |
 | C4. List and form polish | ⏳ | Only once C3's smoke test passes; see the roadmap's parked list |
 
 ## Context
@@ -67,9 +68,10 @@ edit command. The field groups are factored out of the place form so both compos
 Tests covering the prefill, one test per command proving it sends only its own call, and a rejected
 submit landing on the form that made it.
 
-**C3. Delete flow.** Native `<dialog>` confirmation, fetcher submit against an intent, optimistic
-removal from the list, failure surfaced without losing the row. Ends with a smoke test of all four
-tasks from the brief.
+**C3. Delete flow.** Native `<dialog>` confirmation on the list, fetcher submit against an intent,
+optimistic removal, failure surfaced without losing the row. Delete is offered on the list only,
+because removing a mistaken order is a counter workflow rather than something reached through the
+detail page. Ends with a manual smoke test of all four tasks from the brief.
 
 **C4. List and form polish.** The five items the phase B smoke test raised and the roadmap parks:
 error styling on the field itself with `aria-invalid` and a described-by message, clearing a stale

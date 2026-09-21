@@ -3,7 +3,13 @@ import { Link } from "react-router";
 import { useLocale } from "~/hooks/use-locale";
 import type { MaintenanceOrderSummary } from "~/services/endpoints/orders";
 
-export function OrderRow({ order }: { order: MaintenanceOrderSummary }) {
+export function OrderRow({
+  order,
+  onDelete,
+}: {
+  order: MaintenanceOrderSummary;
+  onDelete: (order: MaintenanceOrderSummary) => void;
+}) {
   const { t } = useTranslation();
   const { locale } = useLocale();
 
@@ -26,10 +32,17 @@ export function OrderRow({ order }: { order: MaintenanceOrderSummary }) {
           {t(`orders.status.${order.status}`)}
         </span>
       </td>
-      <td>
+      <td className="flex gap-1">
         <Link to={`/orders/${order.id}`} className="btn btn-ghost btn-xs">
           {t("orders.detail.action")}
         </Link>
+        <button
+          type="button"
+          className="btn btn-ghost btn-xs text-error"
+          onClick={() => onDelete(order)}
+        >
+          {t("orders.delete.action")}
+        </button>
       </td>
     </tr>
   );

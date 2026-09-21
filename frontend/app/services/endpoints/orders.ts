@@ -73,3 +73,9 @@ export function rescheduleOrder(
     }),
   );
 }
+
+export async function deleteOrder(id: string): Promise<void> {
+  await unwrap(
+    apiClient.DELETE("/api/orders/{id}", { params: { path: { id } } }),
+  );
+}

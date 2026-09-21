@@ -34,6 +34,12 @@
       "legend": "Kunde og sykkel",
       "submit": "Lagre detaljer"
     },
+    "delete": {
+      "action": "Slett",
+      "title": "Slett ordre",
+      "confirm": "Slette ordren for {{customer}}? Dette kan ikke angres.",
+      "submit": "Slett ordre"
+    },
     "detail": {
       "action": "Åpne",
       "placedAt": "Registrert",
