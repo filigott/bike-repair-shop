@@ -10,6 +10,12 @@ written, because the failures below are the kind that look like mysteries when t
 
 - `dotnet test` fails outright on the .NET 10 SDK with xunit v3 unless `global.json` opts into
   `Microsoft.Testing.Platform`. The VSTest target is gone. The opt-in is repo-wide, not per project.
+- `dotnet test` also needs `--no-build`, with the build run as its own step first. Letting it build
+  discovers nothing: it reports `Zero tests ran` and exit code 5 for every project, including ones
+  that have not been touched. The run that works prints the target as `net10.0|x64` and the one that
+  finds nothing prints `net10.0`, so the built-in build is resolving a different target than the one
+  the assemblies land in. Running the test executable under `bin/Debug/net10.0/` directly also works
+  and is the quickest way to see a failure message in full.
 - Npgsql 10.0.3 floors EF Core at 10.0.4. Pinning 10.0.0 fails restore with NU1605.
 - PostgreSQL 18 with Npgsql 10, EF 10 and Testcontainers 4.15 was exercised end to end with a real
   container and a real save-and-reload. No compatibility issue, no readiness-probe issue.

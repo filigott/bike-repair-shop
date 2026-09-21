@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using BikeRepairShop.Api.Configuration;
 using BikeRepairShop.Api.Exceptions;
+using BikeRepairShop.Api.Features.DemoData;
 using BikeRepairShop.Api.Features.Orders;
 using BikeRepairShop.Api.Features.ServiceTypes;
 using BikeRepairShop.Database;
@@ -34,10 +35,12 @@ builder.Services.AddShopClock(builder.Configuration);
 // Feature slices
 builder.Services.AddOrders();
 builder.Services.AddServiceTypes();
+builder.Services.AddDemoData(builder.Configuration);
 
 var app = builder.Build();
 
 await app.RunMigrationsIfEnabledAsync();
+await app.SeedDemoDataIfEnabledAsync();
 
 // Pipeline: every failure leaves as ProblemDetails, including bare status codes
 app.UseExceptionHandler();

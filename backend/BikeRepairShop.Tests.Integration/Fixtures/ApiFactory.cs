@@ -1,4 +1,5 @@
 using BikeRepairShop.Api.Configuration;
+using BikeRepairShop.Api.Features.DemoData;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -15,6 +16,8 @@ public sealed class ApiFactory(string connectionString, bool runMigrations = tru
     {
         builder.UseSetting("ConnectionStrings:BikeRepairShop", connectionString);
         builder.UseSetting(MigrationStartupExtensions.SettingName, runMigrations ? "true" : "false");
+        // The Development settings file switches demo data on; a test host decides for itself.
+        builder.UseSetting($"{DemoDataOptions.SectionName}:Enabled", "false");
         builder.ConfigureTestServices(services => services.Replace(ServiceDescriptor.Singleton<TimeProvider>(Time)));
     }
 }

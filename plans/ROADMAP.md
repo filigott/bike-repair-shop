@@ -14,10 +14,10 @@ running `docker compose up`. Everything currently planned lives in
 
 ## Next up
 
-1. Demo data (#8). A seed path behind an explicit setting, writing a varied set of orders including
-   the states the domain refuses to construct. It unblocks the two smoke-test steps that could not
-   run, gives search and paging something to work with, and lets the packaged stack open on a
-   populated table.
+1. Demo data (#8), planned in [plan-h-demo-data.md](plan-h-demo-data.md). A seed path behind an
+   explicit setting, built entirely on public domain methods. It unblocks the two smoke-test steps
+   that could not run, gives search and paging something to work with, and lets the packaged stack
+   open on a populated table.
 2. Phase D packaging (#3), on a branch with a pull request, as the one place the repository shows
    that flow. Taken before the UI work: it is the last hard requirement left in the brief, it is a
    known hour or two, and the UI list is open-ended.
@@ -43,10 +43,10 @@ phases. Only #8 comes before packaging, because packaging cannot be demonstrated
 
 ## Pace
 
-Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). 6h30 spent
-across the first two days, with the phase C smoke test run on the third. All four staff tasks work
-end to end in a browser, so packaging is the last gap in the brief. Phases E through G stay
-untouched until `docker compose up` serves all four.
+Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). 7h30
+across three days. All four staff tasks work end to end in a browser and the manual pass confirmed
+four of them, so packaging is the last gap in the brief. Phases E through G stay untouched until
+`docker compose up` serves all four.
 
 ## Parked from the phase C smoke test
 
@@ -75,9 +75,12 @@ Settled on 2026-09-21, from the pass:
   Inline disclosure was rejected for keeping every form's markup on one busy page.
 - **The order reference is a database-generated sequential number.** A short slice of the GUID needs
   no migration but cannot be dictated or remembered, which is the entire point of having one.
-- **Demo seeding writes states the domain refuses to build.** Overdue is impossible through the API
-  by design, so a fixture that goes straight to the DbContext is the only way to see the rule work.
-  It lives in the API layer behind a setting that is off unless set, never in `Domain`.
+- **Demo seeding goes through the domain, not around it.** The first reading was that a fixture
+  would have to write states the domain refuses to build. Reading the entity corrected it: `Start`,
+  `Complete` and `Cancel` are public, so only the HTTP surface for them is missing, and `Place`
+  takes an `IShopClock`, so an overdue order is one placed with the clock set two weeks back. The
+  slice lives in the API behind a setting that is off unless set. Details in
+  [plan-h-demo-data.md](plan-h-demo-data.md).
 - **Packaging goes before the UI work.** Reversed from the first instinct, which was to fix what the
   pass had just raised. The UI list is around eight items and open-ended; packaging is mandatory and
   bounded, so it carries the smaller risk of being the thing left undone.

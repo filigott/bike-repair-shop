@@ -102,7 +102,11 @@ migration. Migration files are generated code, excluded from style enforcement i
 
 **Migrations apply on start behind an explicit `RunMigrationsOnStartup` setting**, not behind the
 environment name, so the composed stack creates its schema without also switching on the developer
-exception page.
+exception page. `DemoData:Enabled` follows the same pattern: off unless set, it seeds a demo set of
+orders into an empty table at startup and exposes a reset endpoint. The seeder builds every order
+through the public domain API, placing back-dated ones with an `IShopClock` positioned in the past,
+so there is no second way to construct an order. A test host sets the flag itself rather than
+inheriting it from the Development settings file.
 
 **Optimistic concurrency is a `version` field on the DTO**, backed by the PostgreSQL `xmin` system
 column. The update request carries it back and a mismatch is a 409. Deliberately not an ETag with
@@ -190,8 +194,9 @@ role, text or label.
 # Backend (the API needs the compose database: docker compose up -d db)
 dotnet build backend/BikeRepairShop.sln
 dotnet run   --project backend/BikeRepairShop.Api    # http://localhost:5260/health, /scalar for the API reference
-dotnet test  backend/BikeRepairShop.sln
-dotnet test  backend/BikeRepairShop.Tests.Unit/BikeRepairShop.Tests.Unit.csproj -- --filter-method "*Reopen*"
+# Build first: dotnet test discovers nothing when it builds for itself. See plans/reference/verified-on-this-machine.md
+dotnet test  backend/BikeRepairShop.sln --no-build
+dotnet test  backend/BikeRepairShop.Tests.Unit/BikeRepairShop.Tests.Unit.csproj --no-build -- --filter-method "*Reopen*"
 dotnet ef migrations add <Name> --project backend/BikeRepairShop.Database --startup-project backend/BikeRepairShop.Api -- --environment Development
 
 # Front end
