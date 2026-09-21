@@ -1,12 +1,11 @@
 import { useTranslation } from "react-i18next";
 import type { OrderStatus } from "~/services/endpoints/orders";
 
-// Typed per status, so a new status fails the build instead of falling through to a default colour.
 const badgeClasses: Record<OrderStatus, string> = {
   Received: "badge-info",
   InProgress: "badge-warning",
   Completed: "badge-success",
-  Cancelled: "badge-neutral",
+  Cancelled: "badge-error",
 };
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {

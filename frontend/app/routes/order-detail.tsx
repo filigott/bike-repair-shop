@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { CommandForm } from "~/components/orders/command-form";
+import { OrderContactCard } from "~/components/orders/order-contact-card";
 import {
   DueDateField,
   OrderDetailsFields,
@@ -96,11 +97,14 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
           </CommandForm>
         </>
       ) : (
-        <p role="alert" className="alert alert-warning">
-          {t("orders.detail.closed", {
-            status: t(`orders.status.${order.status}`),
-          })}
-        </p>
+        <>
+          <p role="alert" className="alert alert-warning">
+            {t("orders.detail.closed", {
+              status: t(`orders.status.${order.status}`),
+            })}
+          </p>
+          <OrderContactCard order={order} />
+        </>
       )}
     </section>
   );

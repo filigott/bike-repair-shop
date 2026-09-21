@@ -187,4 +187,34 @@ describe("OrderDetail", () => {
     );
     expect(screen.queryByLabelText("Customer name")).not.toBeInTheDocument();
   });
+
+  it("still shows what a closed order holds, now that no form carries it", async () => {
+    // Arrange
+    vi.mocked(getOrder).mockResolvedValue(
+      order({ status: "Cancelled", isEditable: false }),
+    );
+
+    // Act
+    renderPage();
+
+    // Assert
+    expect(await screen.findByText("+4712345678")).toBeInTheDocument();
+    expect(screen.getByText("ada@example.com")).toBeInTheDocument();
+    expect(screen.getByText("Bianchi")).toBeInTheDocument();
+    expect(screen.getByText("Squeaks when braking")).toBeInTheDocument();
+  });
+
+  it("leaves the notes row out when a closed order has none", async () => {
+    // Arrange
+    vi.mocked(getOrder).mockResolvedValue(
+      order({ status: "Cancelled", isEditable: false, notes: null }),
+    );
+
+    // Act
+    renderPage();
+
+    // Assert
+    await screen.findByText("+4712345678");
+    expect(screen.queryByText("Notes")).not.toBeInTheDocument();
+  });
 });

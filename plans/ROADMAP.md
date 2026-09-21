@@ -31,6 +31,10 @@ running `docker compose up`. Everything currently planned lives in
 8. Bike brand suggestions on the place form, from the brands already on file. Needs its own issue
    and a new endpoint; settled on 2026-09-21 that the values come from the database rather than the
    loaded page or a fixed list.
+9. A status legend above the orders table, explaining each colour and what each status can become.
+   Needs its own issue and a new endpoint. Settled on 2026-09-21 that the transitions come from the
+   API, read off the domain's matrix the way the service catalogue is, rather than being written out
+   in both locale files where nothing catches the drift.
 
 Starting state: `main` carries phase C and phase H, with three commits waiting to be pushed. The
 suites are green: 134 backend tests and the front-end `verify` gate.
