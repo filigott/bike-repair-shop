@@ -10,15 +10,13 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done and smoke-tested, phase C next |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done and smoke-tested, phase C in progress |
 
 ## Next up
 
-1. Run the backend suite unfiltered with the compose database up, then push `main`. Eight commits are
-   waiting and none has been pushed since phase A.
-2. Phase C in order: C1 the get, update and delete API including the nullable due date, C2 the edit
+1. Phase C in order: C1 the get, update and delete API including the nullable due date, C2 the edit
    form, C3 the delete flow. Smoke test all four brief tasks before the phase is called done.
-3. Phase D packaging, on a branch with a pull request, as the one place the repository shows that
+2. Phase D packaging, on a branch with a pull request, as the one place the repository shows that
    flow. C4 polish is last and optional.
 
 ## Delivery line
@@ -59,8 +57,9 @@ and gains two labelled groups in C2, since placing an order is one command rathe
 stages, and a wizard would buy step state and partial validation for seven fields that fit on one
 screen.
 
-Work lands on `main` for now. One later phase runs on a branch with a proper pull request, so the
-repository shows that flow too; phase D packaging is the natural candidate.
+Work lands on `main` for now and is pushed as it goes: `main` is current as of the phase C start.
+One later phase runs on a branch with a proper pull request, so the repository shows that flow too;
+phase D packaging is the natural candidate.
 
 ## Blockers
 
