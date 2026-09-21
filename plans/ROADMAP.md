@@ -10,7 +10,7 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A and B done, phase C smoke-tested with two steps unreachable |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 phases A, B, D and H done, C all but its polish, the brief met |
 
 ## Next up
 
@@ -19,9 +19,8 @@ running `docker compose up`. Everything currently planned lives in
 2. ✅ C4a visual polish (#2), pulled ahead of packaging on 2026-09-21: a colour per status, soft
    fills on the row and header actions, and a readable form label size. It also turned up two
    DaisyUI v4 classes that render nothing in v5 and had been silently dead in `FormField`.
-3. Phase D packaging (#3), on a branch with a pull request, as the one place the repository shows
-   that flow. It is the last hard requirement left in the brief and the only item here that the
-   brief actually asks for, so nothing below it starts until it is done.
+3. ✅ Phase D packaging (#3), built on `feat/3-docker-packaging` and smoke-tested from an empty
+   volume. The brief is now met end to end. What remains is the pull request and the push.
 4. Order reference (#9). A database-generated sequential number, so an order can be read out over
    the phone. Lands before the detail rework, which displays it.
 5. Detail page rework (#10). The page goes read-only and each command opens a dialog holding only

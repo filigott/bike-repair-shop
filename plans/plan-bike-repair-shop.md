@@ -20,7 +20,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | A. Foundation | [plan-a-foundation.md](plan-a-foundation.md) | #7 | ✅ |
 | B. Place and find | [plan-b-place-and-list.md](plan-b-place-and-list.md) | #1 | ✅ |
 | C. Find, edit and delete | [plan-c-find-edit-delete.md](plan-c-find-edit-delete.md) | #2 | 🟡 |
-| D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ⏳ |
+| D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ✅ |
 | E. Search | [plan-e-search.md](plan-e-search.md) | #4 | ⏳ |
 | F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ⏳ |
 | G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ⏳ |
@@ -246,10 +246,12 @@ Resolved later, during the design pass:
 9. **Migration application.** RESOLVED: an explicit `RunMigrationsOnStartup` setting.
 10. **TypeScript version.** RESOLVED: 7.0.2, with `openapi-typescript` kept out of the dependency tree.
 11. **Where service metadata lives.** RESOLVED: in the `service_types` table only. The enum is the key.
-12. **Shop timezone.** OPEN until D1 for the value; the shape is settled. `IShopClock` is implemented
+12. **Shop timezone.** RESOLVED: `Europe/Oslo`, already the default in `appsettings.json` and set
+    explicitly in compose so the value is visible where the stack is assembled. The shape was settled
+    earlier. `IShopClock` is implemented
     in the API over `TimeProvider` and a configured `TimeZoneInfo`, and the runtime image has to carry
     tz data. Development runs with a default of `Europe/Oslo`.
-13. **Compose credentials.** OPEN until D1: the database credentials are literal dev values in the
-    compose file. They move to a committed `.env.example` plus an ignored `.env` when the API service
-    joins and needs the same values. The compose project name is pinned and the host port is 5434,
+13. **Compose credentials.** RESOLVED, against what this question proposed: inline defaults of the
+    form `${POSTGRES_PASSWORD:-bikeshop}`, overridable from the environment, with no file to copy
+    first. An ignored `.env` would make the brief's one-command start fail on a fresh clone. The compose project name is pinned and the host port is 5434,
     because 5432, 5433 and 5480 are all taken by other compose stacks on this machine.

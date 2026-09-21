@@ -4,18 +4,45 @@ services:
   db:
     image: postgres:18
     environment:
-      POSTGRES_USER: bikeshop
-      POSTGRES_PASSWORD: bikeshop
-      POSTGRES_DB: bikeshop
+      POSTGRES_USER: ${POSTGRES_USER:-bikeshop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bikeshop}
+      POSTGRES_DB: ${POSTGRES_DB:-bikeshop}
     ports:
-      - "5434:5432"
+      - "${DB_PORT:-5434}:5432"
     volumes:
       - db-data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bikeshop -d bikeshop"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bikeshop} -d ${POSTGRES_DB:-bikeshop}"]
       interval: 5s
       timeout: 3s
       retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      ConnectionStrings__BikeRepairShop: "Host=db;Port=5432;Database=${POSTGRES_DB:-bikeshop};Username=${POSTGRES_USER:-bikeshop};Password=${POSTGRES_PASSWORD:-bikeshop}"
+      RunMigrationsOnStartup: "true"
+      DemoData__Enabled: "true"
+      Shop__TimeZone: ${SHOP_TIMEZONE:-Europe/Oslo}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  web:
+    build:
+      context: ./frontend
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   db-data:
