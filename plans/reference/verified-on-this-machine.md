@@ -36,6 +36,11 @@ written, because the failures below are the kind that look like mysteries when t
   plain Tailwind is the lighter answer for a standalone label.
 - `btn-soft` and `badge-soft` are real DaisyUI 5 modifiers and combine with a semantic colour, which
   is how an action carries a background before it is hovered.
+- `mcr.microsoft.com/dotnet/sdk:10.0` resolved to SDK 10.0.201 here, older than the 10.0.400 that
+  `global.json` pins, and `rollForward` only ever moves up. `dotnet restore` inside the image dies
+  with exit 155 and an SDK-not-found message that lists what it does have. The `10.0.400` tag exists,
+  so the fix is to pin the build stage to it rather than to loosen the repo's pin for the container's
+  benefit. It has to be bumped with `global.json`.
 - `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x` because it uses the JavaScript
   compiler API, and `typescript@7.0.2` ships only the native `tsc` with no `typescript.js`. A plain
   `npm install` of the generator therefore either conflicts or leaves it without its API. Through

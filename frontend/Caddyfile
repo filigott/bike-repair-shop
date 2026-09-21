@@ -1,0 +1,14 @@
+:80 {
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy {$API_ORIGIN:api:8080}
+	}
+
+	handle {
+		root * /srv
+		# SPA build: every unknown path is a client route, not a missing file.
+		try_files {path} /index.html
+		file_server
+	}
+}
