@@ -208,8 +208,34 @@ npm --prefix frontend run test
 npm --prefix frontend run generate:api   # regenerates the OpenAPI types; needs the API running on 5260
 
 # Whole stack
-docker compose up --build
+docker compose up --build              # everything containerised on http://localhost:8080
+docker compose stop api web            # back to the dev loop, keeping the database up
 ```
+
+## Running it locally
+
+Two modes, and they are not interchangeable.
+
+**The dev loop is the default.** `docker compose up -d db`, then `dotnet run` and
+`npm --prefix frontend run dev` in their own terminals. The front end is on 5173, the API on 5260,
+the database on 5434, and Vite proxies `/api` to the API so the browser still sees one origin. Both
+halves hot-reload, and `npm run generate:api` only works in this mode, because it reads the OpenAPI
+document off the running API.
+
+**The packaged stack is a verification step, not a place to work.** `docker compose up --build`
+serves the whole thing on 8080 through Caddy. Nothing hot-reloads: a code change needs another
+`--build`, so iterating here wastes minutes per edit. Run it to prove the images still build and the
+four staff tasks still work before handing the repository to anyone, and prove it from
+`docker compose down -v` at least once, since that is the only way to know the schema and the demo
+data come up from nothing.
+
+**Both modes share one database**, the `db` service and its `db-data` volume. That is deliberate:
+one set of orders whichever way the app is running. It also means the containerised API and a
+`dotnet run` API write to the same rows, so run one or the other, not both.
+
+The database is meant to stay up between sessions, because `dotnet run` needs it. `api` and `web`
+are not: stop those when a packaged run is finished, with `docker compose stop api web`. Use
+`docker compose down` without `-v` to remove the containers and keep the data.
 
 ## Working agreement
 
@@ -223,3 +249,5 @@ docker compose up --build
 - Repo docs change in the same commit as the code that invalidated them.
 - Comments explain a non-obvious why in one line, or they do not exist. A comment that needs a
   paragraph is a sign the code needs a better name or an extracted method.
+- A session that started the packaged stack ends by handing over `docker compose stop api web`,
+  checked against what is actually running rather than an earlier tool result. The database stays up.
