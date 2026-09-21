@@ -33,6 +33,10 @@
       "dueDate": "Frist",
       "notes": "Notater"
     },
+    "groups": {
+      "customer": "Kunde",
+      "bikeAndService": "Sykkel og tjeneste"
+    },
     "overdue": "Forfalt",
     "paging": {
       "showing": "Viser {{from}} til {{to}} av {{total}}",

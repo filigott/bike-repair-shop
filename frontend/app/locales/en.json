@@ -33,6 +33,10 @@
       "dueDate": "Due date",
       "notes": "Notes"
     },
+    "groups": {
+      "customer": "Customer",
+      "bikeAndService": "Bike and service"
+    },
     "overdue": "Overdue",
     "paging": {
       "showing": "Showing {{from}} to {{to}} of {{total}}",

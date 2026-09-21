@@ -17,6 +17,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | C1c.1 Movable clock in the harness | ✅ | Fake `TimeProvider`, so an overdue order can be tested |
 | C1d. Delete | ✅ | A real delete, 204 on success |
 | C2. Edit form | 🟡 | Shares the form component with B4; groups the fields under two headings |
+| C2a. Shared form component | ✅ | Two legends, and the date input stops blocking the submit |
+| C2b. Edit route | ⏳ | Loader, prefilled form, action diffing against the three commands |
 | C3. Delete flow | ⏳ | Smoke test: all four tasks from the brief |
 | C4. List and form polish | ⏳ | Only once C3's smoke test passes; see the roadmap's parked list |
 

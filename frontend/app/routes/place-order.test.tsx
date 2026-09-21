@@ -72,6 +72,28 @@ describe("PlaceOrder", () => {
     );
   });
 
+  it("leaves a missing due date to the API rather than blocking the submit", async () => {
+    // Arrange
+    renderForm();
+    await userEvent.type(
+      await screen.findByLabelText("Customer name"),
+      "Ada Lovelace",
+    );
+    await userEvent.type(screen.getByLabelText("Phone number"), "+4712345678");
+    await userEvent.type(screen.getByLabelText("Email"), "ada@example.com");
+    await userEvent.type(screen.getByLabelText("Bike brand"), "Bianchi");
+
+    // Act
+    await userEvent.click(screen.getByRole("button", { name: "Place order" }));
+
+    // Assert
+    await waitFor(() =>
+      expect(placeOrder).toHaveBeenCalledWith(
+        expect.objectContaining({ dueDate: null }),
+      ),
+    );
+  });
+
   it("returns to the list once the order is placed", async () => {
     // Arrange
     vi.mocked(placeOrder).mockResolvedValue({} as never);
