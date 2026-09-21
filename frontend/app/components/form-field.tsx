@@ -10,8 +10,8 @@ export function FormField({
   children: React.ReactNode;
 }) {
   return (
-    <div className="form-control w-full">
-      <label className="label-text" htmlFor={name}>
+    <div className="flex w-full flex-col gap-1">
+      <label className="text-base font-medium" htmlFor={name}>
         {label}
       </label>
       {children}

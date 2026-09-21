@@ -27,6 +27,15 @@ written, because the failures below are the kind that look like mysteries when t
   CSS-first form survives it.
 - `erasableSyntaxOnly` is not enabled by default in a React Router 8 project, so TypeScript `enum` is
   available and the no-magic-strings rule stands as written.
+- DaisyUI 5 dropped `label-text` and `form-control`, and neither is in the package. Nothing warns:
+  Tailwind emits no rule for a class it does not know, so the markup renders unstyled and looks
+  merely plain rather than broken. Both had been sitting in `FormField` since it was written, which
+  is why its labels ran small and its rows had no spacing. Grep `node_modules/daisyui` for a class
+  before trusting a v4 example. The replacements that do exist are `fieldset-legend` for the field
+  heading and `fieldset-label` for helper text, both of which expect DaisyUI's `fieldset` markup, so
+  plain Tailwind is the lighter answer for a standalone label.
+- `btn-soft` and `badge-soft` are real DaisyUI 5 modifiers and combine with a semantic colour, which
+  is how an action carries a background before it is hovered.
 - `openapi-typescript` 7.13 peer-depends on TypeScript `^5.x` because it uses the JavaScript
   compiler API, and `typescript@7.0.2` ships only the native `tsc` with no `typescript.js`. A plain
   `npm install` of the generator therefore either conflicts or leaves it without its API. Through

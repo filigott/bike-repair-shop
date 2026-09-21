@@ -67,7 +67,7 @@ export default function Orders({ loaderData }: Route.ComponentProps) {
           {demoData.enabled && (
             <button
               type="button"
-              className="btn btn-ghost btn-sm"
+              className="btn btn-warning btn-soft btn-sm"
               onClick={() => setResetting(true)}
             >
               {t("demoData.action")}

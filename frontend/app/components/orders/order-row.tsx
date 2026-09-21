@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { OrderStatusBadge } from "~/components/orders/order-status-badge";
 import { useLocale } from "~/hooks/use-locale";
 import type { MaintenanceOrderSummary } from "~/services/endpoints/orders";
 
@@ -28,17 +29,18 @@ export function OrderRow({
         )}
       </td>
       <td>
-        <span className="badge badge-ghost">
-          {t(`orders.status.${order.status}`)}
-        </span>
+        <OrderStatusBadge status={order.status} />
       </td>
       <td className="flex gap-1">
-        <Link to={`/orders/${order.id}`} className="btn btn-ghost btn-xs">
+        <Link
+          to={`/orders/${order.id}`}
+          className="btn btn-primary btn-soft btn-xs"
+        >
           {t("orders.detail.action")}
         </Link>
         <button
           type="button"
-          className="btn btn-ghost btn-xs text-error"
+          className="btn btn-error btn-soft btn-xs"
           onClick={() => onDelete(order)}
         >
           {t("orders.delete.action")}

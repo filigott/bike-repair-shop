@@ -14,22 +14,26 @@ running `docker compose up`. Everything currently planned lives in
 
 ## Next up
 
-1. Demo data (#8), planned in [plan-h-demo-data.md](plan-h-demo-data.md). A seed path behind an
-   explicit setting, built entirely on public domain methods. It unblocks the two smoke-test steps
-   that could not run, gives search and paging something to work with, and lets the packaged stack
-   open on a populated table.
-2. Phase D packaging (#3), on a branch with a pull request, as the one place the repository shows
-   that flow. Taken before the UI work: it is the last hard requirement left in the brief, it is a
-   known hour or two, and the UI list is open-ended.
-3. Order reference (#9). A database-generated sequential number, so an order can be read out over
+1. ✅ Demo data (#8), built in [plan-h-demo-data.md](plan-h-demo-data.md), seeded on startup into an
+   empty table and reset from the orders list.
+2. ✅ C4a visual polish (#2), pulled ahead of packaging on 2026-09-21: a colour per status, soft
+   fills on the row and header actions, and a readable form label size. It also turned up two
+   DaisyUI v4 classes that render nothing in v5 and had been silently dead in `FormField`.
+3. Phase D packaging (#3), on a branch with a pull request, as the one place the repository shows
+   that flow. It is the last hard requirement left in the brief and the only item here that the
+   brief actually asks for, so nothing below it starts until it is done.
+4. Order reference (#9). A database-generated sequential number, so an order can be read out over
    the phone. Lands before the detail rework, which displays it.
-4. Detail page rework (#10). The page goes read-only and each command opens a dialog holding only
+5. Detail page rework (#10). The page goes read-only and each command opens a dialog holding only
    its own form.
-5. C4 list and form polish (#2), the five items the phase B pass raised.
-6. Localized validation messages from the API (#11).
+6. C4b (#2), the five items the phase B pass raised.
+7. Localized validation messages from the API (#11).
+8. Bike brand suggestions on the place form, from the brands already on file. Needs its own issue
+   and a new endpoint; settled on 2026-09-21 that the values come from the database rather than the
+   loaded page or a fixed list.
 
-Starting state: `main` is clean and pushed through the whole of phase C, the suites are green
-(126 backend tests, the front-end `verify` gate), and no work is in flight.
+Starting state: `main` carries phase C and phase H, with three commits waiting to be pushed. The
+suites are green: 134 backend tests and the front-end `verify` gate.
 
 ## Delivery line
 
@@ -99,7 +103,7 @@ phase C as its own step; the rest needs a decision before it needs code.
 | Status badges that carry meaning: info, warning, success, neutral per status | Do | C4 |
 | `autocomplete` attributes on the contact fields, which is free browser autofill | Do | C4 |
 | Theme: the default DaisyUI primary is purple. Pick a built-in theme or define brand tokens | Decide first | after D |
-| Bike brand suggestions from the brands already stored, as a `datalist` | Decide first | after D |
+| Bike brand suggestions from the brands already stored, as a `datalist` | Do, from a new endpoint | after D |
 | A cards view beside the table, as a second presentation of the same data | Showcase, if time | after D |
 | A multi-step guided place-order flow | Dropped: two labelled groups in C2 instead | C2 |
 

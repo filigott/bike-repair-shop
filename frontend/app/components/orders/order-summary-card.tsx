@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { OrderStatusBadge } from "~/components/orders/order-status-badge";
 import { useLocale } from "~/hooks/use-locale";
 import type { MaintenanceOrderResponse } from "~/services/endpoints/orders";
 
@@ -14,9 +15,7 @@ export function OrderSummaryCard({
     <dl className="grid grid-cols-2 gap-2 rounded-box bg-base-200 p-4 text-sm">
       <dt className="font-semibold">{t("orders.columns.status")}</dt>
       <dd className="flex items-center gap-2">
-        <span className="badge badge-ghost">
-          {t(`orders.status.${order.status}`)}
-        </span>
+        <OrderStatusBadge status={order.status} />
         {order.isOverdue && (
           <span className="badge badge-error badge-sm">
             {t("orders.overdue")}

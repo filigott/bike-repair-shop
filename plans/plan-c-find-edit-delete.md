@@ -21,7 +21,9 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | C2b. Order detail page | ✅ | One loader, one action, one form per command |
 | C3. Delete flow | ✅ | Confirmed on the list, optimistic, restores the row on failure |
 | C3.1 Smoke test of the four brief tasks | ✅ | Six of eight steps clean; 5 and 8 unreachable, see #8 |
-| C4. List and form polish | ⏳ | Now runs after #8, #3, #9 and #10; see the roadmap's Next up |
+| C4. List and form polish | 🟡 | Split once the visual half was pulled ahead of packaging |
+| C4a. Status colours, soft actions, readable labels | ✅ | Also fixed two DaisyUI v4 classes that render nothing in v5 |
+| C4b. The five items the phase B pass raised | ⏳ | Runs after packaging |
 
 ## Context
 
@@ -77,7 +79,14 @@ detail page. Ends with a manual smoke test of all four tasks from the brief.
 error styling on the field itself with `aria-invalid` and a described-by message, clearing a stale
 message when its input changes without re-validating in the browser, a clear-search control that the
 empty state also offers, status badges coloured per status, and `autocomplete` attributes on the
-contact fields. Runs only after C3 is smoke-tested, and does not hold up phase D.
+contact fields.
+
+The phase C pass added three more, and they come first because they are markup in components that
+already exist: a colour per status wherever a status is shown, a soft fill on the row and header
+actions so a button carries a background before it is hovered, and a readable size for the form
+labels, which `FormField` renders through DaisyUI's `label-text` and is therefore one change for
+every form. The colour map is typed `Record<OrderStatus, string>`, so a new status fails the build
+rather than falling through to a default.
 
 ### C3.1 smoke-test checklist
 
