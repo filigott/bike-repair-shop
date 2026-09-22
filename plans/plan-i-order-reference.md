@@ -15,7 +15,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Step | Status | Notes |
 |---|---|---|
 | I1. Column, entity property and both DTOs | ✅ | Identity from 1000, migration, round-trip test |
-| I2. The number in the UI | 🟡 | List column, detail heading, delete confirm, both locales |
+| I2. The number in the UI | ✅ | Code landed and gated; manual pass deferred to a batch run |
 
 ## Context
 
@@ -98,8 +98,11 @@ the fix is `int` end to end, not a cast at the call site.
 Tests: the existing route tests cover all three surfaces already, so the additions are assertions
 on them rather than new files.
 
-Ends with a manual pass: place an order, confirm the number appears in the table and on the page,
-reset the demo data and confirm the numbering continues rather than restarting.
+The manual pass is deferred and batched with the other outstanding ones rather than run per step.
+It checks that the demo orders carry 1000 to 1025, that a new order takes the next number and shows
+it in the table, on the page and on the delete confirmation, that Norwegian renders the number with
+no thousands separator, and that a demo reset continues the numbering rather than restarting. Phase
+I is not done until it is clean, and nothing is pushed before then.
 
 ## Out of scope
 

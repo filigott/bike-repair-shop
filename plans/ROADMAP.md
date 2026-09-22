@@ -160,6 +160,8 @@ until the product phases are done.
 
 ## Blockers
 
-None. Steps 5 and 8 of the phase C checklist were unreachable until #8 landed; the demo set now
-carries an overdue order and a closed one, so both are reachable and wait only on the next manual
-pass.
+Nothing blocks the work. One thing blocks a push: the manual passes are being batched rather than
+run per step, so phase I is code-complete and gated but unverified by hand, and steps 5 and 8 of the
+phase C checklist are reachable at last but still unrun. Both belong to the next batch pass, and
+nothing is pushed or merged before it comes back clean. The checklist for phase I is at the end of
+its plan.

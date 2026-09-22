@@ -82,8 +82,8 @@ phase table is now read against: nothing from E, F or G until the product phases
   earns its place.
 
 - **Task-based actions end to end, not CRUD.** Every change to an order is a named command on the API
-  (place, reschedule, start, complete, cancel, correct the contact details) and a matching action in
-  the UI, shown only when the order's state allows it. A single update endpoint plus a form with a
+  (place, reschedule, start, complete, cancel, reopen, correct the contact details) and a matching
+  action in the UI, shown only when the order's state allows it. A single update endpoint plus a form with a
   status dropdown would leave the lifecycle rules to be remembered by whoever is at the counter. The
   edit form therefore covers the details an order can always carry, and lifecycle moves are buttons
   driven by the transitions the API projects onto the response.
