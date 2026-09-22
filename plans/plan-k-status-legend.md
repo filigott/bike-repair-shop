@@ -14,7 +14,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| K1. Status catalogue endpoint | ⏳ | `Features/OrderStatuses` mirroring the service catalogue |
+| K1. Status catalogue endpoint | 🟡 | `Features/OrderStatuses` mirroring the service catalogue |
 | K2. The legend above the table | ⏳ | Badges at rest, edges on disclosure, both locales |
 | K3. Drop the per-order transitions | ⏳ | Off the response, off the fixtures, out of CLAUDE.md |
 
