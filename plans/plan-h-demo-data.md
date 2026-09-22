@@ -70,4 +70,4 @@ through a route action and an intent. Both locales in the same commit.
 ## Open questions
 
 None outstanding. Wipe semantics, the trigger and the compose behaviour were settled on 2026-09-21;
-the reasoning is in the roadmap under `Parked from the phase C smoke test`.
+the reasoning is in [reference/smoke-test-findings.md](reference/smoke-test-findings.md).

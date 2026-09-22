@@ -127,7 +127,7 @@ no such endpoint until #5. An overdue order cannot be produced either, because `
 `Reschedule` both refuse a past due date on purpose and the API runs on `TimeProvider.System`. Both
 are now covered by #8, and step 5 becomes real once #5 lands.
 
-What the pass raised beyond the checklist is in the roadmap under `Parked from the phase C smoke
+What the pass raised beyond the checklist is in [reference/smoke-test-findings.md](reference/smoke-test-findings.md), under `Parked from the phase C smoke
 test` and is split across #8, #9, #10 and #11. The detail page reworking into one dialog per command
 supersedes the C2 decision below, which argued for one small form per command all visible at once:
 the shape was right, the presentation was not.

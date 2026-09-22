@@ -132,4 +132,9 @@ merge one, wait for the retarget, then merge the next. The wider lesson is the s
 produced about relocating a problem. Stacking pull requests moves the sequencing risk from the
 branches to the merge button, and the cheaper shape is to merge the first and let the second rebase.
 
+Two smaller ones from the same hour, both cheap to avoid next time. `Closes #9, #10` in a pull
+request body closes only the first issue, because GitHub wants a keyword per issue. And a phase
+letter belongs to the phase that claimed it when it was identified, not to the one written first,
+which is why the legend plan had to be renamed from K to L after the fact.
+
 Running total: **14h30 across five days**.
