@@ -14,35 +14,36 @@ running `docker compose up`. Everything currently planned lives in
 
 ## Next up
 
-Everything below is beyond the brief, which is met. Reordered on 2026-09-22 for a repository that is
-about to be read by someone else: visible defects first, then signal, then polish.
+Everything below is beyond the brief, which is met. Ordered for a repository about to be read by
+someone else: enforcement and visible defects first, polish behind them.
 
-1. **Localized validation messages from the API (#11).** The only user-visible defect left. Switch
-   to Norwegian, submit a due date in the past, and the message comes back in English. It is also
-   the only string the front end cannot key, so nothing else can fix it.
-2. **CI (#6).** A workflow running both suites on every pull request. Disproportionate signal for
-   the work, and the rule that everything lands through a pull request has nothing enforcing it yet.
-   Optimistic concurrency is the other half of the issue and can wait; the README half shipped.
-3. **C4b (#2)**, the four items left from the phase B pass: field error styling with `aria-invalid`
-   and a described-by message, clearing a stale message when its input changes, a clear-search
-   control the empty state also offers, and `autocomplete` on the contact fields.
-4. **Search by service and due date (#4).** Searching by customer already works, so this widens a
-   feature rather than adding one. The order number should become searchable here.
+1. **CI (#6).** A workflow running both suites on every pull request. The repository's claim is that
+   nothing lands unreviewed and untested, and nothing currently enforces it. Highest signal for the
+   effort. Optimistic concurrency is the issue's other half and can wait; its README half shipped.
+2. **Localized validation messages from the API (#11).** The only user-visible defect: a Norwegian
+   user submitting a bad due date gets an English message back. It is also the only string the front
+   end cannot key, so nothing else can fix it.
+3. **Search by service and due date (#4).** Searching by customer name, phone and email already
+   works and satisfies what the brief asks for, so this widens a feature rather than adding one. The
+   order number should become searchable here.
+4. **Form and list polish (#18).** Field error styling with `aria-invalid` and a described-by
+   message, clearing a stale message when its input changes, a clear-search control the empty state
+   also offers, and `autocomplete` on the contact fields.
 5. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
 6. **Status change history (#5).** A second table recording who moved an order and when, plus
-   somewhere to show it. The brief never asks for it, so it is scoped on its own. #5 stays open
-   until this lands.
+   somewhere to show it. The brief never asks for it, so it is scoped on its own and #5 stays open
+   until it lands.
 
 ### Why this order
 
-The earlier ordering optimised for depth: it put the state machine, the lifecycle and the detail
-page first because those were the only real domain logic in an otherwise CRUD-shaped problem. That
-work is done, and the audience has changed. What matters now is that someone opening the repository
-finds nothing obviously broken and sees the process working, which puts the one visible defect first
-and CI second.
+The earlier ordering optimised for depth, putting the state machine, the lifecycle and the detail
+page first because they held the only real domain logic in an otherwise CRUD-shaped problem. That
+work is done and the audience has changed. What matters now is that a reader finds nothing obviously
+broken and sees the process actually working, which is why CI leads and the one visible defect
+follows it.
 
-Everything from item 3 down is polish, and none of it is load-bearing for anything else.
+Nothing from item 3 down is load-bearing for anything else.
 
 ## Landed
 
@@ -72,12 +73,13 @@ Green on `main`: backend 163 tests, front-end `verify` at 50, and the packaged s
 volume with its schema migrated, 26 demo orders seeded and the page answering on 8080.
 
 The brief has been met since day three, so every open issue is work beyond it rather than an
-unfinished deliverable.
+unfinished deliverable. What the brief asked for is listed in
+[reference/time-and-scope.md](reference/time-and-scope.md) under `Against the brief`; the original
+document itself is not in this repository, which is worth fixing if a copy exists.
 
 ### Start here next session
 
-1. Verify rather than trust this file: confirm `README.md`, `docs/ai-development.md` and the status
-   legend are on `main`, and that the tracker shows #9, #10 and #13 closed.
+1. Verify rather than trust this file: `git log --oneline -3`, then confirm both suites are green.
 2. Take `Next up` item 1 below. Ask before writing a plan.
 3. The `db` container is the only thing that should be running. Bring the API and the front end up
    yourself when you need them.
