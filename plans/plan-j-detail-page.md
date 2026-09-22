@@ -147,6 +147,11 @@ Settled on 2026-09-22, all four:
   only nullable field on the response. A worded placeholder was the alternative; an empty cell was
   preferred as quieter, at the cost of looking the same as a value that failed to arrive.
 
+The two columns are matched in height by letting the fact cards absorb the difference: the grid row
+stretches, the cards take `flex-1` and spread their rows into whatever space that gives, and the
+action box is `self-start` so it keeps its own height. Padding tuned by hand would only be right for
+one status, since a cancelled order is one button beside two full cards and the taller side swaps.
+
 The component is renamed from `OrderActionBar` to `OrderActions` with it, since a grouped vertical
 column is not a bar.
 
