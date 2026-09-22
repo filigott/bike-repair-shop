@@ -18,7 +18,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | J1. Rekey the state machine by action | ✅ | One edge table; allowedActions on the response |
 | J2. Action area with the lifecycle moves | ✅ | Four actions as confirms; inline forms stay |
 | J3. Edit commands move into dialogs | ✅ | Page goes read-only; three more buttons on the bar |
-| J4. Delete, layout and the duplication | ⏳ | Delete on the page, back link, type, facts once |
+| J4a. Delete, layout and the duplication | 🟡 | Delete on the page, back link, type, facts once |
+| J4b. Dialog state in the URL | ⏳ | `?edit=` param, redirect on success, the effect goes |
 
 ## Context
 
@@ -104,17 +105,31 @@ choosing between two page bodies and starts choosing which buttons exist.
 Tests: opening a dialog and saving sends only that command, and the page shows no form until a
 button is pressed.
 
-**J4. Delete, layout and the duplication.** Delete on the bar, set apart, reusing the list's
-confirmation. Then the four presentation complaints from the manual pass: the back link stops being
-a ghost button in the corner, the body type scale comes up, `Service` and `Due date` appear once
-rather than in both the summary and a form legend, and the page separates what the order is from
-what can be done to it.
+**J4a. Delete, layout and the duplication.** Delete on the bar, set apart, reusing the list's
+confirmation. Then the presentation complaints from the manual pass: the back link stops being a
+ghost button in the corner, the body type scale comes up, and the page separates what the order is
+from what can be done to it. The facts read first as two cards, the actions follow in their own
+boxed area, and the narrow column is centred rather than pinned to the left edge.
 
-Reconfirm at implementation time: whether delete stays available on a closed order. It is a real
-delete rather than a state, so nothing in the domain forbids it, but the page may still want to
-withhold it once an order is cancelled.
+`Service` and `Due date` no longer appear twice: J3 took the form legends off the page, so the
+summary card is the only place either is stated. The complaint is closed by that step, not by this
+one.
+
+Settled on 2026-09-22: **delete stays available on a closed order.** It removes a record rather than
+moving a state, nothing in the domain forbids it, and a cancellation made in error should be
+clearable without a second route. It is never in `allowedActions`, so it is drawn on its own and
+the projection stays the only thing deciding lifecycle moves.
+
+**J4b. Dialog state in the URL.** Open question 1, settled on 2026-09-22 in favour of taking it:
+`?edit=details` and friends, opening as a link, the action redirecting to the bare path on success
+so the dialog unmounts through a navigation, and a failure returning as usual so the param and the
+typed input survive. The codebase's only `useEffect` goes with it.
 
 ## Manual pass checklist
+
+Ran clean on 2026-09-22, every step, alongside the phase C steps that were unreachable until the
+lifecycle and demo data existed. One thing came back: the page is a narrow column pinned to the left
+edge while the dialogs centre themselves, which J4a fixes.
 
 Run before anything here is pushed. Start `docker compose up -d db` (already up), then the API and
 `npm --prefix frontend run dev` in their own terminals.
@@ -159,6 +174,6 @@ Run before anything here is pushed. Start `docker compose up -d db` (already up)
    deciding when the dialog closes, plus a linkable dialog and a back button that shuts it.
 
    Cost: a short param enum, a redirect inside an action that otherwise always answers with
-   `ActionResult`, and a navigation per open and close. Current assumption: take it in J4 if the
-   manual pass gives no louder work, otherwise leave the effect and note it, since it is five lines
-   and correct.
+   `ActionResult`, and a navigation per open and close. **Settled on 2026-09-22: take it**, as J4b.
+   The manual pass raised one item and it was smaller than this, so the condition the assumption
+   named was met.
