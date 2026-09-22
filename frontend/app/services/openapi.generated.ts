@@ -788,7 +788,6 @@ export interface components {
             isOverdue: boolean;
             isEditable: boolean;
             allowedActions: components["schemas"]["OrderAction"][];
-            allowedTransitions: components["schemas"]["OrderStatus"][];
         };
         MaintenanceOrderSummary: {
             /** Format: uuid */
@@ -811,7 +810,6 @@ export interface components {
         OrderStatus: "Received" | "InProgress" | "Completed" | "Cancelled";
         OrderStatusItem: {
             status: components["schemas"]["OrderStatus"];
-            allowedActions: components["schemas"]["OrderAction"][];
             allowedTransitions: components["schemas"]["OrderStatus"][];
         };
         PagedResponseOfMaintenanceOrderSummary: {

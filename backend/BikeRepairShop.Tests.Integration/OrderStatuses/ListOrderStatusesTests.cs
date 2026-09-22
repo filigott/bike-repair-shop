@@ -22,7 +22,7 @@ public class ListOrderStatusesTests(DatabaseFixture database) : IntegrationTest(
     }
 
     [Fact]
-    public async Task Each_status_carries_the_moves_and_targets_the_domain_gives_it()
+    public async Task Each_status_carries_the_targets_the_domain_gives_it()
     {
         // Arrange
         using var client = Database.Factory.CreateClient();
@@ -32,10 +32,7 @@ public class ListOrderStatusesTests(DatabaseFixture database) : IntegrationTest(
 
         // Assert
         items.Should().AllSatisfy(item =>
-        {
-            item.AllowedActions.Should().Equal(item.Status.AllowedActions);
-            item.AllowedTransitions.Should().Equal(item.Status.AllowedTransitions);
-        });
+            item.AllowedTransitions.Should().Equal(item.Status.AllowedTransitions));
     }
 
     [Fact]
@@ -49,7 +46,6 @@ public class ListOrderStatusesTests(DatabaseFixture database) : IntegrationTest(
 
         // Assert
         var cancelled = items.Single(item => item.Status == OrderStatus.Cancelled);
-        cancelled.AllowedActions.Should().BeEmpty();
         cancelled.AllowedTransitions.Should().BeEmpty();
     }
 

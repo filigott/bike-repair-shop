@@ -32,12 +32,10 @@ vi.mock("~/services/endpoints/order-statuses", () => ({
 const catalogue = [
   {
     status: "Received" as const,
-    allowedActions: ["Start" as const, "Cancel" as const],
     allowedTransitions: ["InProgress" as const, "Cancelled" as const],
   },
   {
     status: "Cancelled" as const,
-    allowedActions: [],
     allowedTransitions: [],
   },
 ];

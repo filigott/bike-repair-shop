@@ -57,7 +57,6 @@ function order(
     isOverdue: false,
     isEditable: true,
     allowedActions: ["Start", "Complete", "Cancel"],
-    allowedTransitions: ["InProgress", "Completed", "Cancelled"],
     ...overrides,
   };
 }
@@ -132,7 +131,6 @@ describe("OrderDetail", () => {
         status: "Cancelled",
         isEditable: false,
         allowedActions: [],
-        allowedTransitions: [],
       }),
     );
 
@@ -180,7 +178,6 @@ describe("OrderDetail", () => {
         status: "Completed",
         isEditable: false,
         allowedActions: ["Reopen"],
-        allowedTransitions: ["InProgress"],
       }),
     );
 
@@ -343,7 +340,6 @@ describe("OrderDetail", () => {
         status: "Completed",
         isEditable: false,
         allowedActions: ["Reopen"],
-        allowedTransitions: ["InProgress"],
       }),
     );
 
@@ -366,7 +362,6 @@ describe("OrderDetail", () => {
         status: "Cancelled",
         isEditable: false,
         allowedActions: [],
-        allowedTransitions: [],
       }),
     );
 
@@ -409,7 +404,6 @@ describe("OrderDetail", () => {
         status: "Cancelled",
         isEditable: false,
         allowedActions: [],
-        allowedTransitions: [],
       }),
     );
 
@@ -458,7 +452,6 @@ describe("OrderDetail", () => {
         status: "Cancelled",
         isEditable: false,
         allowedActions: [],
-        allowedTransitions: [],
       }),
     );
 
@@ -492,7 +485,6 @@ describe("OrderDetail", () => {
         status: "Cancelled",
         isEditable: false,
         allowedActions: [],
-        allowedTransitions: [],
         notes: null,
       }),
     );

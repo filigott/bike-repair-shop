@@ -159,10 +159,11 @@ that appear only when the current state allows them. A status dropdown or a gene
 form puts the state machine in the user's head; a "Complete order" button that the API's capability
 flags switch on keeps it in the code.
 
-**The UI never recomputes a server rule.** `allowedActions`, `allowedTransitions`, `isEditable`,
-`isOverdue` and `isReopened` are projected onto the response by the API. The order's action column
-renders one control per `allowedActions` entry, so it never works out which command moves an order
-from one status to another. Computing overdue in the browser lets the viewer's device timezone decide
+**The UI never recomputes a server rule.** `allowedActions`, `isEditable`, `isOverdue` and
+`isReopened` are projected onto the order response by the API, and the status matrix is published
+whole by `GET /api/order-statuses`. The order's action column renders one control per
+`allowedActions` entry, so it never works out which command moves an order from one status to
+another. Computing overdue in the browser lets the viewer's device timezone decide
 whether an order is late, and deriving editability from the status puts the state machine back in the
 client.
 

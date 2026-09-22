@@ -37,7 +37,6 @@ public sealed class MaintenanceOrder
 
     public IReadOnlyList<OrderAction> AllowedActions => Status.AllowedActions;
 
-    public IReadOnlyList<OrderStatus> AllowedTransitions => Status.AllowedTransitions;
 
     public bool IsOverdueOn(DateOnly today)
     {

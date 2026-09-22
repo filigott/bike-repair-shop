@@ -34,7 +34,7 @@ public class PlaceOrderTests(DatabaseFixture database) : IntegrationTest(databas
         body.Status.Should().Be(OrderStatus.Received);
         body.Email.Should().Be("kari@example.com");
         body.PhoneNumber.Should().Be("+4791234567");
-        body.AllowedTransitions.Should().BeEquivalentTo([OrderStatus.InProgress, OrderStatus.Completed, OrderStatus.Cancelled]);
+        body.AllowedActions.Should().BeEquivalentTo([OrderAction.Start, OrderAction.Complete, OrderAction.Cancel]);
 
         await using var scope = Database.CreateScope();
         var saved = await scope.ServiceProvider.GetRequiredService<BikeRepairShopDbContext>()
