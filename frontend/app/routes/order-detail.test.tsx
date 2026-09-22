@@ -427,7 +427,7 @@ describe("OrderDetail", () => {
     ).toHaveAttribute("href", "/");
   });
 
-  it("leaves the notes row out when a closed order has none", async () => {
+  it("keeps the notes row when there are none, with nothing in the value", async () => {
     // Arrange
     vi.mocked(getOrder).mockResolvedValue(
       order({
@@ -444,6 +444,6 @@ describe("OrderDetail", () => {
 
     // Assert
     await screen.findByText("+4712345678");
-    expect(screen.queryByText("Notes")).not.toBeInTheDocument();
+    expect(screen.getByText("Notes").nextElementSibling).toBeEmptyDOMElement();
   });
 });

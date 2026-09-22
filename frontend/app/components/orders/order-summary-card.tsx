@@ -12,7 +12,7 @@ export function OrderSummaryCard({
   const { locale } = useLocale();
 
   return (
-    <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 rounded-box bg-base-200 p-6 text-base">
+    <dl className="grid flex-1 grid-cols-[auto_1fr] content-between gap-x-6 gap-y-4 rounded-box bg-base-200 p-6 text-base">
       <dt className="text-base-content/60">{t("orders.columns.status")}</dt>
       <dd className="flex items-center gap-2 font-medium">
         <OrderStatusBadge status={order.status} />

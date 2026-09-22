@@ -4,7 +4,7 @@ import { Link, redirect, useFetcher } from "react-router";
 import { CommandDialog } from "~/components/orders/command-dialog";
 import { ConfirmDialog } from "~/components/orders/confirm-dialog";
 import { DeleteOrderDialog } from "~/components/orders/delete-order-dialog";
-import { OrderActionBar, toneOf } from "~/components/orders/order-action-bar";
+import { OrderActions, toneOf } from "~/components/orders/order-actions";
 import { OrderContactCard } from "~/components/orders/order-contact-card";
 import {
   DueDateField,
@@ -76,7 +76,7 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
     fetcher.data && isActionFailure(fetcher.data) ? fetcher.data : undefined;
 
   return (
-    <section className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+    <section className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <Link to="/" className="btn btn-outline btn-sm w-fit">
         {t("orders.backToList")}
       </Link>
@@ -88,35 +88,39 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
         <p className="text-base-content/70 text-lg">{order.customerName}</p>
       </header>
 
-      <OrderSummaryCard order={order} />
-      <OrderContactCard order={order} />
+      <div className="grid gap-6 md:grid-cols-[1fr_16rem]">
+        <div className="flex flex-col gap-6">
+          <OrderSummaryCard order={order} />
+          <OrderContactCard order={order} />
+        </div>
 
-      <div className="flex flex-col gap-4 rounded-box border border-base-300 p-6">
-        <h2 className="font-semibold text-base-content/60 text-sm uppercase tracking-wide">
-          {t("common.actions")}
-        </h2>
+        <div className="flex flex-col gap-4 self-start rounded-box border border-base-300 p-5">
+          <h2 className="font-semibold text-base-content/60 text-sm uppercase tracking-wide">
+            {t("common.actions")}
+          </h2>
 
-        {failure && (
-          <p role="alert" className="alert alert-error">
-            {failure.detail ?? failure.title}
-          </p>
-        )}
+          {failure && (
+            <p role="alert" className="alert alert-error">
+              {failure.detail ?? failure.title}
+            </p>
+          )}
 
-        {!order.isEditable && (
-          <p role="alert" className="alert alert-warning">
-            {t("orders.detail.closed", {
-              status: t(`orders.status.${order.status}`),
-            })}
-          </p>
-        )}
+          {!order.isEditable && (
+            <p role="alert" className="alert alert-warning">
+              {t("orders.detail.closed", {
+                status: t(`orders.status.${order.status}`),
+              })}
+            </p>
+          )}
 
-        <OrderActionBar
-          actions={order.allowedActions}
-          edits={order.isEditable ? editCommands : []}
-          onAction={setPending}
-          onEdit={setEditing}
-          onDelete={() => setDeleting(true)}
-        />
+          <OrderActions
+            actions={order.allowedActions}
+            edits={order.isEditable ? editCommands : []}
+            onAction={setPending}
+            onEdit={setEditing}
+            onDelete={() => setDeleting(true)}
+          />
+        </div>
       </div>
 
       {editing === OrderIntent.CorrectDetails && (
