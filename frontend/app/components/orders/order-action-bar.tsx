@@ -6,10 +6,10 @@ export type ActionTone = "primary" | "error";
 
 // Class names are spelled out because Tailwind only emits what it finds literally in the source.
 const styles: Record<OrderAction, { tone: ActionTone; button: string }> = {
-  Start: { tone: "primary", button: "btn btn-soft btn-sm btn-primary" },
-  Complete: { tone: "primary", button: "btn btn-soft btn-sm btn-primary" },
-  Reopen: { tone: "primary", button: "btn btn-soft btn-sm btn-primary" },
-  Cancel: { tone: "error", button: "btn btn-soft btn-sm btn-error" },
+  Start: { tone: "primary", button: "btn btn-soft btn-primary" },
+  Complete: { tone: "primary", button: "btn btn-soft btn-primary" },
+  Reopen: { tone: "primary", button: "btn btn-soft btn-primary" },
+  Cancel: { tone: "error", button: "btn btn-soft btn-error" },
 };
 
 export function toneOf(action: OrderAction): ActionTone {
@@ -21,11 +21,13 @@ export function OrderActionBar({
   edits,
   onAction,
   onEdit,
+  onDelete,
 }: {
   actions: OrderAction[];
   edits: readonly EditCommand[];
   onAction: (action: OrderAction) => void;
   onEdit: (command: EditCommand) => void;
+  onDelete: () => void;
 }) {
   const { t } = useTranslation();
   const editLabels: Record<EditCommand, string> = {
@@ -34,12 +36,8 @@ export function OrderActionBar({
     [OrderIntent.Reschedule]: t("orders.reschedule.action"),
   };
 
-  if (actions.length === 0 && edits.length === 0) {
-    return null;
-  }
-
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {actions.map((action) => (
         <button
           key={action}
@@ -54,12 +52,19 @@ export function OrderActionBar({
         <button
           key={command}
           type="button"
-          className="btn btn-soft btn-sm btn-secondary"
+          className="btn btn-soft btn-secondary"
           onClick={() => onEdit(command)}
         >
           {editLabels[command]}
         </button>
       ))}
+      <button
+        type="button"
+        className="btn btn-ghost btn-sm ml-auto text-error"
+        onClick={onDelete}
+      >
+        {t("orders.delete.action")}
+      </button>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   changeOrderService,
   completeOrder,
   correctOrderDetails,
+  deleteOrder,
   getOrder,
   reopenOrder,
   rescheduleOrder,
@@ -22,6 +23,7 @@ vi.mock("~/services/endpoints/orders", () => ({
   correctOrderDetails: vi.fn(),
   changeOrderService: vi.fn(),
   rescheduleOrder: vi.fn(),
+  deleteOrder: vi.fn(),
   startOrder: vi.fn(),
   completeOrder: vi.fn(),
   cancelOrder: vi.fn(),
@@ -66,6 +68,7 @@ function renderPage() {
       action: (args) =>
         clientAction(args as Parameters<typeof clientAction>[0]),
     },
+    { path: "/", Component: () => <h1>Orders</h1> },
   ]);
   return render(<Stub initialEntries={[`/orders/${ORDER_ID}`]} />);
 }
@@ -80,6 +83,7 @@ describe("OrderDetail", () => {
     vi.mocked(completeOrder).mockReset().mockResolvedValue(order());
     vi.mocked(cancelOrder).mockReset().mockResolvedValue(order());
     vi.mocked(reopenOrder).mockReset().mockResolvedValue(order());
+    vi.mocked(deleteOrder).mockReset().mockResolvedValue(undefined);
     vi.mocked(listServiceTypes).mockResolvedValue([
       { code: "WheelAdjustment", displayName: "Wheel adjustment" },
       { code: "ChainReplacement", displayName: "Chain replacement" },
@@ -369,6 +373,58 @@ describe("OrderDetail", () => {
     expect(screen.getByText("ada@example.com")).toBeInTheDocument();
     expect(screen.getByText("Bianchi")).toBeInTheDocument();
     expect(screen.getByText("Squeaks when braking")).toBeInTheDocument();
+  });
+
+  it("names the order in the delete confirmation and returns to the list", async () => {
+    // Arrange
+    renderPage();
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Delete" }),
+    );
+    expect(
+      screen.getByText(
+        "Delete order #1042 for Ada Lovelace? This cannot be undone.",
+      ),
+    ).toBeInTheDocument();
+
+    // Act
+    await userEvent.click(screen.getByRole("button", { name: "Delete order" }));
+
+    // Assert
+    await waitFor(() => expect(deleteOrder).toHaveBeenCalledWith(ORDER_ID));
+    expect(
+      await screen.findByRole("heading", { name: "Orders" }),
+    ).toBeInTheDocument();
+  });
+
+  it("still offers delete on a closed order, which removes a record rather than moving a state", async () => {
+    // Arrange
+    vi.mocked(getOrder).mockResolvedValue(
+      order({
+        status: "Cancelled",
+        isEditable: false,
+        allowedActions: [],
+        allowedTransitions: [],
+      }),
+    );
+
+    // Act
+    renderPage();
+
+    // Assert
+    expect(
+      await screen.findByRole("button", { name: "Delete" }),
+    ).toBeInTheDocument();
+  });
+
+  it("leads back to the list", async () => {
+    // Act
+    renderPage();
+
+    // Assert
+    expect(
+      await screen.findByRole("link", { name: "Back to orders" }),
+    ).toHaveAttribute("href", "/");
   });
 
   it("leaves the notes row out when a closed order has none", async () => {

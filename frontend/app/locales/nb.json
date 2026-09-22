@@ -4,7 +4,6 @@
   },
   "common": {
     "actions": "Handlinger",
-    "back": "Tilbake",
     "cancel": "Avbryt",
     "language": "Språk",
     "loading": "Laster",
@@ -31,6 +30,7 @@
       "Cancel": "Avbryt ordre",
       "Reopen": "Gjenåpne"
     },
+    "backToList": "Tilbake til ordrer",
     "changeService": {
       "action": "Endre tjeneste"
     },
@@ -78,7 +78,6 @@
       "schedule": "Tjeneste og frist"
     },
     "overdue": "Forfalt",
-    "reference": "#{{number}}",
     "paging": {
       "showing": "Viser {{from}} til {{to}} av {{total}}",
       "previous": "Forrige",
@@ -89,6 +88,7 @@
       "action": "Registrer ordre",
       "submit": "Registrer"
     },
+    "reference": "#{{number}}",
     "reschedule": {
       "action": "Endre frist"
     },

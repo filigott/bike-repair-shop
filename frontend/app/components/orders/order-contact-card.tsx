@@ -9,20 +9,20 @@ export function OrderContactCard({
   const { t } = useTranslation();
 
   return (
-    <dl className="grid grid-cols-2 gap-2 rounded-box bg-base-200 p-4">
-      <dt className="font-semibold">{t("orders.fields.phoneNumber")}</dt>
-      <dd>{order.phoneNumber}</dd>
+    <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 rounded-box bg-base-200 p-6 text-base">
+      <dt className="text-base-content/60">{t("orders.fields.phoneNumber")}</dt>
+      <dd className="font-medium">{order.phoneNumber}</dd>
 
-      <dt className="font-semibold">{t("orders.fields.email")}</dt>
-      <dd>{order.email}</dd>
+      <dt className="text-base-content/60">{t("orders.fields.email")}</dt>
+      <dd className="font-medium">{order.email}</dd>
 
-      <dt className="font-semibold">{t("orders.fields.bikeBrand")}</dt>
-      <dd>{order.bikeBrand}</dd>
+      <dt className="text-base-content/60">{t("orders.fields.bikeBrand")}</dt>
+      <dd className="font-medium">{order.bikeBrand}</dd>
 
       {order.notes && (
         <>
-          <dt className="font-semibold">{t("orders.fields.notes")}</dt>
-          <dd>{order.notes}</dd>
+          <dt className="text-base-content/60">{t("orders.fields.notes")}</dt>
+          <dd className="font-medium">{order.notes}</dd>
         </>
       )}
     </dl>

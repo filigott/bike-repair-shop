@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useFetcher } from "react-router";
+import { Link, redirect, useFetcher } from "react-router";
 import { CommandDialog } from "~/components/orders/command-dialog";
 import { ConfirmDialog } from "~/components/orders/confirm-dialog";
+import { DeleteOrderDialog } from "~/components/orders/delete-order-dialog";
 import { OrderActionBar, toneOf } from "~/components/orders/order-action-bar";
 import { OrderContactCard } from "~/components/orders/order-contact-card";
 import {
@@ -23,6 +24,7 @@ import {
   changeOrderService,
   completeOrder,
   correctOrderDetails,
+  deleteOrder,
   getOrder,
   reopenOrder,
   rescheduleOrder,
@@ -52,14 +54,15 @@ export async function clientAction({
   request,
 }: Route.ClientActionArgs) {
   const form = await request.formData();
+  const intent = textOf(form, "intent") as OrderIntent;
 
   try {
-    await runIntent(params.id, form);
+    await runIntent(params.id, intent, form);
   } catch (error) {
     return actionFailureFrom<OrderFormField>(error);
   }
 
-  return actionSuccess(null);
+  return intent === OrderIntent.Delete ? redirect("/") : actionSuccess(null);
 }
 
 export default function OrderDetail({ loaderData }: Route.ComponentProps) {
@@ -68,47 +71,53 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
   const fetcher = useFetcher();
   const [pending, setPending] = useState<OrderAction | null>(null);
   const [editing, setEditing] = useState<EditCommand | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const failure =
     fetcher.data && isActionFailure(fetcher.data) ? fetcher.data : undefined;
 
   return (
-    <section className="flex max-w-xl flex-col gap-4">
-      <div className="flex items-center gap-4">
-        <div>
-          <h1 className="font-mono text-2xl font-bold">
-            {t("orders.reference", { number: order.orderNumber })}
-          </h1>
-          <p className="text-base-content/70">{order.customerName}</p>
-        </div>
-        <Link to="/" className="btn btn-ghost btn-sm ml-auto">
-          {t("common.back")}
-        </Link>
-      </div>
+    <section className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+      <Link to="/" className="btn btn-outline btn-sm w-fit">
+        {t("orders.backToList")}
+      </Link>
+
+      <header>
+        <h1 className="font-mono text-4xl font-bold">
+          {t("orders.reference", { number: order.orderNumber })}
+        </h1>
+        <p className="text-base-content/70 text-lg">{order.customerName}</p>
+      </header>
 
       <OrderSummaryCard order={order} />
-
-      <OrderActionBar
-        actions={order.allowedActions}
-        edits={order.isEditable ? editCommands : []}
-        onAction={setPending}
-        onEdit={setEditing}
-      />
-
-      {failure && (
-        <p role="alert" className="alert alert-error">
-          {failure.detail ?? failure.title}
-        </p>
-      )}
-
-      {!order.isEditable && (
-        <p role="alert" className="alert alert-warning">
-          {t("orders.detail.closed", {
-            status: t(`orders.status.${order.status}`),
-          })}
-        </p>
-      )}
-
       <OrderContactCard order={order} />
+
+      <div className="flex flex-col gap-4 rounded-box border border-base-300 p-6">
+        <h2 className="font-semibold text-base-content/60 text-sm uppercase tracking-wide">
+          {t("common.actions")}
+        </h2>
+
+        {failure && (
+          <p role="alert" className="alert alert-error">
+            {failure.detail ?? failure.title}
+          </p>
+        )}
+
+        {!order.isEditable && (
+          <p role="alert" className="alert alert-warning">
+            {t("orders.detail.closed", {
+              status: t(`orders.status.${order.status}`),
+            })}
+          </p>
+        )}
+
+        <OrderActionBar
+          actions={order.allowedActions}
+          edits={order.isEditable ? editCommands : []}
+          onAction={setPending}
+          onEdit={setEditing}
+          onDelete={() => setDeleting(true)}
+        />
+      </div>
 
       {editing === OrderIntent.CorrectDetails && (
         <CommandDialog
@@ -149,6 +158,17 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
         </CommandDialog>
       )}
 
+      {deleting && (
+        <DeleteOrderDialog
+          order={order}
+          onClose={() => setDeleting(false)}
+          onConfirm={() => {
+            fetcher.submit({ intent: OrderIntent.Delete }, { method: "post" });
+            setDeleting(false);
+          }}
+        />
+      )}
+
       {pending && (
         <ConfirmDialog
           title={t(`orders.actions.${pending}`)}
@@ -182,8 +202,12 @@ const transitions: Record<
   Reopen: reopenOrder,
 };
 
-function runIntent(id: string, form: FormData): Promise<unknown> {
-  switch (textOf(form, "intent")) {
+function runIntent(
+  id: string,
+  intent: OrderIntent,
+  form: FormData,
+): Promise<unknown> {
+  switch (intent) {
     case OrderIntent.Transition:
       return transitions[textOf(form, "action") as OrderAction](id);
     case OrderIntent.CorrectDetails:
@@ -200,7 +224,9 @@ function runIntent(id: string, form: FormData): Promise<unknown> {
       });
     case OrderIntent.Reschedule:
       return rescheduleOrder(id, { dueDate: optionalTextOf(form, "dueDate") });
+    case OrderIntent.Delete:
+      return deleteOrder(id);
     default:
-      throw new Error(`Unknown order intent: ${textOf(form, "intent")}`);
+      throw new Error(`Unknown order intent: ${intent}`);
   }
 }

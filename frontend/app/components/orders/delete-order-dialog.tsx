@@ -1,8 +1,13 @@
 import { useTranslation } from "react-i18next";
 import type { MaintenanceOrderSummary } from "~/services/endpoints/orders";
 
+type DeletableOrder = Pick<
+  MaintenanceOrderSummary,
+  "orderNumber" | "customerName"
+>;
+
 type DeleteOrderDialogProps = {
-  order: MaintenanceOrderSummary;
+  order: DeletableOrder;
   onClose: () => void;
   onConfirm: () => void;
 };

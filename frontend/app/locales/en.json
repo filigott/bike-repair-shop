@@ -4,7 +4,6 @@
   },
   "common": {
     "actions": "Actions",
-    "back": "Back",
     "cancel": "Cancel",
     "language": "Language",
     "loading": "Loading",
@@ -31,6 +30,7 @@
       "Cancel": "Cancel order",
       "Reopen": "Reopen"
     },
+    "backToList": "Back to orders",
     "changeService": {
       "action": "Change service"
     },
@@ -78,7 +78,6 @@
       "schedule": "Service and due date"
     },
     "overdue": "Overdue",
-    "reference": "#{{number}}",
     "paging": {
       "showing": "Showing {{from}} to {{to}} of {{total}}",
       "previous": "Previous",
@@ -89,6 +88,7 @@
       "action": "Place an order",
       "submit": "Place order"
     },
+    "reference": "#{{number}}",
     "reschedule": {
       "action": "Reschedule"
     },
