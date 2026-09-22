@@ -5,8 +5,9 @@
 The order detail page stops being three always-open forms and becomes a read-only view of the
 order with an action area underneath it. Seven commands live there: four lifecycle moves that are
 a confirm, three edit commands that each open a dialog holding only their own form, and delete set
-apart from the rest. Which actions appear comes from `allowedTransitions` and `isEditable` on the
-response, so a closed order simply has fewer, and the browser decides nothing.
+apart from the rest. Which actions appear comes from `allowedActions` and `isEditable` on the
+response, so a closed order simply has fewer, and the browser decides nothing. The first step earns
+that by rekeying the domain's state machine from target statuses to named actions.
 
 ## Progress
 
@@ -14,9 +15,10 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| J1. Action area with the lifecycle moves | 🟡 | Four transitions as confirms; inline forms stay |
-| J2. Edit commands move into dialogs | ⏳ | Page goes read-only; three more buttons on the bar |
-| J3. Delete, layout and the duplication | ⏳ | Delete on the page, back link, type, facts once |
+| J1. Rekey the state machine by action | 🟡 | One edge table; allowedActions on the response |
+| J2. Action area with the lifecycle moves | ⏳ | Four actions as confirms; inline forms stay |
+| J3. Edit commands move into dialogs | ⏳ | Page goes read-only; three more buttons on the bar |
+| J4. Delete, layout and the duplication | ⏳ | Delete on the page, back link, type, facts once |
 
 ## Context
 
@@ -38,7 +40,7 @@ and the actions follow them, which matches the task: see what it is, then decide
 sticky right column reads well on a counter monitor and costs a breakpoint plus a stacking rule for
 phone width, on a page of about six facts that never scrolls.
 
-**A closed order shows no actions, not disabled ones.** `allowedTransitions` is empty for
+**A closed order shows no actions, not disabled ones.** `allowedActions` is empty for
 `Cancelled` and `isEditable` is false for both closed states, so absence falls straight out of the
 projection. Greying buttons out would mean the browser deciding what is unavailable, which is the
 one thing the UI is not allowed to work out for itself. The existing "this order can no longer be
@@ -53,10 +55,18 @@ number as well as the customer, so acting on the wrong order takes a deliberate 
 form: fields, Save and Cancel. Forcing both through one component would mean a dialog that
 sometimes has children and sometimes does not, so there are two small components instead.
 
-**The button label comes from the pair, not the target.** `Received` to `InProgress` is "Start" and
-`Completed` to `InProgress` is "Reopen", the same target status from two different origins. The UI
-maps the pair to a command, which is also why the API keeps `start` and `reopen` as separate
-endpoints despite being the same domain call.
+**The state machine is keyed by the action, not by the target status.** `Received` to `InProgress`
+is "Start" and `Completed` to `InProgress` is "Reopen": one target, two different edges. A matrix
+keyed by `from -> [to]` cannot tell them apart, so something has to bridge statuses back to command
+names, and every placement of that bridge is wrong. In the browser it rots when a status is added.
+On the server it is still a hand-written lookup and two response fields that can disagree.
+
+Keying the machine by the action removes the bridge instead of moving it. One table of
+`(from, action) -> to` edges is the single source, `AllowedActions` is what the UI renders,
+`AllowedTransitions` is derived from it for the status legend, and the two cannot drift because one
+is computed from the other. `Start` and `Reopen` gain real origins, so posting `start` to a
+completed order is refused without a second rule sitting beside the matrix. The better exception
+message falls out rather than being written, which is the sign the shape is right.
 
 **One route action, one intent enum.** The existing envelope already switches on an `intent` read
 from `FormData`, and the transitions and delete join it rather than gaining route resources of their
@@ -68,15 +78,25 @@ full navigation apiece.
 Ordered so the page works after every commit. The inline forms are not removed until the dialogs
 that replace them exist.
 
-**J1. Action area with the lifecycle moves.** Endpoint wrappers for the four transitions, four
+**J1. Rekey the state machine by action.** An `OrderAction` enum in the domain and one edge table
+replacing the `from -> [to]` matrix. `AllowedActions` and `AllowedTransitions` both derive from it,
+`InvalidStateTransitionException` carries the action rather than a target status, and the entity's
+four transition methods become thin wrappers over one `Apply`. The response gains `allowedActions`.
+
+Tests first, since this is a transition matrix: the unit suite gains the per-status action sets and
+the origin refusals, and the two existing assertions that pin the old behaviour change. Starting a
+completed order stops being a reopen and becomes a 409, which is the behaviour this rekeying exists
+to make expressible.
+
+**J2. Action area with the lifecycle moves.** Endpoint wrappers for the four transitions, four
 intents, the route action branches, a confirm dialog component, and an action bar rendered from
-`allowedTransitions`. The three inline edit forms stay exactly where they are for this step, below
+`allowedActions`. The three inline edit forms stay exactly where they are for this step, below
 the new bar. Both locales gain the action labels and the confirm sentences.
 
 Tests: the bar offers only the moves the loaded order allows, the confirm posts the right command,
 and a cancelled order offers none.
 
-**J2. Edit commands move into dialogs.** The three `CommandForm` blocks become three dialogs opened
+**J3. Edit commands move into dialogs.** The three `CommandForm` blocks become three dialogs opened
 from three more buttons on the bar, and the page body goes read-only: the summary card plus the
 contact, bike and notes card, for open and closed orders alike. The `isEditable` branch stops
 choosing between two page bodies and starts choosing which buttons exist.
@@ -84,7 +104,7 @@ choosing between two page bodies and starts choosing which buttons exist.
 Tests: opening a dialog and saving sends only that command, and the page shows no form until a
 button is pressed.
 
-**J3. Delete, layout and the duplication.** Delete on the bar, set apart, reusing the list's
+**J4. Delete, layout and the duplication.** Delete on the bar, set apart, reusing the list's
 confirmation. Then the four presentation complaints from the manual pass: the back link stops being
 a ghost button in the corner, the body type scale comes up, `Service` and `Due date` appear once
 rather than in both the summary and a form legend, and the page separates what the order is from
