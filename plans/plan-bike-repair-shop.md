@@ -28,6 +28,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | I. Order reference | [plan-i-order-reference.md](plan-i-order-reference.md) | #9 | ✅ |
 | J. Detail page rework | [plan-j-detail-page.md](plan-j-detail-page.md) | #10 | ✅ |
 | K. Localized API messages | not yet written | #11 | ⏳ |
+| L. Status legend | [plan-l-status-legend.md](plan-l-status-legend.md) | #13 | ✅ |
 
 Each phase plan carries its own step table. From B on, the last step of a phase ends in a manual
 smoke test through the running API and front end before the phase is called done. Phases I and F
@@ -36,7 +37,8 @@ phase; the roadmap's `Blockers` names what that pass owes. Phase F covers the AP
 so the issue stays open for the status history.
 
 The letters record when a phase was identified, not the order it runs in. H through K came out of
-the phase C smoke test, and the running order so far has been A, B, C, H, D, I, F, with J next.
+the phase C smoke test and L out of phase J, while the running order has been A, B, C, H, D, I, F,
+J, L.
 The roadmap's `Next up` is the one place that order lives.
 
 ## Context

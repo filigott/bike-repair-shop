@@ -1,4 +1,4 @@
-# Phase K: status legend (#13)
+# Phase L: status legend (#13)
 
 ## At a glance
 
@@ -17,9 +17,9 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| K1. Status catalogue endpoint | ✅ | `Features/OrderStatuses` mirroring the service catalogue |
-| K2. The legend above the table | ✅ | Badges at rest, edges on disclosure, both locales |
-| K3. Drop the per-order transitions | ✅ | Off the response, off the fixtures, out of CLAUDE.md |
+| L1. Status catalogue endpoint | ✅ | `Features/OrderStatuses` mirroring the service catalogue |
+| L2. The legend above the table | ✅ | Badges at rest, edges on disclosure, both locales |
+| L3. Drop the per-order transitions | ✅ | Off the response, off the fixtures, out of CLAUDE.md |
 
 ## Context
 
@@ -58,21 +58,21 @@ matrix in two locale files, which is the duplication this endpoint exists to pre
 
 ## Steps
 
-**K1. Status catalogue endpoint.** `Features/OrderStatuses` with a query, a handler, an
+**L1. Status catalogue endpoint.** `Features/OrderStatuses` with a query, a handler, an
 `OrderStatusItem` model and `AddOrderStatuses()`, plus `OrderStatusesController`. Each item carries
 the status, its allowed actions and its target statuses, all read from the existing edge table.
 
 Tests: the catalogue covers every status the enum declares, the edges match the domain matrix rather
 than a second copy, and `Cancelled` comes back with none.
 
-**K2. The legend above the table.** An endpoint wrapper, the orders loader fetching it alongside the
+**L2. The legend above the table.** An endpoint wrapper, the orders loader fetching it alongside the
 list, and a component rendering the summary badges and the disclosed rows. Both locales gain the
 legend title and the connective.
 
 Tests: the legend names every status the catalogue returns, and the edges it shows are the ones the
 catalogue gave rather than anything computed in the browser.
 
-**K3. Drop the per-order transitions.** Remove `AllowedTransitions` from `MaintenanceOrderResponse`,
+**L3. Drop the per-order transitions.** Remove `AllowedTransitions` from `MaintenanceOrderResponse`,
 regenerate `openapi.generated.ts`, drop the field from the front-end test fixtures, and take it out
 of the list of projected fields in `CLAUDE.md`. `AllowedActions` stays: the action column renders
 from it.
