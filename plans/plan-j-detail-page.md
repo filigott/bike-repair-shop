@@ -114,6 +114,30 @@ Reconfirm at implementation time: whether delete stays available on a closed ord
 delete rather than a state, so nothing in the domain forbids it, but the page may still want to
 withhold it once an order is cancelled.
 
+## Manual pass checklist
+
+Run before anything here is pushed. Start `docker compose up -d db` (already up), then the API and
+`npm --prefix frontend run dev` in their own terminals.
+
+1. The list shows an `Order` column, demo orders numbered 1000 to 1025.
+2. Place an order. It takes the next number and appears in the table with it.
+3. Open it. The heading is the number with the customer name beneath, then the summary card, then a
+   row of actions, then the contact card. No form is open.
+4. `Start work`, `Complete` and `Cancel order` are offered on a new order; `Reopen` is not.
+5. Press `Cancel order`, read the confirmation, dismiss it. Nothing changed.
+6. Press `Start work` and confirm. The status becomes In progress and the buttons become
+   `Complete`, `Cancel order` and the three edit commands.
+7. `Complete` it. The page says it can no longer be changed, the edit buttons are gone, and the only
+   action left is `Reopen`.
+8. `Reopen` it, then `Cancel order` it. A cancelled order offers nothing at all.
+9. On an open order, press `Edit details`. A dialog holds only those fields, prefilled. Save closes
+   it and the page shows the new values.
+10. `Endre frist` with a date in the past. The dialog stays open and shows the message.
+11. Switch to Norwegian. Every action label, dialog title and confirmation reads naturally, and the
+    order number renders with no thousands separator.
+12. Delete an order from the list. The confirmation names the order number and the customer.
+13. Reset the demo data. Numbering continues past the highest used rather than restarting.
+
 ## Out of scope
 
 - The status legend above the orders table, which is the next roadmap item and belongs to the list.

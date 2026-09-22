@@ -18,10 +18,10 @@ Everything below is beyond the brief, which is met. Ordered on 2026-09-21 after 
 the priorities; the reasoning is under `Why this order` below. The first two came off the queue on
 2026-09-22 and are recorded under `Landed` further down.
 
-1. Detail page rework (#10), planned in [plan-j-detail-page.md](plan-j-detail-page.md). The page
-   goes read-only and every command becomes an action: three edit commands opening a dialog with
-   their own form, four transitions that are a confirm, and delete set apart. Built once, with all
-   seven in hand, now that the transition endpoints exist.
+1. Detail page rework (#10), planned in [plan-j-detail-page.md](plan-j-detail-page.md). Three of
+   its four steps are done: the state machine is rekeyed by action, the lifecycle moves are on the
+   page, and the page is read-only with one dialog per edit command. Only J4 is left, and it waits
+   on the manual pass.
 2. A status legend above the orders table. Its transitions come from the API, read off the domain's
    matrix the way the service catalogue is, never written out in both locale files.
 3. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
@@ -64,9 +64,19 @@ down the queue.
 
 ## State
 
-As of 2026-09-22: `main` carries everything above and is **not pushed**, because the manual pass is
-outstanding. The suites are green at 148 backend tests and the front-end `verify` gate. No branch is
-in flight. The `db` container is up, which is its resting state; nothing else is running.
+As of 2026-09-22, end of session. `main` carries 15 commits that are **not pushed**, because the
+manual pass gates the push. Backend 160 tests green, front-end `verify` green at 36 tests. No branch
+is in flight. The `db` container is up, which is its resting state; the API and the front end are
+not running.
+
+**The next action is yours, not the agent's: the batched manual pass.** Its checklist is at the end
+of [plan-j-detail-page.md](plan-j-detail-page.md). It covers everything since the last pass, which
+is phases I and F and the first three steps of J. Nothing is pushed, merged or started on J4 until
+it comes back.
+
+J4 was deliberately left until after the pass. It is delete on the detail page plus the back link,
+the type scale and the remaining duplication, which is exactly the work the pass should steer rather
+than review after the fact.
 
 ## Delivery line
 
