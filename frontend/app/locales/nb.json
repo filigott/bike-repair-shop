@@ -77,6 +77,11 @@
       "details": "Ordredetaljer",
       "schedule": "Tjeneste og frist"
     },
+    "legend": {
+      "becomes": "kan bli",
+      "final": "er der en ordre stopper",
+      "title": "Statuser"
+    },
     "overdue": "Forfalt",
     "paging": {
       "showing": "Viser {{from}} til {{to}} av {{total}}",
