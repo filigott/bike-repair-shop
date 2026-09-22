@@ -87,6 +87,58 @@ public class TransitionOrderTests(DatabaseFixture database) : IntegrationTest(da
         (await ReloadAsync(order.Id)).Status.Should().Be(OrderStatus.InProgress);
     }
 
+
+    [Fact]
+    public async Task An_order_runs_from_placed_to_completed_over_the_api_alone()
+    {
+        // Arrange
+        using var client = Database.Factory.CreateClient();
+        var placed = await client.PostAsJsonAsync("/api/orders", PlaceOrderRequests.Valid(Clock), Json.Options, TestContext.Current.CancellationToken);
+        var order = (await placed.Content.ReadFromJsonAsync<MaintenanceOrderResponse>(Json.Options, TestContext.Current.CancellationToken))!;
+
+        // Act
+        var started = await ReadAsync(await PostAsync(client, order.Id, "start"));
+        var completed = await ReadAsync(await PostAsync(client, order.Id, "complete"));
+
+        // Assert
+        order.AllowedTransitions.Should().BeEquivalentTo([OrderStatus.InProgress, OrderStatus.Completed, OrderStatus.Cancelled]);
+        started.AllowedTransitions.Should().BeEquivalentTo([OrderStatus.Completed, OrderStatus.Cancelled]);
+        completed.AllowedTransitions.Should().BeEquivalentTo([OrderStatus.InProgress]);
+        (await ReloadAsync(order.Id)).Status.Should().Be(OrderStatus.Completed);
+    }
+
+    [Fact]
+    public async Task Completing_an_order_stops_reporting_it_as_editable()
+    {
+        // Arrange
+        var order = OrderFixtures.Place(Clock);
+        await Database.SeedAsync(order);
+        using var client = Database.Factory.CreateClient();
+
+        // Act
+        var body = await ReadAsync(await PostAsync(client, order.Id, "complete"));
+
+        // Assert
+        body.IsEditable.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Starting_a_completed_order_reopens_it_because_only_the_matrix_guards()
+    {
+        // Arrange
+        var order = OrderFixtures.Place(Clock);
+        order.Complete();
+        await Database.SeedAsync(order);
+        using var client = Database.Factory.CreateClient();
+
+        // Act
+        var response = await PostAsync(client, order.Id, "start");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        (await ReloadAsync(order.Id)).Status.Should().Be(OrderStatus.InProgress);
+    }
+
     #endregion
 
     #region Refusals
@@ -123,11 +175,38 @@ public class TransitionOrderTests(DatabaseFixture database) : IntegrationTest(da
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+
+    [Theory]
+    [InlineData("start")]
+    [InlineData("complete")]
+    [InlineData("reopen")]
+    public async Task A_cancelled_order_refuses_every_move(string command)
+    {
+        // Arrange
+        var order = OrderFixtures.Place(Clock);
+        order.Cancel();
+        await Database.SeedAsync(order);
+        using var client = Database.Factory.CreateClient();
+
+        // Act
+        var response = await PostAsync(client, order.Id, command);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        (await ReloadAsync(order.Id)).Status.Should().Be(OrderStatus.Cancelled);
+    }
+
     #endregion
 
     private static Task<HttpResponseMessage> PostAsync(HttpClient client, Guid id, string command)
     {
         return client.PostAsync($"/api/orders/{id}/{command}", null, TestContext.Current.CancellationToken);
+    }
+
+    private static async Task<MaintenanceOrderResponse> ReadAsync(HttpResponseMessage response)
+    {
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        return (await response.Content.ReadFromJsonAsync<MaintenanceOrderResponse>(Json.Options, TestContext.Current.CancellationToken))!;
     }
 
     private async Task<MaintenanceOrder> ReloadAsync(Guid id)

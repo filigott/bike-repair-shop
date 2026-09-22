@@ -14,7 +14,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| F1. Transition commands over HTTP | 🟡 | start, complete, cancel, reopen, plus 409 and 404 |
+| F1. Transition commands over HTTP | ✅ | Four commands; coverage widened to the seam after review |
 
 ## Context
 
@@ -66,6 +66,14 @@ Tests: one integration test per command asserting the persisted status from a fr
 than from the returned entity, one asserting an illegal move returns 409 with ProblemDetails, and
 one asserting an unknown id returns 404. The transition matrix itself is already covered by the
 unit suite and is not re-driven over HTTP.
+
+Widened after review to cover the seam rather than the rules. A single test walks an order from
+placed to completed through the API alone and watches `allowedTransitions` narrow at each hop, which
+is the only place the four endpoints are proved to compose. One pins `isEditable` going false once
+an order closes, since that flag is what the UI hangs the edit affordance on. One pins that posting
+to `start` on a completed order reopens it, because that is a decision taken deliberately and an
+origin guard added later would otherwise break nothing. A theory drives all three moves against a
+cancelled order, which is the only absorbing state and the one worth stating at the HTTP boundary.
 
 Reconfirm at implementation time: whether `cancel` is allowed from `Completed`. The matrix currently
 says no, so a completed order can only be reopened, and that is the behaviour the tests will pin.
