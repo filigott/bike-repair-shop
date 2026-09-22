@@ -2,10 +2,10 @@ using BikeRepairShop.Domain.Orders;
 
 namespace BikeRepairShop.Domain.Exceptions;
 
-public sealed class InvalidStateTransitionException(OrderStatus from, OrderStatus to)
-    : DomainException($"An order cannot move from {from} to {to}.")
+public sealed class InvalidStateTransitionException(OrderStatus from, OrderAction action)
+    : DomainException($"The {action} action is not allowed on a {from} order.")
 {
     public OrderStatus From { get; } = from;
 
-    public OrderStatus To { get; } = to;
+    public OrderAction Action { get; } = action;
 }

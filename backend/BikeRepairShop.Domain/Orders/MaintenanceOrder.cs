@@ -35,6 +35,8 @@ public sealed class MaintenanceOrder
 
     public DateTimeOffset PlacedAt { get; private set; }
 
+    public IReadOnlyList<OrderAction> AllowedActions => Status.AllowedActions;
+
     public IReadOnlyList<OrderStatus> AllowedTransitions => Status.AllowedTransitions;
 
     public bool IsOverdueOn(DateOnly today)
@@ -92,32 +94,32 @@ public sealed class MaintenanceOrder
 
     public void Start()
     {
-        TransitionTo(OrderStatus.InProgress);
+        Apply(OrderAction.Start);
     }
 
     public void Complete()
     {
-        TransitionTo(OrderStatus.Completed);
+        Apply(OrderAction.Complete);
     }
 
     public void Cancel()
     {
-        TransitionTo(OrderStatus.Cancelled);
+        Apply(OrderAction.Cancel);
     }
 
     public void Reopen()
     {
-        TransitionTo(OrderStatus.InProgress);
+        Apply(OrderAction.Reopen);
     }
 
-    private void TransitionTo(OrderStatus next)
+    private void Apply(OrderAction action)
     {
-        if (!Status.CanTransitionTo(next))
+        if (!Status.Allows(action))
         {
-            throw new InvalidStateTransitionException(Status, next);
+            throw new InvalidStateTransitionException(Status, action);
         }
 
-        Status = next;
+        Status = Status.After(action);
     }
 
     private void EnsureEditable()

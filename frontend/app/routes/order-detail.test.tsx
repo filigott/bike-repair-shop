@@ -42,6 +42,7 @@ function order(
     placedAt: "2026-09-20T08:00:00+00:00",
     isOverdue: false,
     isEditable: true,
+    allowedActions: ["Start", "Complete", "Cancel"],
     allowedTransitions: ["InProgress", "Completed", "Cancelled"],
     ...overrides,
   };

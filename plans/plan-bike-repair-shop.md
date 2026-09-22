@@ -172,9 +172,13 @@ phase table is now read against: nothing from E, F or G until the product phases
   transition matrix, the locale keys and the test cases from multiplying for a distinction the history
   already records.
 
-- **The transition matrix is expressed exactly once**, as a static map that every transition method,
-  `CanTransitionTo` and `AllowedTransitions` read from. Two copies of the same matrix is the bug this
-  whole design exists to prevent.
+- **The state machine is one table of edges, keyed by the action.** `(from, action) to`, with
+  `AllowedActions`, `AllowedTransitions` and `CanTransitionTo` all derived from it and every
+  transition method funnelling through one `Apply`. Two copies of the same matrix is the bug this
+  whole design exists to prevent, and keying by target status was a third copy waiting to happen:
+  `Start` and `Reopen` share `InProgress` from different origins, so a `from -> [to]` map cannot
+  tell them apart and something has to bridge statuses back to command names. Whichever side that
+  bridge sits, it is hand-written and can disagree with the matrix. Keying by the action removes it.
 
 - **snake_case identifiers, decided before the first migration.** EF's PascalCase defaults need
   quoting in every hand-written query and every `psql` session, and switching afterwards is a

@@ -83,7 +83,13 @@ bare records. Controllers stay thin and take the handler per action via `[FromSe
 business action (`MaintenanceOrder.Place()`) that validates, `private set` on anything a domain method
 owns, `init` on `Id` and immutable foreign keys. Mutators are named for the task (`Reschedule`,
 `CorrectDetails`), never a bare `Update`, and every one guards the lifecycle. An order's status moves
-only through domain methods, and the transition matrix lives in exactly one place.
+only through domain methods.
+
+**The lifecycle is one table of edges, keyed by the action.** `(from, action) to` in
+`OrderStatus.cs` is the single source: `AllowedActions`, `AllowedTransitions` and `CanTransitionTo`
+are all derived from it, and the entity's `Start`, `Complete`, `Cancel` and `Reopen` are wrappers
+over one `Apply`. Keying by target status instead cannot tell `Start` from `Reopen`, which share
+`InProgress` from different origins, and leaves something to bridge statuses back to command names.
 
 **Exception types match the layer.** `ArgumentException` for bad method input. `DomainException` and
 its subtypes (`BusinessRuleViolationException`, `InvalidStateTransitionException`) for invariants.
@@ -150,8 +156,10 @@ that appear only when the current state allows them. A status dropdown or a gene
 form puts the state machine in the user's head; a "Complete order" button that the API's capability
 flags switch on keeps it in the code.
 
-**The UI never recomputes a server rule.** `allowedTransitions`, `isEditable`, `isOverdue` and
-`isReopened` are projected onto the response by the API. Computing overdue in the browser lets the
+**The UI never recomputes a server rule.** `allowedActions`, `allowedTransitions`, `isEditable`,
+`isOverdue` and `isReopened` are projected onto the response by the API. The action bar renders one
+button per `allowedActions` entry, so it never works out which command moves an order from one
+status to another. Computing overdue in the browser lets the
 viewer's device timezone decide whether an order is late, and deriving editability from the status
 puts the state machine back in the client.
 

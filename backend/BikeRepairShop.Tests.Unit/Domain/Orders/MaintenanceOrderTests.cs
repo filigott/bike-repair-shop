@@ -217,8 +217,36 @@ public class MaintenanceOrderTests
 
         // Assert
         act.Should().Throw<InvalidStateTransitionException>()
-            .Which.Should().BeEquivalentTo(new { From = OrderStatus.InProgress, To = OrderStatus.InProgress });
+            .Which.Should().BeEquivalentTo(new { From = OrderStatus.InProgress, Action = OrderAction.Start });
         order.Status.Should().Be(OrderStatus.InProgress);
+    }
+
+    [Fact]
+    public void Start_throws_when_the_order_is_completed()
+    {
+        // Arrange
+        var order = OrderFixtures.Completed();
+
+        // Act
+        var act = () => order.Start();
+
+        // Assert
+        act.Should().Throw<InvalidStateTransitionException>();
+        order.Status.Should().Be(OrderStatus.Completed);
+    }
+
+    [Fact]
+    public void Reopen_throws_when_the_order_is_received()
+    {
+        // Arrange
+        var order = OrderFixtures.Placed();
+
+        // Act
+        var act = () => order.Reopen();
+
+        // Assert
+        act.Should().Throw<InvalidStateTransitionException>();
+        order.Status.Should().Be(OrderStatus.Received);
     }
 
     [Fact]

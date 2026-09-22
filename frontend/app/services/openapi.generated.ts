@@ -752,6 +752,7 @@ export interface components {
             placedAt: string;
             isOverdue: boolean;
             isEditable: boolean;
+            allowedActions: components["schemas"]["OrderAction"][];
             allowedTransitions: components["schemas"]["OrderStatus"][];
         };
         MaintenanceOrderSummary: {
@@ -769,6 +770,8 @@ export interface components {
             status: components["schemas"]["OrderStatus"];
             isOverdue: boolean;
         };
+        /** @enum {unknown} */
+        OrderAction: "Start" | "Complete" | "Cancel" | "Reopen";
         /** @enum {unknown} */
         OrderStatus: "Received" | "InProgress" | "Completed" | "Cancelled";
         PagedResponseOfMaintenanceOrderSummary: {
