@@ -89,6 +89,54 @@ public sealed class OrdersController : ControllerBase
         return await handler.HandleAsync(RescheduleOrderCommand.From(id, request), cancellationToken);
     }
 
+    [HttpPost("{id:guid}/start")]
+    [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<MaintenanceOrderResponse>> Start(
+        [FromServices] StartOrderHandler handler,
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(new StartOrderCommand(id), cancellationToken);
+    }
+
+    [HttpPost("{id:guid}/complete")]
+    [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<MaintenanceOrderResponse>> Complete(
+        [FromServices] CompleteOrderHandler handler,
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(new CompleteOrderCommand(id), cancellationToken);
+    }
+
+    [HttpPost("{id:guid}/cancel")]
+    [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<MaintenanceOrderResponse>> Cancel(
+        [FromServices] CancelOrderHandler handler,
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(new CancelOrderCommand(id), cancellationToken);
+    }
+
+    [HttpPost("{id:guid}/reopen")]
+    [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<MaintenanceOrderResponse>> Reopen(
+        [FromServices] ReopenOrderHandler handler,
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return await handler.HandleAsync(new ReopenOrderCommand(id), cancellationToken);
+    }
+
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]

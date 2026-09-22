@@ -15,6 +15,7 @@ export function OrdersTable({
     <table className="table">
       <thead>
         <tr>
+          <th>{t("orders.columns.reference")}</th>
           <th>{t("orders.columns.customer")}</th>
           <th>{t("orders.columns.phone")}</th>
           <th>{t("orders.columns.bike")}</th>

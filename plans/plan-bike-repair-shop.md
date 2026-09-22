@@ -22,18 +22,21 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | C. Find, edit and delete | [plan-c-find-edit-delete.md](plan-c-find-edit-delete.md) | #2 | 🟡 |
 | D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ✅ |
 | E. Search | [plan-e-search.md](plan-e-search.md) | #4 | ⏳ |
-| F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ⏳ |
+| F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ✅ |
 | G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ⏳ |
 | H. Demo data | [plan-h-demo-data.md](plan-h-demo-data.md) | #8 | ✅ |
-| I. Order reference | not yet written | #9 | ⏳ |
-| J. Detail page rework | not yet written | #10 | ⏳ |
+| I. Order reference | [plan-i-order-reference.md](plan-i-order-reference.md) | #9 | ✅ |
+| J. Detail page rework | [plan-j-detail-page.md](plan-j-detail-page.md) | #10 | ✅ |
 | K. Localized API messages | not yet written | #11 | ⏳ |
 
 Each phase plan carries its own step table. From B on, the last step of a phase ends in a manual
-smoke test through the running API and front end before the phase is called done.
+smoke test through the running API and front end before the phase is called done. Phases I and F
+are code-complete and gated, with their manual passes batched into one run rather than taken per
+phase; the roadmap's `Blockers` names what that pass owes. Phase F covers the API half of #5 only,
+so the issue stays open for the status history.
 
 The letters record when a phase was identified, not the order it runs in. H through K came out of
-the phase C smoke test, and the running order is now C, H, D, I, J, the rest of C, K, then E, F, G.
+the phase C smoke test, and the running order so far has been A, B, C, H, D, I, F, with J next.
 The roadmap's `Next up` is the one place that order lives.
 
 ## Context
@@ -82,8 +85,8 @@ phase table is now read against: nothing from E, F or G until the product phases
   earns its place.
 
 - **Task-based actions end to end, not CRUD.** Every change to an order is a named command on the API
-  (place, reschedule, start, complete, cancel, correct the contact details) and a matching action in
-  the UI, shown only when the order's state allows it. A single update endpoint plus a form with a
+  (place, reschedule, start, complete, cancel, reopen, correct the contact details) and a matching
+  action in the UI, shown only when the order's state allows it. A single update endpoint plus a form with a
   status dropdown would leave the lifecycle rules to be remembered by whoever is at the counter. The
   edit form therefore covers the details an order can always carry, and lifecycle moves are buttons
   driven by the transitions the API projects onto the response.
@@ -169,9 +172,13 @@ phase table is now read against: nothing from E, F or G until the product phases
   transition matrix, the locale keys and the test cases from multiplying for a distinction the history
   already records.
 
-- **The transition matrix is expressed exactly once**, as a static map that every transition method,
-  `CanTransitionTo` and `AllowedTransitions` read from. Two copies of the same matrix is the bug this
-  whole design exists to prevent.
+- **The state machine is one table of edges, keyed by the action.** `(from, action) to`, with
+  `AllowedActions`, `AllowedTransitions` and `CanTransitionTo` all derived from it and every
+  transition method funnelling through one `Apply`. Two copies of the same matrix is the bug this
+  whole design exists to prevent, and keying by target status was a third copy waiting to happen:
+  `Start` and `Reopen` share `InProgress` from different origins, so a `from -> [to]` map cannot
+  tell them apart and something has to bridge statuses back to command names. Whichever side that
+  bridge sits, it is hand-written and can disagree with the matrix. Keying by the action removes it.
 
 - **snake_case identifiers, decided before the first migration.** EF's PascalCase defaults need
   quoting in every hand-written query and every `psql` session, and switching afterwards is a

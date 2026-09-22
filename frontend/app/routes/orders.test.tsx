@@ -29,6 +29,7 @@ function summary(
 ): MaintenanceOrderSummary {
   return {
     id: crypto.randomUUID(),
+    orderNumber: 1042,
     customerName: "Ada Lovelace",
     phoneNumber: "+4712345678",
     email: "ada@example.com",
@@ -80,6 +81,7 @@ describe("Orders", () => {
       page([
         summary({ customerName: "Ada Lovelace" }),
         summary({
+          orderNumber: 1043,
           customerName: "Grace Hopper",
           status: "InProgress",
           serviceType: "ChainReplacement",
@@ -93,6 +95,11 @@ describe("Orders", () => {
     // Assert
     expect(await screen.findByText("Ada Lovelace")).toBeInTheDocument();
     expect(screen.getByText("Grace Hopper")).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: "Order" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("#1042")).toBeInTheDocument();
+    expect(screen.getByText("#1043")).toBeInTheDocument();
     expect(screen.getByText("In progress")).toBeInTheDocument();
     expect(screen.getByText("Wheel adjustment")).toBeInTheDocument();
     expect(screen.getByText("Chain replacement")).toBeInTheDocument();
@@ -180,6 +187,11 @@ describe("Orders", () => {
     renderOrders();
     await screen.findByText("Ada Lovelace");
     await userEvent.click(screen.getAllByRole("button", { name: "Delete" })[0]);
+    expect(
+      screen.getByText(
+        "Delete order #1042 for Ada Lovelace? This cannot be undone.",
+      ),
+    ).toBeInTheDocument();
 
     // Act
     await userEvent.click(screen.getByRole("button", { name: "Delete order" }));

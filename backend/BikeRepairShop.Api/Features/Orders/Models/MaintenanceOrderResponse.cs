@@ -4,6 +4,7 @@ namespace BikeRepairShop.Api.Features.Orders.Models;
 
 public sealed record MaintenanceOrderResponse(
     Guid Id,
+    long OrderNumber,
     string CustomerName,
     string PhoneNumber,
     string Email,
@@ -15,12 +16,14 @@ public sealed record MaintenanceOrderResponse(
     DateTimeOffset PlacedAt,
     bool IsOverdue,
     bool IsEditable,
+    IReadOnlyList<OrderAction> AllowedActions,
     IReadOnlyList<OrderStatus> AllowedTransitions)
 {
     public static MaintenanceOrderResponse From(MaintenanceOrder order, DateOnly today)
     {
         return new MaintenanceOrderResponse(
             order.Id,
+            order.OrderNumber,
             order.CustomerName,
             order.PhoneNumber.Value,
             order.Email.Value,
@@ -32,6 +35,7 @@ public sealed record MaintenanceOrderResponse(
             order.PlacedAt,
             order.IsOverdueOn(today),
             order.Status.IsEditable,
+            order.AllowedActions,
             order.AllowedTransitions);
     }
 }

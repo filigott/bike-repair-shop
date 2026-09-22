@@ -12,9 +12,9 @@ export function OrderSummaryCard({
   const { locale } = useLocale();
 
   return (
-    <dl className="grid grid-cols-2 gap-2 rounded-box bg-base-200 p-4">
-      <dt className="font-semibold">{t("orders.columns.status")}</dt>
-      <dd className="flex items-center gap-2">
+    <dl className="grid flex-1 grid-cols-[auto_1fr] content-between gap-x-6 gap-y-4 rounded-box bg-base-200 p-6 text-base">
+      <dt className="text-base-content/60">{t("orders.columns.status")}</dt>
+      <dd className="flex items-center gap-2 font-medium">
         <OrderStatusBadge status={order.status} />
         {order.isOverdue && (
           <span className="badge badge-error badge-sm">
@@ -23,14 +23,16 @@ export function OrderSummaryCard({
         )}
       </dd>
 
-      <dt className="font-semibold">{t("orders.columns.service")}</dt>
-      <dd>{t(`orders.serviceType.${order.serviceType}`)}</dd>
+      <dt className="text-base-content/60">{t("orders.columns.service")}</dt>
+      <dd className="font-medium">
+        {t(`orders.serviceType.${order.serviceType}`)}
+      </dd>
 
-      <dt className="font-semibold">{t("orders.columns.due")}</dt>
-      <dd>{formatDay(order.dueDate, locale)}</dd>
+      <dt className="text-base-content/60">{t("orders.columns.due")}</dt>
+      <dd className="font-medium">{formatDay(order.dueDate, locale)}</dd>
 
-      <dt className="font-semibold">{t("orders.detail.placedAt")}</dt>
-      <dd>{formatDay(order.placedAt, locale)}</dd>
+      <dt className="text-base-content/60">{t("orders.detail.placedAt")}</dt>
+      <dd className="font-medium">{formatDay(order.placedAt, locale)}</dd>
     </dl>
   );
 }

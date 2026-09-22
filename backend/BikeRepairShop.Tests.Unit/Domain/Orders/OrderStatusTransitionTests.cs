@@ -32,6 +32,36 @@ public class OrderStatusTransitionTests
     }
 
     [Theory]
+    [InlineData(OrderStatus.Received, new[] { OrderAction.Start, OrderAction.Complete, OrderAction.Cancel })]
+    [InlineData(OrderStatus.InProgress, new[] { OrderAction.Complete, OrderAction.Cancel })]
+    [InlineData(OrderStatus.Completed, new[] { OrderAction.Reopen })]
+    [InlineData(OrderStatus.Cancelled, new OrderAction[0])]
+    public void AllowedActions_lists_every_move_the_status_offers(OrderStatus from, OrderAction[] expected)
+    {
+        // Act
+        var result = from.AllowedActions;
+
+        // Assert
+        result.Should().BeEquivalentTo(expected);
+    }
+
+    [Theory]
+    [InlineData(OrderStatus.Received, OrderAction.Start, true)]
+    [InlineData(OrderStatus.Received, OrderAction.Reopen, false)]
+    [InlineData(OrderStatus.InProgress, OrderAction.Start, false)]
+    [InlineData(OrderStatus.Completed, OrderAction.Start, false)]
+    [InlineData(OrderStatus.Completed, OrderAction.Reopen, true)]
+    [InlineData(OrderStatus.Cancelled, OrderAction.Reopen, false)]
+    public void Allows_separates_start_from_reopen_by_origin(OrderStatus from, OrderAction action, bool expected)
+    {
+        // Act
+        var result = from.Allows(action);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory]
     [InlineData(OrderStatus.Received, new[] { OrderStatus.InProgress, OrderStatus.Completed, OrderStatus.Cancelled })]
     [InlineData(OrderStatus.InProgress, new[] { OrderStatus.Completed, OrderStatus.Cancelled })]
     [InlineData(OrderStatus.Completed, new[] { OrderStatus.InProgress })]

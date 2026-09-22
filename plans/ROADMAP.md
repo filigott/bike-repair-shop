@@ -10,57 +10,70 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D and H done, C all but its polish; the brief is met and everything left is extra |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, H, I and J done, C all but its polish; the brief is met and everything left is extra |
 
 ## Next up
 
-Everything below is beyond the brief, which is met. Reordered on 2026-09-21 after a second look at
-the priorities; the reasoning is under `Why this order` below.
+Everything below is beyond the brief, which is met. Ordered on 2026-09-21 after a second look at
+the priorities; the reasoning is under `Why this order` below. The first three came off the queue on
+2026-09-22 and are recorded under `Landed` further down.
 
-1. Order reference (#9). A database-generated sequential number, so an order can be read out over
-   the phone. First because both manual passes on 2026-09-21 had to search by customer name, and
-   because the detail page is meant to lead with it.
-2. Order lifecycle, the API half only (#5). `start`, `complete` and `cancel` as commands over HTTP,
-   calling the domain methods that already exist and are already unit-tested. No UI in this unit and
-   no history table.
-3. Detail page rework (#10). The page goes read-only and every command becomes an action: three edit
-   commands opening a dialog with their own form, and three transitions that are a confirm rather
-   than a form. Built once, with all six in hand.
-4. A status legend above the orders table. Its transitions come from the API, read off the domain's
+1. A status legend above the orders table. Its transitions come from the API, read off the domain's
    matrix the way the service catalogue is, never written out in both locale files.
-5. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
+2. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
    a described-by message, clearing a stale message when its input changes, a clear-search control
    the empty state also offers, and `autocomplete` on the contact fields.
-6. Localized validation messages from the API (#11). The only strings the front end cannot key.
-7. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
+3. Localized validation messages from the API (#11). The only strings the front end cannot key.
+4. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
-8. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
+5. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
    and when, plus somewhere to show it. The brief never asks for it, so it is scoped on its own
-   rather than folded into the transitions.
-9. Search, concurrency, CI and the README (#4, #6), the remaining original phases. The order
-   number from item 1 should become searchable here rather than in #9.
+   rather than folded into the transitions. #5 stays open until this lands.
+6. Search, concurrency, CI and the README (#4, #6), the remaining original phases. The order number
+   should become searchable here rather than in #9.
 
 ### Why this order
 
-The state machine is the one piece of real domain logic in an otherwise CRUD-shaped problem, and
-nothing can currently reach it: the transition matrix is written and tested, `allowedTransitions` is
-projected onto every response, the status colours are on screen, and no caller exists. The demo
-seeder had to call the domain methods directly to produce a completed order. That is the largest
-functional gap left, which is why the lifecycle API moved from fifth place to second.
+The state machine was the one piece of real domain logic in an otherwise CRUD-shaped problem, and
+nothing could reach it: the matrix was written and tested, `allowedTransitions` was projected onto
+every response, the status colours were on screen, and no caller existed. The demo seeder had to
+call the domain methods in process to produce a completed order. That gap is closed, which is why
+the detail rework went first and why the legend can go next.
 
-The detail rework follows it rather than preceding it because that rework builds an action area, and
-half the actions belonging in it did not exist. They are also a different shape: a transition is a
-confirm, not a form in a dialog. Building the area for three commands and returning for the other
-three is avoidable by doing them in one pass.
+The rework waited for the transitions rather than preceding them because it builds an action area,
+and half the actions belonging in it did not exist. They are also a different shape: a transition is
+a confirm, not a form in a dialog. Building the area for three commands and returning for the other
+four was avoided by doing them in one pass.
 
-Splitting #5 keeps that unit reviewable. Transitions make the state machine reachable and unblock
-both the detail page and the legend; the history is a table, a migration and a view that nothing
-else waits on.
+Splitting #5 kept that unit reviewable. The transitions unblocked both the detail page and the
+legend; the history is a table, a migration and a view that nothing else waits on, so it sits far
+down the queue.
 
-Starting state at the end of 2026-09-21: `main` is clean, pushed and carries everything including
-the merged packaging pull request. The suites are green at 134 backend tests and the front-end
-`verify` gate. No branch is in flight. `docker compose up --build` serves all four staff tasks from
-an empty volume.
+## Landed
+
+- **Detail page rework (#10)**, 2026-09-22, [plan-j-detail-page.md](plan-j-detail-page.md). The
+  lifecycle keyed by action rather than target status, all seven commands on the page, the page
+  read-only with a dialog per edit, the actions standing beside the facts, and the open dialog held
+  in the URL. The route module was thinned back to a route at the end of it.
+- **Order reference (#9)**, 2026-09-22, [plan-i-order-reference.md](plan-i-order-reference.md). A
+  `bigint` identity column starting at 1000, carried through to the table, the detail heading and
+  the delete confirmation. Both manual passes before it had to search by customer name.
+- **Order lifecycle, the API half (#5)**, 2026-09-22, [plan-f-lifecycle.md](plan-f-lifecycle.md).
+  `start`, `complete`, `cancel` and `reopen` as POST commands answering with the updated order. The
+  issue stays open for the history.
+
+## State
+
+As of 2026-09-22, day five. The batched manual pass ran clean, and phase J is finished: delete on
+the page, the actions beside the facts, the dialogs in the URL, and the route thinned back down.
+`main` carries 28 commits that are **not pushed**. Backend 160 tests green, front-end `verify` green
+at 48 tests. No branch is in flight. The `db` container is up, which is its resting state; the API
+and the front end are not running.
+
+**A second short manual pass over the detail page comes before the push.** J4b changed how the edit
+dialogs open and close, so the steps worth rerunning are the dialog ones: open from a button, open
+from a pasted URL, reject a past due date and confirm the message and the typed value survive, save
+and watch the page show the new value, and the back button closing a dialog.
 
 ## Delivery line
 
@@ -70,14 +83,15 @@ green. From phase B on, each phase is a thin vertical through API and front end 
 manual smoke test, so there is always a shippable state and something to try by hand.
 
 Issues #8 to #11 came out of the phase C pass and sit between the product phases and the depth
-phases. Only #8 comes before packaging, because packaging cannot be demonstrated on an empty table.
+phases. #8 went before packaging, because packaging cannot be demonstrated on an empty table; the
+rest follow it.
 
 ## Pace
 
-Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). 7h30
-across three days. All four staff tasks work end to end in a browser and the manual pass confirmed
-four of them, so packaging is the last gap in the brief. Phases E through G stay untouched until
-`docker compose up` serves all four.
+Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). The brief
+is met: all four staff tasks work end to end in a browser and `docker compose up --build` serves
+them from an empty volume. Everything in `Next up` is beyond it, which is why the manual pass can be
+batched rather than gating each unit.
 
 ## Parked from the phase C smoke test
 
@@ -141,9 +155,14 @@ and gains two labelled groups in C2, since placing an order is one command rathe
 stages, and a wizard would buy step state and partial validation for seven fields that fit on one
 screen.
 
-Work lands on `main` and is pushed as it goes. Phase D ran on `feat/3-docker-packaging` and merged
-through pull request 12, so the repository shows that flow once; there is no need to repeat it for
-every phase.
+**Every unit of work lands through a pull request from now on, off an issue, on a branch named for
+it.** Nothing commits straight to `main`. Settled on 2026-09-22: holding issues to a standard while
+pushing the work itself to `main` unreviewed was the inconsistency that prompted it. Phase D already
+ran this way on `feat/3-docker-packaging` through pull request 12.
+
+The work that predates the rule sits on `feat/10-detail-page-rework`: 29 commits covering #9, #5 and
+#10, moved off `main` rather than pushed to it. `main` is back at its pushed state, and that branch
+becomes one batch pull request covering the whole range once the second manual pass is clean.
 
 ## Parked, toolchain
 
@@ -159,4 +178,8 @@ until the product phases are done.
 
 ## Blockers
 
-None. Steps 5 and 8 of the phase C checklist stay unverified until #8 lands.
+Nothing blocks the work. One thing blocks a push: the manual passes are being batched rather than
+run per step, so phase I is code-complete and gated but unverified by hand, and steps 5 and 8 of the
+phase C checklist are reachable at last but still unrun. Both belong to the next batch pass, and
+nothing is pushed or merged before it comes back clean. The checklist for phase I is at the end of
+its plan.

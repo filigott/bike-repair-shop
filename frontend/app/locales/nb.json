@@ -4,10 +4,10 @@
   },
   "common": {
     "actions": "Handlinger",
-    "back": "Tilbake",
     "cancel": "Avbryt",
     "language": "Språk",
     "loading": "Laster",
+    "save": "Lagre",
     "saving": "Lagrer"
   },
   "demoData": {
@@ -24,11 +24,18 @@
     "nb": "Norsk"
   },
   "orders": {
+    "actions": {
+      "Start": "Start arbeidet",
+      "Complete": "Fullfør",
+      "Cancel": "Avbryt ordre",
+      "Reopen": "Gjenåpne"
+    },
+    "backToList": "Tilbake til ordrer",
     "changeService": {
-      "legend": "Tjeneste",
-      "submit": "Endre tjeneste"
+      "action": "Endre tjeneste"
     },
     "columns": {
+      "reference": "Ordre",
       "customer": "Kunde",
       "phone": "Telefon",
       "bike": "Sykkelmerke",
@@ -36,14 +43,19 @@
       "due": "Frist",
       "status": "Status"
     },
+    "confirm": {
+      "Start": "Starte arbeidet på ordre {{reference}} for {{customer}}?",
+      "Complete": "Merke ordre {{reference}} for {{customer}} som fullført?",
+      "Cancel": "Avbryte ordre {{reference}} for {{customer}}? En avbrutt ordre kan ikke gjenåpnes.",
+      "Reopen": "Gjenåpne ordre {{reference}} for {{customer}}?"
+    },
     "correctDetails": {
-      "legend": "Kunde og sykkel",
-      "submit": "Lagre detaljer"
+      "action": "Endre opplysninger"
     },
     "delete": {
       "action": "Slett",
       "title": "Slett ordre",
-      "confirm": "Slette ordren for {{customer}}? Dette kan ikke angres.",
+      "confirm": "Slette ordre {{reference}} for {{customer}}? Dette kan ikke angres.",
       "submit": "Slett ordre"
     },
     "detail": {
@@ -76,9 +88,9 @@
       "action": "Registrer ordre",
       "submit": "Registrer"
     },
+    "reference": "#{{number}}",
     "reschedule": {
-      "legend": "Frist",
-      "submit": "Endre frist"
+      "action": "Endre frist"
     },
     "search": {
       "label": "Søk i ordrer",
