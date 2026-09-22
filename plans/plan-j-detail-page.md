@@ -170,7 +170,27 @@ branches. The label map behind both that dialog and the action column moves onto
 `shouldRevalidate` stays. It is a route module export that React Router reads off the route, its
 body is route policy in five lines, and moving it would leave the export behind as a forwarder.
 
-No test changes: the behaviour is identical and the existing suite is what proves it.
+No test changes for the move itself: the behaviour is identical and the existing suite is what
+proves it. The dispatch then gained its own tests, which is what earned the extraction.
+
+**The posted vocabulary is parsed, not asserted.** `as OrderIntent` and `as OrderAction` on values
+read out of `FormData` were telling the compiler something no one had checked. The intent goes
+through `orderIntentOf` and the action through an `isOrderAction` predicate, both throwing a named
+error that reaches the error boundary, since a request the UI cannot produce is not a form failure.
+The predicate uses `Object.hasOwn` rather than `in`, because `in` walks the prototype chain and
+would accept `toString` as a lifecycle action. Dropping the switch's `default` is what makes the
+compiler enforce that every intent is handled.
+
+`serviceType` keeps its cast. The catalogue lives on the server, the only runtime list of valid
+codes is the one the API publishes, and hardcoding a copy in the browser is the thing the
+projection rules exist to prevent. A wrong code comes back as a 422 the form renders.
+
+**`runOrderCommand` stays one function with that name.** The suggestion was that it does not
+separate lifecycle moves from edits. It should not: every one of the seven is a command, the caller
+has one posted intent and cannot know its kind until it is parsed, and splitting would make the
+route branch on the kind before dispatching, which is more code for no gain. The distinction is
+already visible in the body, where the lifecycle moves go through the `transitions` record and the
+edits are cases of their own.
 
 **J4b. Dialog state in the URL.** Open question 1, settled on 2026-09-22 in favour of taking it:
 `?edit=details` and friends, opening as a link, the action redirecting to the bare path on success
