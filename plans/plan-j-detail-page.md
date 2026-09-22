@@ -19,8 +19,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | J2. Action area with the lifecycle moves | ✅ | Four actions as confirms; inline forms stay |
 | J3. Edit commands move into dialogs | ✅ | Page goes read-only; three more buttons on the bar |
 | J4a. Delete, layout and the duplication | ✅ | Delete on the page, back link, type, facts once |
-| J4c. Actions column and the empty rows | 🟡 | Second layout pass off the manual look; decisions open |
-| J4b. Dialog state in the URL | ⏳ | `?edit=` param, redirect on success, the effect goes |
+| J4c. Actions column and the empty rows | ✅ | Actions beside the facts, grouped; every fact keeps its row |
+| J4b. Dialog state in the URL | 🟡 | `?edit=` param, redirect on success, the effect goes |
 
 ## Context
 
