@@ -18,18 +18,16 @@ Everything below is beyond the brief, which is met. Ordered on 2026-09-21 after 
 the priorities; the reasoning is under `Why this order` below. The first three came off the queue on
 2026-09-22 and are recorded under `Landed` further down.
 
-1. A status legend above the orders table. Its transitions come from the API, read off the domain's
-   matrix the way the service catalogue is, never written out in both locale files.
-2. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
+1. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
    a described-by message, clearing a stale message when its input changes, a clear-search control
    the empty state also offers, and `autocomplete` on the contact fields.
-3. Localized validation messages from the API (#11). The only strings the front end cannot key.
-4. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
+2. Localized validation messages from the API (#11). The only strings the front end cannot key.
+3. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
-5. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
+4. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
    and when, plus somewhere to show it. The brief never asks for it, so it is scoped on its own
    rather than folded into the transitions. #5 stays open until this lands.
-6. Search, concurrency, CI and the README (#4, #6), the remaining original phases. The order number
+5. Search, concurrency and CI (#4, #6), the remaining original phases. The order number
    should become searchable here rather than in #9.
 
 ### Why this order
@@ -51,6 +49,11 @@ down the queue.
 
 ## Landed
 
+- **Status legend (#13)**, 2026-09-22, [plan-l-status-legend.md](plan-l-status-legend.md). A status
+  catalogue endpoint publishing the matrix whole, a native disclosure above the orders table showing
+  the badges at rest and the edges on request, and the retirement of two projections nothing read.
+- **Root README and the AI development record**, 2026-09-22. The README was the last piece of #6
+  that did not depend on the rest of it, so it went early; concurrency and CI stay in the issue.
 - **Detail page rework (#10)**, 2026-09-22, [plan-j-detail-page.md](plan-j-detail-page.md). The
   lifecycle keyed by action rather than target status, all seven commands on the page, the page
   read-only with a dialog per edit, the actions standing beside the facts, and the open dialog held
@@ -64,16 +67,25 @@ down the queue.
 
 ## State
 
-As of 2026-09-22, day five. The batched manual pass ran clean, and phase J is finished: delete on
-the page, the actions beside the facts, the dialogs in the URL, and the route thinned back down.
-`main` carries 28 commits that are **not pushed**. Backend 160 tests green, front-end `verify` green
-at 48 tests. No branch is in flight. The `db` container is up, which is its resting state; the API
-and the front end are not running.
+As of 2026-09-22, end of day five. Nothing commits to `main` any more, so the work went out as two
+stacked pull requests, both open and awaiting merge:
 
-**A second short manual pass over the detail page comes before the push.** J4b changed how the edit
-dialogs open and close, so the steps worth rerunning are the dialog ones: open from a button, open
-from a pasted URL, reject a past due date and confirm the message and the typed value survive, save
-and watch the page show the new value, and the back button closing a dialog.
+| Pull request | Holds | Base |
+|---|---|---|
+| 14, `feat/10-detail-page-rework` | 29 commits: #9, #5 and #10 | `main` |
+| 15, `feat/13-status-legend` | the legend, the README and the AI record | pull request 14, retargeting to `main` when that merges |
+
+Merge 14 first. The second manual pass ran clean against the packaged stack before either was
+pushed. Backend 163 tests green, front-end `verify` green at 50 tests.
+
+The packaged stack was verified on day five from `docker compose down -v`: three services up from an
+empty volume, the schema migrated on start, 26 demo orders seeded, the catalogue endpoint served
+through Caddy and the page answering on 8080. It is still running, so the manual pass can be taken
+against it rather than the dev loop.
+
+**The remaining gate is the second manual pass**, covering only what changed since the last one: the
+edit dialogs now open from a link and close on a redirect, delete is on the detail page, and the
+legend is new.
 
 ## Delivery line
 

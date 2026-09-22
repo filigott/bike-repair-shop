@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -6,6 +6,7 @@ import {
   getDemoDataStatus,
   resetDemoData,
 } from "~/services/endpoints/demo-data";
+import { listOrderStatuses } from "~/services/endpoints/order-statuses";
 import type {
   MaintenanceOrderSummary,
   PagedOrders,
@@ -23,6 +24,21 @@ vi.mock("~/services/endpoints/demo-data", () => ({
   getDemoDataStatus: vi.fn(),
   resetDemoData: vi.fn(),
 }));
+
+vi.mock("~/services/endpoints/order-statuses", () => ({
+  listOrderStatuses: vi.fn(),
+}));
+
+const catalogue = [
+  {
+    status: "Received" as const,
+    allowedTransitions: ["InProgress" as const, "Cancelled" as const],
+  },
+  {
+    status: "Cancelled" as const,
+    allowedTransitions: [],
+  },
+];
 
 function summary(
   overrides: Partial<MaintenanceOrderSummary> = {},
@@ -73,6 +89,35 @@ describe("Orders", () => {
     vi.mocked(resetDemoData)
       .mockReset()
       .mockResolvedValue({ enabled: true, orderCount: 26 });
+    vi.mocked(listOrderStatuses).mockReset().mockResolvedValue(catalogue);
+  });
+
+  it("names every status the catalogue returns, above the table", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(page([summary()]));
+
+    // Act
+    renderOrders();
+
+    // Assert
+    const legend = within(await screen.findByRole("group"));
+    expect(legend.getByText("Statuses")).toBeInTheDocument();
+    expect(legend.getAllByText("Received")).not.toHaveLength(0);
+    expect(legend.getAllByText("Cancelled")).not.toHaveLength(0);
+  });
+
+  it("shows the edges the catalogue gave, and marks a status nothing follows", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(page([summary()]));
+
+    // Act
+    renderOrders();
+
+    // Assert
+    const legend = within(await screen.findByRole("group"));
+    expect(legend.getByText("can become")).toBeInTheDocument();
+    expect(legend.getByText("In progress")).toBeInTheDocument();
+    expect(legend.getByText("is where an order stops")).toBeInTheDocument();
   });
 
   it("renders a row per order", async () => {
@@ -93,16 +138,17 @@ describe("Orders", () => {
     renderOrders();
 
     // Assert
-    expect(await screen.findByText("Ada Lovelace")).toBeInTheDocument();
-    expect(screen.getByText("Grace Hopper")).toBeInTheDocument();
+    const table = within(await screen.findByRole("table"));
+    expect(table.getByText("Ada Lovelace")).toBeInTheDocument();
+    expect(table.getByText("Grace Hopper")).toBeInTheDocument();
     expect(
-      screen.getByRole("columnheader", { name: "Order" }),
+      table.getByRole("columnheader", { name: "Order" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("#1042")).toBeInTheDocument();
-    expect(screen.getByText("#1043")).toBeInTheDocument();
-    expect(screen.getByText("In progress")).toBeInTheDocument();
-    expect(screen.getByText("Wheel adjustment")).toBeInTheDocument();
-    expect(screen.getByText("Chain replacement")).toBeInTheDocument();
+    expect(table.getByText("#1042")).toBeInTheDocument();
+    expect(table.getByText("#1043")).toBeInTheDocument();
+    expect(table.getByText("In progress")).toBeInTheDocument();
+    expect(table.getByText("Wheel adjustment")).toBeInTheDocument();
+    expect(table.getByText("Chain replacement")).toBeInTheDocument();
   });
 
   it("marks an overdue order", async () => {

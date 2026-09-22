@@ -31,7 +31,7 @@ public class GetOrderTests(DatabaseFixture database) : IntegrationTest(database)
         body.Status.Should().Be(OrderStatus.Received);
         body.IsOverdue.Should().BeFalse();
         body.IsEditable.Should().BeTrue();
-        body.AllowedTransitions.Should().BeEquivalentTo([OrderStatus.InProgress, OrderStatus.Completed, OrderStatus.Cancelled]);
+        body.AllowedActions.Should().BeEquivalentTo([OrderAction.Start, OrderAction.Complete, OrderAction.Cancel]);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class GetOrderTests(DatabaseFixture database) : IntegrationTest(database)
 
         // Assert
         body!.IsEditable.Should().BeFalse();
-        body.AllowedTransitions.Should().BeEquivalentTo([OrderStatus.InProgress]);
+        body.AllowedActions.Should().BeEquivalentTo([OrderAction.Reopen]);
     }
 
     [Fact]

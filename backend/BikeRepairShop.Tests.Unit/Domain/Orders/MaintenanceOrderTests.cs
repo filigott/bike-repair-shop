@@ -278,16 +278,16 @@ public class MaintenanceOrderTests
     }
 
     [Fact]
-    public void AllowedTransitions_reflects_the_current_status()
+    public void AllowedActions_reflects_the_current_status()
     {
         // Arrange
         var order = OrderFixtures.Completed();
 
         // Act
-        var result = order.AllowedTransitions;
+        var result = order.AllowedActions;
 
         // Assert
-        result.Should().BeEquivalentTo([OrderStatus.InProgress]);
+        result.Should().BeEquivalentTo([OrderAction.Reopen]);
     }
 
     [Theory]

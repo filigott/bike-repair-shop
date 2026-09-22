@@ -77,6 +77,11 @@
       "details": "Order details",
       "schedule": "Service and due date"
     },
+    "legend": {
+      "becomes": "can become",
+      "final": "is where an order stops",
+      "title": "Statuses"
+    },
     "overdue": "Overdue",
     "paging": {
       "showing": "Showing {{from}} to {{to}} of {{total}}",

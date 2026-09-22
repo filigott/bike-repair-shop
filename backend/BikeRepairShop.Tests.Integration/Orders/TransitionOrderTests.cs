@@ -34,7 +34,6 @@ public class TransitionOrderTests(DatabaseFixture database) : IntegrationTest(da
         var body = await response.Content.ReadFromJsonAsync<MaintenanceOrderResponse>(Json.Options, TestContext.Current.CancellationToken);
         body!.Status.Should().Be(OrderStatus.InProgress);
         body.AllowedActions.Should().BeEquivalentTo([OrderAction.Complete, OrderAction.Cancel]);
-        body.AllowedTransitions.Should().BeEquivalentTo([OrderStatus.Completed, OrderStatus.Cancelled]);
         (await ReloadAsync(order.Id)).Status.Should().Be(OrderStatus.InProgress);
     }
 
