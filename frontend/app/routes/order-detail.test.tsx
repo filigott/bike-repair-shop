@@ -4,10 +4,14 @@ import { createRoutesStub } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { MaintenanceOrderResponse } from "~/services/endpoints/orders";
 import {
+  cancelOrder,
   changeOrderService,
+  completeOrder,
   correctOrderDetails,
   getOrder,
+  reopenOrder,
   rescheduleOrder,
+  startOrder,
 } from "~/services/endpoints/orders";
 import { listServiceTypes } from "~/services/endpoints/service-types";
 import { ApiError } from "~/services/http";
@@ -18,6 +22,10 @@ vi.mock("~/services/endpoints/orders", () => ({
   correctOrderDetails: vi.fn(),
   changeOrderService: vi.fn(),
   rescheduleOrder: vi.fn(),
+  startOrder: vi.fn(),
+  completeOrder: vi.fn(),
+  cancelOrder: vi.fn(),
+  reopenOrder: vi.fn(),
 }));
 vi.mock("~/services/endpoints/service-types", () => ({
   listServiceTypes: vi.fn(),
@@ -68,6 +76,10 @@ describe("OrderDetail", () => {
     vi.mocked(correctOrderDetails).mockReset().mockResolvedValue(order());
     vi.mocked(changeOrderService).mockReset().mockResolvedValue(order());
     vi.mocked(rescheduleOrder).mockReset().mockResolvedValue(order());
+    vi.mocked(startOrder).mockReset().mockResolvedValue(order());
+    vi.mocked(completeOrder).mockReset().mockResolvedValue(order());
+    vi.mocked(cancelOrder).mockReset().mockResolvedValue(order());
+    vi.mocked(reopenOrder).mockReset().mockResolvedValue(order());
     vi.mocked(listServiceTypes).mockResolvedValue([
       { code: "WheelAdjustment", displayName: "Wheel adjustment" },
       { code: "ChainReplacement", displayName: "Chain replacement" },
@@ -83,6 +95,96 @@ describe("OrderDetail", () => {
       await screen.findByRole("heading", { name: "#1042" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Ada Lovelace")).toBeInTheDocument();
+  });
+
+  it("offers a button per action the order allows and no others", async () => {
+    // Act
+    renderPage();
+
+    // Assert
+    expect(
+      await screen.findByRole("button", { name: "Start work" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Complete" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Cancel order" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Reopen" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("offers no actions on a cancelled order", async () => {
+    // Arrange
+    vi.mocked(getOrder).mockResolvedValue(
+      order({
+        status: "Cancelled",
+        isEditable: false,
+        allowedActions: [],
+        allowedTransitions: [],
+      }),
+    );
+
+    // Act
+    renderPage();
+
+    // Assert
+    await screen.findByRole("heading", { name: "#1042" });
+    expect(
+      screen.queryByRole("button", { name: "Start work" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Cancel order" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("names the order in the confirmation and sends only that transition", async () => {
+    // Arrange
+    renderPage();
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Cancel order" }),
+    );
+    expect(
+      screen.getByText(
+        "Cancel order #1042 for Ada Lovelace? A cancelled order cannot be reopened.",
+      ),
+    ).toBeInTheDocument();
+
+    // Act
+    await userEvent.click(
+      screen.getAllByRole("button", { name: "Cancel order" })[1],
+    );
+
+    // Assert
+    await waitFor(() => expect(cancelOrder).toHaveBeenCalledWith(ORDER_ID));
+    expect(startOrder).not.toHaveBeenCalled();
+    expect(completeOrder).not.toHaveBeenCalled();
+    expect(reopenOrder).not.toHaveBeenCalled();
+  });
+
+  it("offers reopen and nothing else once an order is completed", async () => {
+    // Arrange
+    vi.mocked(getOrder).mockResolvedValue(
+      order({
+        status: "Completed",
+        isEditable: false,
+        allowedActions: ["Reopen"],
+        allowedTransitions: ["InProgress"],
+      }),
+    );
+
+    // Act
+    renderPage();
+
+    // Assert
+    expect(
+      await screen.findByRole("button", { name: "Reopen" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Complete" }),
+    ).not.toBeInTheDocument();
   });
 
   it("prefills one form per command from the loaded order", async () => {

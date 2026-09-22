@@ -24,6 +24,12 @@
     "nb": "Norsk"
   },
   "orders": {
+    "actions": {
+      "Start": "Start arbeidet",
+      "Complete": "Fullfør",
+      "Cancel": "Avbryt ordre",
+      "Reopen": "Gjenåpne"
+    },
     "changeService": {
       "legend": "Tjeneste",
       "submit": "Endre tjeneste"
@@ -36,6 +42,12 @@
       "service": "Tjeneste",
       "due": "Frist",
       "status": "Status"
+    },
+    "confirm": {
+      "Start": "Starte arbeidet på ordre {{reference}} for {{customer}}?",
+      "Complete": "Merke ordre {{reference}} for {{customer}} som fullført?",
+      "Cancel": "Avbryte ordre {{reference}} for {{customer}}? En avbrutt ordre kan ikke gjenåpnes.",
+      "Reopen": "Gjenåpne ordre {{reference}} for {{customer}}?"
     },
     "correctDetails": {
       "legend": "Kunde og sykkel",

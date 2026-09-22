@@ -24,6 +24,12 @@
     "nb": "Norsk"
   },
   "orders": {
+    "actions": {
+      "Start": "Start work",
+      "Complete": "Complete",
+      "Cancel": "Cancel order",
+      "Reopen": "Reopen"
+    },
     "changeService": {
       "legend": "Service",
       "submit": "Change service"
@@ -36,6 +42,12 @@
       "service": "Service",
       "due": "Due date",
       "status": "Status"
+    },
+    "confirm": {
+      "Start": "Start work on order {{reference}} for {{customer}}?",
+      "Complete": "Mark order {{reference}} for {{customer}} as completed?",
+      "Cancel": "Cancel order {{reference}} for {{customer}}? A cancelled order cannot be reopened.",
+      "Reopen": "Reopen order {{reference}} for {{customer}}?"
     },
     "correctDetails": {
       "legend": "Customer and bike",

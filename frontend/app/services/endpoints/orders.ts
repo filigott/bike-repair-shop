@@ -19,6 +19,7 @@ export type ListOrdersParams = NonNullable<
 >;
 export type OrderStatus = components["schemas"]["OrderStatus"];
 export type ServiceType = components["schemas"]["ServiceType"];
+export type OrderAction = components["schemas"]["OrderAction"];
 
 export function listOrders(
   params: ListOrdersParams = {},
@@ -71,6 +72,30 @@ export function rescheduleOrder(
       params: { path: { id } },
       body: schedule,
     }),
+  );
+}
+
+export function startOrder(id: string): Promise<MaintenanceOrderResponse> {
+  return unwrap(
+    apiClient.POST("/api/orders/{id}/start", { params: { path: { id } } }),
+  );
+}
+
+export function completeOrder(id: string): Promise<MaintenanceOrderResponse> {
+  return unwrap(
+    apiClient.POST("/api/orders/{id}/complete", { params: { path: { id } } }),
+  );
+}
+
+export function cancelOrder(id: string): Promise<MaintenanceOrderResponse> {
+  return unwrap(
+    apiClient.POST("/api/orders/{id}/cancel", { params: { path: { id } } }),
+  );
+}
+
+export function reopenOrder(id: string): Promise<MaintenanceOrderResponse> {
+  return unwrap(
+    apiClient.POST("/api/orders/{id}/reopen", { params: { path: { id } } }),
   );
 }
 
