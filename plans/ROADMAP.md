@@ -17,9 +17,10 @@ running `docker compose up`. Everything currently planned lives in
 Everything below is beyond the brief, which is met. Reordered on 2026-09-21 after a second look at
 the priorities; the reasoning is under `Why this order` below.
 
-1. Order reference (#9). A database-generated sequential number, so an order can be read out over
-   the phone. First because both manual passes on 2026-09-21 had to search by customer name, and
-   because the detail page is meant to lead with it.
+1. Order reference (#9), planned in [plan-i-order-reference.md](plan-i-order-reference.md). A
+   database-generated sequential number, so an order can be read out over the phone. First because
+   both manual passes on 2026-09-21 had to search by customer name, and because the detail page is
+   meant to lead with it.
 2. Order lifecycle, the API half only (#5). `start`, `complete` and `cancel` as commands over HTTP,
    calling the domain methods that already exist and are already unit-tested. No UI in this unit and
    no history table.
@@ -159,4 +160,6 @@ until the product phases are done.
 
 ## Blockers
 
-None. Steps 5 and 8 of the phase C checklist stay unverified until #8 lands.
+None. Steps 5 and 8 of the phase C checklist were unreachable until #8 landed; the demo set now
+carries an overdue order and a closed one, so both are reachable and wait only on the next manual
+pass.

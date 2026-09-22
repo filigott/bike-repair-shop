@@ -25,7 +25,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ⏳ |
 | G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ⏳ |
 | H. Demo data | [plan-h-demo-data.md](plan-h-demo-data.md) | #8 | ✅ |
-| I. Order reference | not yet written | #9 | ⏳ |
+| I. Order reference | [plan-i-order-reference.md](plan-i-order-reference.md) | #9 | 🟡 |
 | J. Detail page rework | not yet written | #10 | ⏳ |
 | K. Localized API messages | not yet written | #11 | ⏳ |
 
