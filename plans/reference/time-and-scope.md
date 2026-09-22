@@ -20,6 +20,7 @@ structure honest by measuring it against that list rather than against its own t
 | Day two, 12:10 to 14:27 | 1h00 | Phase C: order by id, the three edit commands, delete, the detail page with one form per command, delete from the list |
 | Day three, 19:30 to 21:45 | 1h30 | The phase C smoke test, demo data end to end, the visual pass, and phase D packaging |
 | Day four, 09:15 to 13:16 | 4h00 | The order reference (#9), the lifecycle API (#5), and three of the four detail-page steps (#10) including the state-machine rekey |
+| Day five, 15:13 onward | 2h00 | The detail page finished and its route thinned, the status legend end to end (#13), the pull request rule, the root README and the AI development record |
 
 Day one total: 5h30 and 32 commits. Two of those hours preceded the first commit, and ten of the
 commits touch only plans or conventions.
@@ -109,3 +110,18 @@ concurrent writes and a race behind one save button, and it hides the commands t
 replacement is one form per command on a detail page, an intent read from `FormData`. Roughly
 35 minutes, and the rule it confirms is already in `CLAUDE.md` under actions being explicit on the
 API and in the UI alike. Check a screen against that rule before building it, not after.
+
+## What day five cost
+
+Two corrections came from the developer rather than from a test, and both were about the shape of
+the code rather than its behaviour. Form values were being cast to their enum types, which asserts
+what nobody has checked; they are parsed now, and a prototype key like `toString` is refused by name.
+The order detail route had grown to 269 lines against 162 for the next largest file, which is where a
+route stops reading as a route; the command dispatch and the three dialog branches moved out.
+
+The third was a process observation with more reach than either: issues were being held to a
+standard while the work itself went straight to `main` unreviewed. Everything runs through a pull
+request off an issue from now on, and the 29 commits that predate the rule moved to a branch rather
+than being pushed to `main`.
+
+Running total: **14h00 across five days**.

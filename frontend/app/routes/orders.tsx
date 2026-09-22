@@ -4,6 +4,7 @@ import { Link, useFetcher } from "react-router";
 import { ResetDemoDataDialog } from "~/components/demo-data/reset-demo-data-dialog";
 import { DeleteOrderDialog } from "~/components/orders/delete-order-dialog";
 import { OrderSearchForm } from "~/components/orders/order-search-form";
+import { OrderStatusLegend } from "~/components/orders/order-status-legend";
 import { OrdersPager } from "~/components/orders/orders-pager";
 import { OrdersTable } from "~/components/orders/orders-table";
 import { actionFailureFrom } from "~/services/action-errors";
@@ -11,6 +12,7 @@ import {
   getDemoDataStatus,
   resetDemoData,
 } from "~/services/endpoints/demo-data";
+import { listOrderStatuses } from "~/services/endpoints/order-statuses";
 import type { MaintenanceOrderSummary } from "~/services/endpoints/orders";
 import { deleteOrder, listOrders } from "~/services/endpoints/orders";
 import { textOf } from "~/services/form-data";
@@ -25,12 +27,13 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   const params = new URL(request.url).searchParams;
   const search = params.get("search")?.trim() ?? "";
   const page = Math.max(1, Number(params.get("page") ?? 1) || 1);
-  const [orders, demoData] = await Promise.all([
+  const [orders, demoData, statuses] = await Promise.all([
     listOrders({ search: search || undefined, page, pageSize: PAGE_SIZE }),
     getDemoDataStatus(),
+    listOrderStatuses(),
   ]);
 
-  return { orders, demoData, search, page };
+  return { orders, demoData, statuses, search, page };
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
@@ -46,7 +49,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function Orders({ loaderData }: Route.ComponentProps) {
-  const { orders, demoData, search, page } = loaderData;
+  const { orders, demoData, statuses, search, page } = loaderData;
   const { t } = useTranslation();
   const fetcher = useFetcher();
   const [selected, setSelected] = useState<MaintenanceOrderSummary | null>(
@@ -78,6 +81,7 @@ export default function Orders({ loaderData }: Route.ComponentProps) {
           </Link>
         </div>
       </div>
+      <OrderStatusLegend statuses={statuses} />
       <OrderSearchForm search={search} />
       {failure && (
         <p role="alert" className="alert alert-error">

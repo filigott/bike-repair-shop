@@ -3,6 +3,7 @@ using BikeRepairShop.Api.Configuration;
 using BikeRepairShop.Api.Exceptions;
 using BikeRepairShop.Api.Features.DemoData;
 using BikeRepairShop.Api.Features.Orders;
+using BikeRepairShop.Api.Features.OrderStatuses;
 using BikeRepairShop.Api.Features.ServiceTypes;
 using BikeRepairShop.Database;
 using FluentValidation;
@@ -35,6 +36,7 @@ builder.Services.AddShopClock(builder.Configuration);
 // Feature slices
 builder.Services.AddOrders();
 builder.Services.AddServiceTypes();
+builder.Services.AddOrderStatuses();
 builder.Services.AddDemoData(builder.Configuration);
 
 var app = builder.Build();

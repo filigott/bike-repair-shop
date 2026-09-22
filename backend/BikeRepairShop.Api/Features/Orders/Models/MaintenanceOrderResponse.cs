@@ -16,8 +16,7 @@ public sealed record MaintenanceOrderResponse(
     DateTimeOffset PlacedAt,
     bool IsOverdue,
     bool IsEditable,
-    IReadOnlyList<OrderAction> AllowedActions,
-    IReadOnlyList<OrderStatus> AllowedTransitions)
+    IReadOnlyList<OrderAction> AllowedActions)
 {
     public static MaintenanceOrderResponse From(MaintenanceOrder order, DateOnly today)
     {
@@ -35,7 +34,6 @@ public sealed record MaintenanceOrderResponse(
             order.PlacedAt,
             order.IsOverdueOn(today),
             order.Status.IsEditable,
-            order.AllowedActions,
-            order.AllowedTransitions);
+            order.AllowedActions);
     }
 }
