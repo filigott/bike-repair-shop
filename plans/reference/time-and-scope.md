@@ -1,7 +1,7 @@
 > **Reference doc: load only when working in this area**
 > - **Covers:** what the build has cost so far and how far the result is from the brief
 > - **Used by:** [ROADMAP.md](../ROADMAP.md) and [plan-bike-repair-shop.md](../plan-bike-repair-shop.md); read before adding a phase or a design decision
-> - **Updated:** 2026-09-21
+> - **Updated:** 2026-09-22
 
 # Time and scope, measured
 
@@ -19,6 +19,7 @@ structure honest by measuring it against that list rather than against its own t
 | Day one, 21:30 to 22:00 | 0h30 | Phase B3: the orders list page |
 | Day two, 12:10 to 14:27 | 1h00 | Phase C: order by id, the three edit commands, delete, the detail page with one form per command, delete from the list |
 | Day three, 19:30 to 21:45 | 1h30 | The phase C smoke test, demo data end to end, the visual pass, and phase D packaging |
+| Day four, 09:15 to 13:16 | 4h00 | The order reference (#9), the lifecycle API (#5), and three of the four detail-page steps (#10) including the state-machine rekey |
 
 Day one total: 5h30 and 32 commits. Two of those hours preceded the first commit, and ten of the
 commits touch only plans or conventions.
@@ -28,13 +29,19 @@ but it was shared with other work rather than worked straight through, so 1h00 i
 goes into the running total.
 
 Day three is counted the way day two was, as focused time rather than wall clock. The window spans
-2h15; 1h30 is the figure that goes into the running total: **8h00 across three days**. It is the
+2h15; 1h30 is the figure that goes into the running total: 8h00 across three days. It is the
 evening the brief was finally met, and two manual passes drove most of it, which is the trade those
 passes are supposed to make: both turned up things no test was ever going to.
 
+Day four is wall clock read off the commit stamps, not self-reported focused time, so it is the one
+row measured differently from the two before it. The window is 4h01 and the longest gap in it is
+71 minutes, which carried the state-machine rekey and its plan, so nothing suggests a stretch where
+the session was idle. Running total: **12h00 across four days**, 16 commits on day four of which
+seven touch code.
+
 ## Against the brief
 
-| Requirement | State after day three |
+| Requirement | State after day four |
 |---|---|
 | Place an order | Done end to end |
 | Find an order | Done end to end: list, customer search, paging |
@@ -46,8 +53,10 @@ passes are supposed to make: both turned up things no test was ever going to.
 | `docker compose up` runs the stack | Done: three services from one command, verified from a deleted volume |
 
 The first 5h30 bought the whole foundation and none of the four staff tasks end to end. The next
-hour turned that into all four, which is the payback the foundation was bet on. What the brief still
-misses is packaging, not features.
+hour turned that into all four, which is the payback the foundation was bet on. The brief has been
+fully met since day three, so everything on day four was beyond it: an order reference staff can
+read out, the lifecycle reachable over HTTP at last, and the detail page rebuilt around one action
+at a time.
 
 ## Where scope ran ahead of the brief
 
@@ -67,8 +76,30 @@ the typed client are what made phase C quick.
 - Plan status edits ride in the step's own commit instead of taking a commit of their own.
 - A new design decision needs a consumer in the current or next phase, or it waits.
 - Brief-complete as of day three. Everything still on the list is beyond what was asked.
-- The estimate for what remains is about 3h: the order reference (#9), the detail page rework (#10),
-  C4b polish, the localized API messages (#11), the status legend and the brand suggestions.
+- Revised after day four. The order reference is done and the detail page rework is three steps of
+  four. What remains is about 2h: J4, C4b polish, the localized API messages (#11), the status
+  legend, the brand suggestions and the status history.
+- Day four's manual pass was batched rather than run per phase, which is a departure worth watching.
+  It bought speed and it means three phases are unverified by hand at once.
+
+## What day four cost
+
+One design was rebuilt, and the pattern is worth naming because it nearly shipped wrong. The
+lifecycle needed the UI to know that `Completed` to `InProgress` is `reopen` while `Received` to
+`InProgress` is `start`. Three options were put up for where that mapping should live: in the
+browser, beside the existing field on the server, or replacing it. All three were rejected in one
+sentence, and rightly: every one of them moved the mapping rather than removed it. The real fault
+was that the matrix was keyed by target status, which cannot tell two edges apart when they share a
+target.
+
+Rekeying it by the action deleted the mapping outright and, unprompted, fixed two defects the old
+shape could not express. Roughly 70 minutes including the plan. The rule it leaves behind: when
+every option on the table relocates a problem, none of them is the answer, and the thing to question
+is what the data is keyed by.
+
+The other call worth recording is a deferral. J4 is delete on the detail page plus the type scale,
+the back link and the remaining duplication, and it was deliberately left unbuilt so the manual pass
+steers it rather than reviewing it afterwards. The plan had it before the pass; that was wrong.
 
 ## What the hour cost
 
