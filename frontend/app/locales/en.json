@@ -8,6 +8,7 @@
     "cancel": "Cancel",
     "language": "Language",
     "loading": "Loading",
+    "save": "Save",
     "saving": "Saving"
   },
   "demoData": {
@@ -31,8 +32,7 @@
       "Reopen": "Reopen"
     },
     "changeService": {
-      "legend": "Service",
-      "submit": "Change service"
+      "action": "Change service"
     },
     "columns": {
       "reference": "Order",
@@ -50,8 +50,7 @@
       "Reopen": "Reopen order {{reference}} for {{customer}}?"
     },
     "correctDetails": {
-      "legend": "Customer and bike",
-      "submit": "Save details"
+      "action": "Edit details"
     },
     "delete": {
       "action": "Delete",
@@ -91,8 +90,7 @@
       "submit": "Place order"
     },
     "reschedule": {
-      "legend": "Due date",
-      "submit": "Reschedule"
+      "action": "Reschedule"
     },
     "search": {
       "label": "Search orders",

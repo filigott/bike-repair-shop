@@ -8,6 +8,7 @@
     "cancel": "Avbryt",
     "language": "Språk",
     "loading": "Laster",
+    "save": "Lagre",
     "saving": "Lagrer"
   },
   "demoData": {
@@ -31,8 +32,7 @@
       "Reopen": "Gjenåpne"
     },
     "changeService": {
-      "legend": "Tjeneste",
-      "submit": "Endre tjeneste"
+      "action": "Endre tjeneste"
     },
     "columns": {
       "reference": "Ordre",
@@ -50,8 +50,7 @@
       "Reopen": "Gjenåpne ordre {{reference}} for {{customer}}?"
     },
     "correctDetails": {
-      "legend": "Kunde og sykkel",
-      "submit": "Lagre detaljer"
+      "action": "Endre opplysninger"
     },
     "delete": {
       "action": "Slett",
@@ -91,8 +90,7 @@
       "submit": "Registrer"
     },
     "reschedule": {
-      "legend": "Frist",
-      "submit": "Endre frist"
+      "action": "Endre frist"
     },
     "search": {
       "label": "Søk i ordrer",

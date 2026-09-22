@@ -187,27 +187,43 @@ describe("OrderDetail", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("prefills one form per command from the loaded order", async () => {
+  it("shows no form until an edit command is chosen", async () => {
     // Act
     renderPage();
 
     // Assert
-    expect(await screen.findByLabelText("Customer name")).toHaveValue(
-      "Ada Lovelace",
+    await screen.findByRole("heading", { name: "#1042" });
+    expect(screen.queryByLabelText("Customer name")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Service")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Due date")).not.toBeInTheDocument();
+  });
+
+  it("prefills the dialog of the command that was chosen, and only that one", async () => {
+    // Arrange
+    renderPage();
+
+    // Act
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Edit details" }),
     );
-    expect(screen.getByLabelText("Service")).toHaveValue("ChainReplacement");
-    expect(screen.getByLabelText("Due date")).toHaveValue("2026-09-25");
+
+    // Assert
+    expect(screen.getByLabelText("Customer name")).toHaveValue("Ada Lovelace");
+    expect(screen.queryByLabelText("Due date")).not.toBeInTheDocument();
   });
 
   it("sends only the correct-details command when the details form is saved", async () => {
     // Arrange
     renderPage();
-    const name = await screen.findByLabelText("Customer name");
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Edit details" }),
+    );
+    const name = screen.getByLabelText("Customer name");
     await userEvent.clear(name);
     await userEvent.type(name, "Grace Hopper");
 
     // Act
-    await userEvent.click(screen.getByRole("button", { name: "Save details" }));
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
     // Assert
     await waitFor(() =>
@@ -226,15 +242,16 @@ describe("OrderDetail", () => {
   it("sends only the change-service command when the service form is saved", async () => {
     // Arrange
     renderPage();
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Change service" }),
+    );
     await userEvent.selectOptions(
-      await screen.findByLabelText("Service"),
+      screen.getByLabelText("Service"),
       "WheelAdjustment",
     );
 
     // Act
-    await userEvent.click(
-      screen.getByRole("button", { name: "Change service" }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
     // Assert
     await waitFor(() =>
@@ -248,12 +265,15 @@ describe("OrderDetail", () => {
   it("sends only the reschedule command when the due date form is saved", async () => {
     // Arrange
     renderPage();
-    const dueDate = await screen.findByLabelText("Due date");
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Reschedule" }),
+    );
+    const dueDate = screen.getByLabelText("Due date");
     await userEvent.clear(dueDate);
     await userEvent.type(dueDate, "2026-10-02");
 
     // Act
-    await userEvent.click(screen.getByRole("button", { name: "Reschedule" }));
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
     // Assert
     await waitFor(() =>
@@ -274,23 +294,48 @@ describe("OrderDetail", () => {
       }),
     );
     renderPage();
-    const dueDate = await screen.findByLabelText("Due date");
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Reschedule" }),
+    );
+    const dueDate = screen.getByLabelText("Due date");
     await userEvent.clear(dueDate);
     await userEvent.type(dueDate, "2020-01-01");
 
     // Act
-    await userEvent.click(screen.getByRole("button", { name: "Reschedule" }));
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
     // Assert
     expect(
       await screen.findByText("The due date cannot be before today."),
     ).toBeInTheDocument();
+    expect(screen.getByLabelText("Due date")).toBeInTheDocument();
+  });
+
+  it("closes the dialog once the command is accepted", async () => {
+    // Arrange
+    renderPage();
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Edit details" }),
+    );
+
+    // Act
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    // Assert
+    await waitFor(() =>
+      expect(screen.queryByLabelText("Customer name")).not.toBeInTheDocument(),
+    );
   });
 
   it("offers no commands for an order the shop can no longer change", async () => {
     // Arrange
     vi.mocked(getOrder).mockResolvedValue(
-      order({ status: "Completed", isEditable: false }),
+      order({
+        status: "Completed",
+        isEditable: false,
+        allowedActions: ["Reopen"],
+        allowedTransitions: ["InProgress"],
+      }),
     );
 
     // Act
@@ -300,13 +345,20 @@ describe("OrderDetail", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "A Completed order can no longer be changed.",
     );
-    expect(screen.queryByLabelText("Customer name")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Edit details" }),
+    ).not.toBeInTheDocument();
   });
 
   it("still shows what a closed order holds, now that no form carries it", async () => {
     // Arrange
     vi.mocked(getOrder).mockResolvedValue(
-      order({ status: "Cancelled", isEditable: false }),
+      order({
+        status: "Cancelled",
+        isEditable: false,
+        allowedActions: [],
+        allowedTransitions: [],
+      }),
     );
 
     // Act
@@ -322,7 +374,13 @@ describe("OrderDetail", () => {
   it("leaves the notes row out when a closed order has none", async () => {
     // Arrange
     vi.mocked(getOrder).mockResolvedValue(
-      order({ status: "Cancelled", isEditable: false, notes: null }),
+      order({
+        status: "Cancelled",
+        isEditable: false,
+        allowedActions: [],
+        allowedTransitions: [],
+        notes: null,
+      }),
     );
 
     // Act

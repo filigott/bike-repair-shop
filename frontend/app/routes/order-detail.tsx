@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useFetcher } from "react-router";
-import { CommandForm } from "~/components/orders/command-form";
+import { CommandDialog } from "~/components/orders/command-dialog";
 import { ConfirmDialog } from "~/components/orders/confirm-dialog";
 import { OrderActionBar, toneOf } from "~/components/orders/order-action-bar";
 import { OrderContactCard } from "~/components/orders/order-contact-card";
@@ -31,7 +31,11 @@ import {
 import { listServiceTypes } from "~/services/endpoints/service-types";
 import { optionalTextOf, textOf } from "~/services/form-data";
 import { actionSuccess, isActionFailure } from "~/types/action-result";
-import { OrderIntent } from "~/types/intents/orders";
+import {
+  type EditCommand,
+  editCommands,
+  OrderIntent,
+} from "~/types/intents/orders";
 import type { Route } from "./+types/order-detail";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -63,6 +67,7 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
   const { t } = useTranslation();
   const fetcher = useFetcher();
   const [pending, setPending] = useState<OrderAction | null>(null);
+  const [editing, setEditing] = useState<EditCommand | null>(null);
   const failure =
     fetcher.data && isActionFailure(fetcher.data) ? fetcher.data : undefined;
 
@@ -82,7 +87,12 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
 
       <OrderSummaryCard order={order} />
 
-      <OrderActionBar actions={order.allowedActions} onSelect={setPending} />
+      <OrderActionBar
+        actions={order.allowedActions}
+        edits={order.isEditable ? editCommands : []}
+        onAction={setPending}
+        onEdit={setEditing}
+      />
 
       {failure && (
         <p role="alert" className="alert alert-error">
@@ -90,49 +100,53 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
         </p>
       )}
 
-      {order.isEditable ? (
-        <>
-          <CommandForm
-            intent={OrderIntent.CorrectDetails}
-            legend={t("orders.correctDetails.legend")}
-            submitLabel={t("orders.correctDetails.submit")}
-          >
-            {(errors) => (
-              <OrderDetailsFields defaults={order} errors={errors} />
-            )}
-          </CommandForm>
+      {!order.isEditable && (
+        <p role="alert" className="alert alert-warning">
+          {t("orders.detail.closed", {
+            status: t(`orders.status.${order.status}`),
+          })}
+        </p>
+      )}
 
-          <CommandForm
-            intent={OrderIntent.ChangeService}
-            legend={t("orders.changeService.legend")}
-            submitLabel={t("orders.changeService.submit")}
-          >
-            {(errors) => (
-              <ServiceTypeField
-                serviceTypes={serviceTypes}
-                defaults={order}
-                errors={errors}
-              />
-            )}
-          </CommandForm>
+      <OrderContactCard order={order} />
 
-          <CommandForm
-            intent={OrderIntent.Reschedule}
-            legend={t("orders.reschedule.legend")}
-            submitLabel={t("orders.reschedule.submit")}
-          >
-            {(errors) => <DueDateField defaults={order} errors={errors} />}
-          </CommandForm>
-        </>
-      ) : (
-        <>
-          <p role="alert" className="alert alert-warning">
-            {t("orders.detail.closed", {
-              status: t(`orders.status.${order.status}`),
-            })}
-          </p>
-          <OrderContactCard order={order} />
-        </>
+      {editing === OrderIntent.CorrectDetails && (
+        <CommandDialog
+          intent={OrderIntent.CorrectDetails}
+          title={t("orders.correctDetails.action")}
+          submitLabel={t("common.save")}
+          onClose={() => setEditing(null)}
+        >
+          {(errors) => <OrderDetailsFields defaults={order} errors={errors} />}
+        </CommandDialog>
+      )}
+
+      {editing === OrderIntent.ChangeService && (
+        <CommandDialog
+          intent={OrderIntent.ChangeService}
+          title={t("orders.changeService.action")}
+          submitLabel={t("common.save")}
+          onClose={() => setEditing(null)}
+        >
+          {(errors) => (
+            <ServiceTypeField
+              serviceTypes={serviceTypes}
+              defaults={order}
+              errors={errors}
+            />
+          )}
+        </CommandDialog>
+      )}
+
+      {editing === OrderIntent.Reschedule && (
+        <CommandDialog
+          intent={OrderIntent.Reschedule}
+          title={t("orders.reschedule.action")}
+          submitLabel={t("common.save")}
+          onClose={() => setEditing(null)}
+        >
+          {(errors) => <DueDateField defaults={order} errors={errors} />}
+        </CommandDialog>
       )}
 
       {pending && (

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import type { OrderAction } from "~/services/endpoints/orders";
+import { type EditCommand, OrderIntent } from "~/types/intents/orders";
 
 export type ActionTone = "primary" | "error";
 
@@ -17,14 +18,23 @@ export function toneOf(action: OrderAction): ActionTone {
 
 export function OrderActionBar({
   actions,
-  onSelect,
+  edits,
+  onAction,
+  onEdit,
 }: {
   actions: OrderAction[];
-  onSelect: (action: OrderAction) => void;
+  edits: readonly EditCommand[];
+  onAction: (action: OrderAction) => void;
+  onEdit: (command: EditCommand) => void;
 }) {
   const { t } = useTranslation();
+  const editLabels: Record<EditCommand, string> = {
+    [OrderIntent.CorrectDetails]: t("orders.correctDetails.action"),
+    [OrderIntent.ChangeService]: t("orders.changeService.action"),
+    [OrderIntent.Reschedule]: t("orders.reschedule.action"),
+  };
 
-  if (actions.length === 0) {
+  if (actions.length === 0 && edits.length === 0) {
     return null;
   }
 
@@ -35,9 +45,19 @@ export function OrderActionBar({
           key={action}
           type="button"
           className={styles[action].button}
-          onClick={() => onSelect(action)}
+          onClick={() => onAction(action)}
         >
           {t(`orders.actions.${action}`)}
+        </button>
+      ))}
+      {edits.map((command) => (
+        <button
+          key={command}
+          type="button"
+          className="btn btn-soft btn-sm btn-secondary"
+          onClick={() => onEdit(command)}
+        >
+          {editLabels[command]}
         </button>
       ))}
     </div>
