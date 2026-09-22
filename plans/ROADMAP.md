@@ -18,9 +18,10 @@ Everything below is beyond the brief, which is met. Ordered on 2026-09-21 after 
 the priorities; the reasoning is under `Why this order` below. The first two came off the queue on
 2026-09-22 and are recorded under `Landed` further down.
 
-1. Detail page rework (#10). The page goes read-only and every command becomes an action: three edit
-   commands opening a dialog with their own form, and four transitions that are a confirm rather
-   than a form. Built once, with all seven in hand, now that the transition endpoints exist.
+1. Detail page rework (#10), planned in [plan-j-detail-page.md](plan-j-detail-page.md). The page
+   goes read-only and every command becomes an action: three edit commands opening a dialog with
+   their own form, four transitions that are a confirm, and delete set apart. Built once, with all
+   seven in hand, now that the transition endpoints exist.
 2. A status legend above the orders table. Its transitions come from the API, read off the domain's
    matrix the way the service catalogue is, never written out in both locale files.
 3. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
