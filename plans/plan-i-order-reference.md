@@ -14,8 +14,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| I1. Column, entity property and both DTOs | 🟡 | Identity from 1000, migration, round-trip test |
-| I2. The number in the UI | ⏳ | List column, detail heading, delete confirm, both locales |
+| I1. Column, entity property and both DTOs | ✅ | Identity from 1000, migration, round-trip test |
+| I2. The number in the UI | 🟡 | List column, detail heading, delete confirm, both locales |
 
 ## Context
 
@@ -84,10 +84,16 @@ numbered 1000 to 1025 and the unique index created in the same transaction, so n
 needed. The detail is in [reference/verified-on-this-machine.md](reference/verified-on-this-machine.md).
 
 **I2. The number in the UI.** Regenerate `openapi.generated.ts` first, which needs the API
-listening on 5260 and is therefore a handoff rather than something this session runs. Then a
-leading `Order` column in `orders-table.tsx`, the detail page heading becoming the number with the
-customer name beneath it, and `orders.delete.confirm` naming both. Keys `orders.reference` and
-`orders.columns.reference` land in `en.json` and `nb.json` in the same commit.
+listening on 5260. Then a leading `Order` column in `orders-table.tsx`, the detail page heading
+becoming the number with the customer name beneath it, and `orders.delete.confirm` naming both.
+Keys `orders.reference` and `orders.columns.reference` land in `en.json` and `nb.json` in the same
+commit.
+
+The regenerated contract types `orderNumber` as `number | string`, because `long` carries
+`format: int64` and `openapi-typescript` will not assume a JSON number survives the round trip.
+Left as is rather than narrowing the column to `int`: nothing in the browser does arithmetic on the
+reference, and it is rendered through one interpolation. If a consumer ever needs it as a number,
+the fix is `int` end to end, not a cast at the call site.
 
 Tests: the existing route tests cover all three surfaces already, so the additions are assertions
 on them rather than new files.

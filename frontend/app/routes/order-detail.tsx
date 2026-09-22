@@ -54,7 +54,12 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
   return (
     <section className="flex max-w-xl flex-col gap-4">
       <div className="flex items-center gap-4">
-        <h1 className="text-2xl font-bold">{order.customerName}</h1>
+        <div>
+          <h1 className="font-mono text-2xl font-bold">
+            {t("orders.reference", { number: order.orderNumber })}
+          </h1>
+          <p className="text-base-content/70">{order.customerName}</p>
+        </div>
         <Link to="/" className="btn btn-ghost btn-sm ml-auto">
           {t("common.back")}
         </Link>

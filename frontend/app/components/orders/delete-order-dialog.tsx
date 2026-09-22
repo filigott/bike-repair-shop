@@ -25,7 +25,10 @@ export function DeleteOrderDialog({
       <div className="modal-box">
         <h2 className="text-lg font-bold">{t("orders.delete.title")}</h2>
         <p className="py-4">
-          {t("orders.delete.confirm", { customer: order.customerName })}
+          {t("orders.delete.confirm", {
+            reference: t("orders.reference", { number: order.orderNumber }),
+            customer: order.customerName,
+          })}
         </p>
         <div className="modal-action">
           <form method="dialog">

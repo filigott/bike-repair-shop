@@ -517,6 +517,8 @@ export interface components {
         MaintenanceOrderResponse: {
             /** Format: uuid */
             id: string;
+            /** Format: int64 */
+            orderNumber: number | string;
             customerName: string;
             phoneNumber: string;
             email: string;
@@ -535,6 +537,8 @@ export interface components {
         MaintenanceOrderSummary: {
             /** Format: uuid */
             id: string;
+            /** Format: int64 */
+            orderNumber: number | string;
             customerName: string;
             phoneNumber: string;
             email: string;

@@ -30,6 +30,7 @@ function order(
 ): MaintenanceOrderResponse {
   return {
     id: ORDER_ID,
+    orderNumber: 1042,
     customerName: "Ada Lovelace",
     phoneNumber: "+4712345678",
     email: "ada@example.com",
@@ -70,6 +71,17 @@ describe("OrderDetail", () => {
       { code: "WheelAdjustment", displayName: "Wheel adjustment" },
       { code: "ChainReplacement", displayName: "Chain replacement" },
     ]);
+  });
+
+  it("leads with the order number and names the customer below it", async () => {
+    // Act
+    renderPage();
+
+    // Assert
+    expect(
+      await screen.findByRole("heading", { name: "#1042" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Ada Lovelace")).toBeInTheDocument();
   });
 
   it("prefills one form per command from the loaded order", async () => {

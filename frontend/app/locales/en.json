@@ -29,6 +29,7 @@
       "submit": "Change service"
     },
     "columns": {
+      "reference": "Order",
       "customer": "Customer",
       "phone": "Phone",
       "bike": "Bike brand",
@@ -43,7 +44,7 @@
     "delete": {
       "action": "Delete",
       "title": "Delete order",
-      "confirm": "Delete the order for {{customer}}? This cannot be undone.",
+      "confirm": "Delete order {{reference}} for {{customer}}? This cannot be undone.",
       "submit": "Delete order"
     },
     "detail": {
@@ -66,6 +67,7 @@
       "schedule": "Service and due date"
     },
     "overdue": "Overdue",
+    "reference": "#{{number}}",
     "paging": {
       "showing": "Showing {{from}} to {{to}} of {{total}}",
       "previous": "Previous",

@@ -93,3 +93,6 @@ written, because the failures below are the kind that look like mysteries when t
   when the EF model and the migration snapshot disagree. It fires before any test body runs, so a
   mapping change made without regenerating the migration reads as a fixture failure rather than an
   assertion failure.
+- `openapi-typescript` 7.13 emits `number | string` for an OpenAPI `integer` with `format: int64`,
+  which is what a C# `long` produces. It is defensive about large values rather than wrong, and the
+  only way to get a plain `number` is to narrow the property to `int` on the API.

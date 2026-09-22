@@ -16,6 +16,9 @@ export function OrderRow({
 
   return (
     <tr>
+      <td className="font-mono">
+        {t("orders.reference", { number: order.orderNumber })}
+      </td>
       <td>{order.customerName}</td>
       <td>{order.phoneNumber}</td>
       <td>{order.bikeBrand}</td>
