@@ -18,7 +18,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | J1. Rekey the state machine by action | ✅ | One edge table; allowedActions on the response |
 | J2. Action area with the lifecycle moves | ✅ | Four actions as confirms; inline forms stay |
 | J3. Edit commands move into dialogs | ✅ | Page goes read-only; three more buttons on the bar |
-| J4a. Delete, layout and the duplication | 🟡 | Delete on the page, back link, type, facts once |
+| J4a. Delete, layout and the duplication | ✅ | Delete on the page, back link, type, facts once |
+| J4c. Actions column and the empty rows | 🟡 | Second layout pass off the manual look; decisions open |
 | J4b. Dialog state in the URL | ⏳ | `?edit=` param, redirect on success, the effect goes |
 
 ## Context
@@ -119,6 +120,18 @@ Settled on 2026-09-22: **delete stays available on a closed order.** It removes 
 moving a state, nothing in the domain forbids it, and a cancellation made in error should be
 clearable without a second route. It is never in `allowedActions`, so it is drawn on its own and
 the projection stays the only thing deciding lifecycle moves.
+
+**J4c. Actions column and the empty rows.** A second layout pass, from looking at what J4a
+produced. Four things: the actions move off the bottom of the page and stand beside the facts, the
+delete button stops being the only one without a background, the three kinds of action gain physical
+separation matching their logical grouping, and every fact keeps its row whether or not it holds a
+value. `notes` is the only nullable field on the response, so the last one is a single row that
+currently disappears.
+
+This revisits the first design decision on this page, which rejected a right-hand column. That
+rejection was written before the button count was known. It is seven on an open order, which is
+roughly the height of the two cards, so the argument that a column would be mostly empty no longer
+holds. What it costs is one breakpoint.
 
 **J4b. Dialog state in the URL.** Open question 1, settled on 2026-09-22 in favour of taking it:
 `?edit=details` and friends, opening as a link, the action redirecting to the bare path on success
