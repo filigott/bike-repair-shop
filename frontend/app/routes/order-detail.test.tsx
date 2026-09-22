@@ -16,7 +16,11 @@ import {
 } from "~/services/endpoints/orders";
 import { listServiceTypes } from "~/services/endpoints/service-types";
 import { ApiError } from "~/services/http";
-import OrderDetail, { clientAction, clientLoader } from "./order-detail";
+import OrderDetail, {
+  clientAction,
+  clientLoader,
+  shouldRevalidate,
+} from "./order-detail";
 
 vi.mock("~/services/endpoints/orders", () => ({
   getOrder: vi.fn(),
@@ -58,7 +62,7 @@ function order(
   };
 }
 
-function renderPage() {
+function renderPage(entry = `/orders/${ORDER_ID}`) {
   const Stub = createRoutesStub([
     {
       path: "/orders/:id",
@@ -67,10 +71,11 @@ function renderPage() {
         clientLoader(args as Parameters<typeof clientLoader>[0]),
       action: (args) =>
         clientAction(args as Parameters<typeof clientAction>[0]),
+      shouldRevalidate,
     },
     { path: "/", Component: () => <h1>Orders</h1> },
   ]);
-  return render(<Stub initialEntries={[`/orders/${ORDER_ID}`]} />);
+  return render(<Stub initialEntries={[entry]} />);
 }
 
 describe("OrderDetail", () => {
@@ -208,7 +213,7 @@ describe("OrderDetail", () => {
 
     // Act
     await userEvent.click(
-      await screen.findByRole("button", { name: "Edit details" }),
+      await screen.findByRole("link", { name: "Edit details" }),
     );
 
     // Assert
@@ -220,7 +225,7 @@ describe("OrderDetail", () => {
     // Arrange
     renderPage();
     await userEvent.click(
-      await screen.findByRole("button", { name: "Edit details" }),
+      await screen.findByRole("link", { name: "Edit details" }),
     );
     const name = screen.getByLabelText("Customer name");
     await userEvent.clear(name);
@@ -247,7 +252,7 @@ describe("OrderDetail", () => {
     // Arrange
     renderPage();
     await userEvent.click(
-      await screen.findByRole("button", { name: "Change service" }),
+      await screen.findByRole("link", { name: "Change service" }),
     );
     await userEvent.selectOptions(
       screen.getByLabelText("Service"),
@@ -270,7 +275,7 @@ describe("OrderDetail", () => {
     // Arrange
     renderPage();
     await userEvent.click(
-      await screen.findByRole("button", { name: "Reschedule" }),
+      await screen.findByRole("link", { name: "Reschedule" }),
     );
     const dueDate = screen.getByLabelText("Due date");
     await userEvent.clear(dueDate);
@@ -299,7 +304,7 @@ describe("OrderDetail", () => {
     );
     renderPage();
     await userEvent.click(
-      await screen.findByRole("button", { name: "Reschedule" }),
+      await screen.findByRole("link", { name: "Reschedule" }),
     );
     const dueDate = screen.getByLabelText("Due date");
     await userEvent.clear(dueDate);
@@ -319,7 +324,7 @@ describe("OrderDetail", () => {
     // Arrange
     renderPage();
     await userEvent.click(
-      await screen.findByRole("button", { name: "Edit details" }),
+      await screen.findByRole("link", { name: "Edit details" }),
     );
 
     // Act
@@ -350,7 +355,7 @@ describe("OrderDetail", () => {
       "A Completed order can no longer be changed.",
     );
     expect(
-      screen.queryByRole("button", { name: "Edit details" }),
+      screen.queryByRole("link", { name: "Edit details" }),
     ).not.toBeInTheDocument();
   });
 
@@ -425,6 +430,59 @@ describe("OrderDetail", () => {
     expect(
       await screen.findByRole("link", { name: "Back to orders" }),
     ).toHaveAttribute("href", "/");
+  });
+
+  it("opens the dialog the url names, without a click", async () => {
+    // Act
+    renderPage(`/orders/${ORDER_ID}?edit=due-date`);
+
+    // Assert
+    expect(await screen.findByLabelText("Due date")).toHaveValue("2026-09-25");
+  });
+
+  it("opens nothing when the url names a command that does not exist", async () => {
+    // Act
+    renderPage(`/orders/${ORDER_ID}?edit=sharpen-the-bell`);
+
+    // Assert
+    await screen.findByRole("heading", { name: "#1042" });
+    expect(
+      screen.queryByRole("button", { name: "Save" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("opens nothing when the url names a command a closed order cannot run", async () => {
+    // Arrange
+    vi.mocked(getOrder).mockResolvedValue(
+      order({
+        status: "Cancelled",
+        isEditable: false,
+        allowedActions: [],
+        allowedTransitions: [],
+      }),
+    );
+
+    // Act
+    renderPage(`/orders/${ORDER_ID}?edit=details`);
+
+    // Assert
+    await screen.findByRole("heading", { name: "#1042" });
+    expect(screen.queryByLabelText("Customer name")).not.toBeInTheDocument();
+  });
+
+  it("closes the dialog on cancel without sending the command", async () => {
+    // Arrange
+    renderPage(`/orders/${ORDER_ID}?edit=details`);
+    await screen.findByLabelText("Customer name");
+
+    // Act
+    await userEvent.click(screen.getAllByRole("button", { name: "Cancel" })[0]);
+
+    // Assert
+    await waitFor(() =>
+      expect(screen.queryByLabelText("Customer name")).not.toBeInTheDocument(),
+    );
+    expect(correctOrderDetails).not.toHaveBeenCalled();
   });
 
   it("keeps the notes row when there are none, with nothing in the value", async () => {

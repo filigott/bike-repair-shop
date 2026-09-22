@@ -1,7 +1,9 @@
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import type { OrderAction } from "~/services/endpoints/orders";
 import { type EditCommand, OrderIntent } from "~/types/intents/orders";
+import { EDIT_PARAM, editParams } from "~/types/params/orders";
 
 export type ActionTone = "primary" | "error";
 
@@ -21,13 +23,11 @@ export function OrderActions({
   actions,
   edits,
   onAction,
-  onEdit,
   onDelete,
 }: {
   actions: OrderAction[];
   edits: readonly EditCommand[];
   onAction: (action: OrderAction) => void;
-  onEdit: (command: EditCommand) => void;
   onDelete: () => void;
 }) {
   const { t } = useTranslation();
@@ -54,14 +54,13 @@ export function OrderActions({
     {
       key: "edit",
       buttons: edits.map((command) => (
-        <button
+        <Link
           key={command}
-          type="button"
+          to={`?${EDIT_PARAM}=${editParams[command]}`}
           className="btn btn-soft btn-secondary w-full"
-          onClick={() => onEdit(command)}
         >
           {editLabels[command]}
-        </button>
+        </Link>
       )),
     },
     {

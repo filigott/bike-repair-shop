@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, redirect, useFetcher } from "react-router";
+import {
+  Link,
+  redirect,
+  type ShouldRevalidateFunctionArgs,
+  useFetcher,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router";
 import { CommandDialog } from "~/components/orders/command-dialog";
 import { ConfirmDialog } from "~/components/orders/confirm-dialog";
 import { DeleteOrderDialog } from "~/components/orders/delete-order-dialog";
@@ -33,11 +41,12 @@ import {
 import { listServiceTypes } from "~/services/endpoints/service-types";
 import { optionalTextOf, textOf } from "~/services/form-data";
 import { actionSuccess, isActionFailure } from "~/types/action-result";
+import { editCommands, OrderIntent } from "~/types/intents/orders";
 import {
-  type EditCommand,
-  editCommands,
-  OrderIntent,
-} from "~/types/intents/orders";
+  EDIT_PARAM,
+  editCommandOf,
+  isEditCommand,
+} from "~/types/params/orders";
 import type { Route } from "./+types/order-detail";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -62,7 +71,26 @@ export async function clientAction({
     return actionFailureFrom<OrderFormField>(error);
   }
 
-  return intent === OrderIntent.Delete ? redirect("/") : actionSuccess(null);
+  if (intent === OrderIntent.Delete) {
+    return redirect("/");
+  }
+
+  // An accepted edit closes its dialog by navigating off the param that opened it.
+  return isEditCommand(intent)
+    ? redirect(new URL(request.url).pathname)
+    : actionSuccess(null);
+}
+
+export function shouldRevalidate({
+  formMethod,
+  currentUrl,
+  nextUrl,
+  defaultShouldRevalidate,
+}: ShouldRevalidateFunctionArgs) {
+  const dialogOnly =
+    formMethod === undefined && currentUrl.pathname === nextUrl.pathname;
+
+  return dialogOnly ? false : defaultShouldRevalidate;
 }
 
 export default function OrderDetail({ loaderData }: Route.ComponentProps) {
@@ -70,8 +98,14 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
   const { t } = useTranslation();
   const fetcher = useFetcher();
   const [pending, setPending] = useState<OrderAction | null>(null);
-  const [editing, setEditing] = useState<EditCommand | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const editing = order.isEditable
+    ? editCommandOf(searchParams.get(EDIT_PARAM))
+    : null;
+  const closeDialog = () => navigate(pathname, { replace: true });
   const failure =
     fetcher.data && isActionFailure(fetcher.data) ? fetcher.data : undefined;
 
@@ -117,7 +151,6 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
             actions={order.allowedActions}
             edits={order.isEditable ? editCommands : []}
             onAction={setPending}
-            onEdit={setEditing}
             onDelete={() => setDeleting(true)}
           />
         </div>
@@ -128,7 +161,7 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
           intent={OrderIntent.CorrectDetails}
           title={t("orders.correctDetails.action")}
           submitLabel={t("common.save")}
-          onClose={() => setEditing(null)}
+          onClose={closeDialog}
         >
           {(errors) => <OrderDetailsFields defaults={order} errors={errors} />}
         </CommandDialog>
@@ -139,7 +172,7 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
           intent={OrderIntent.ChangeService}
           title={t("orders.changeService.action")}
           submitLabel={t("common.save")}
-          onClose={() => setEditing(null)}
+          onClose={closeDialog}
         >
           {(errors) => (
             <ServiceTypeField
@@ -156,7 +189,7 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
           intent={OrderIntent.Reschedule}
           title={t("orders.reschedule.action")}
           submitLabel={t("common.save")}
-          onClose={() => setEditing(null)}
+          onClose={closeDialog}
         >
           {(errors) => <DueDateField defaults={order} errors={errors} />}
         </CommandDialog>

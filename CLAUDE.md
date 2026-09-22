@@ -49,6 +49,7 @@ frontend/
   app/routes/                     one route per page, resource routes are action-only
   app/services/endpoints/         one wrapper file per API controller
   app/types/intents/              one intent enum per domain
+  app/types/params/               one search-param enum per route that carries UI state
   app/locales/                    en and nb, kept in step
 plans/                            ROADMAP plus one plan file per track
 docs/                             topical reference docs, updated with the code that changes them
@@ -133,9 +134,11 @@ the gate a front-end commit passes.
 one route action that switches on an `intent` value read from `FormData`. The intent set is an enum
 in `app/types/intents/`, namespaced so two slices on one route cannot collide.
 
-**One action envelope.** Every action returns `ActionResult<T>`, a union of success and failure, and
-consumers narrow with `isActionFailure`. No `success` or `message` keys. ProblemDetails mapping is a
-single shared helper: 5xx rethrows to the error boundary, 4xx becomes a typed failure the form renders.
+**One action envelope.** An action answers with `ActionResult<T>`, a union of success and failure,
+and consumers narrow with `isActionFailure`. No `success` or `message` keys. A command whose success
+takes the user somewhere else redirects instead, which is how a dialog held in the URL closes.
+ProblemDetails mapping is a single shared helper: 5xx rethrows to the error boundary, 4xx becomes a
+typed failure the form renders.
 
 **Transport is `openapi-fetch` typed by the generated `paths`.** One core module owns the client, a
 per-call timeout and `unwrap`, which turns the `{ data, error }` result into a value or an `ApiError`
@@ -157,16 +160,19 @@ form puts the state machine in the user's head; a "Complete order" button that t
 flags switch on keeps it in the code.
 
 **The UI never recomputes a server rule.** `allowedActions`, `allowedTransitions`, `isEditable`,
-`isOverdue` and `isReopened` are projected onto the response by the API. The action bar renders one
-button per `allowedActions` entry, so it never works out which command moves an order from one
-status to another. Computing overdue in the browser lets the
-viewer's device timezone decide whether an order is late, and deriving editability from the status
-puts the state machine back in the client.
+`isOverdue` and `isReopened` are projected onto the response by the API. The order's action column
+renders one control per `allowedActions` entry, so it never works out which command moves an order
+from one status to another. Computing overdue in the browser lets the viewer's device timezone decide
+whether an order is late, and deriving editability from the status puts the state machine back in the
+client.
 
-**UI rules.** Signals of intent over booleans: native `<dialog>` with `showModal()` for modals, with
-the parent holding `selected: T | null`. DaisyUI semantic tokens only (`primary`, `base-100`, `error`
-and so on), never raw Tailwind palette colours. `react-icons/lu` for icons. React Router control flow,
-no `useEffect` for data loading. Never mirror a prop into state.
+**UI rules.** Signals of intent over booleans: native `<dialog>` with `showModal()` for modals. A
+dialog that only confirms is held by the parent as `selected: T | null`; a dialog holding a form is
+held in the URL as a search param, so it is linkable, the back button shuts it, and the server
+decides when it closes by redirecting off the param. Reading a param means parsing it into the
+command it names, never trusting the string. DaisyUI semantic tokens only (`primary`, `base-100`,
+`error` and so on), never raw Tailwind palette colours. React Router control flow, and no `useEffect`
+at all: there is none in the app. Never mirror a prop into state.
 
 **i18n keys only.** `t("key")` with no inline English fallback. Both locales and the key union change
 in the same commit. Generic words reuse `common.*`.
