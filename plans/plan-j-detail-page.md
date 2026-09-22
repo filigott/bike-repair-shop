@@ -20,7 +20,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | J3. Edit commands move into dialogs | ✅ | Page goes read-only; three more buttons on the bar |
 | J4a. Delete, layout and the duplication | ✅ | Delete on the page, back link, type, facts once |
 | J4c. Actions column and the empty rows | ✅ | Actions beside the facts, grouped; every fact keeps its row |
-| J4b. Dialog state in the URL | 🟡 | `?edit=` param, redirect on success, the effect goes |
+| J4b. Dialog state in the URL | ✅ | `?edit=` param, redirect on success, no effect left |
+| J4d. Thin the route module | 🟡 | Command dispatch and the edit dialogs leave the route |
 
 ## Context
 
@@ -154,6 +155,22 @@ one status, since a cancelled order is one button beside two full cards and the 
 
 The component is renamed from `OrderActionBar` to `OrderActions` with it, since a grouped vertical
 column is not a bar.
+
+**J4d. Thin the route module.** By the end of J4b `order-detail.tsx` was 269 lines against 162 for
+the next largest file on the front end, which is the point at which it stops reading as a route and
+starts reading as a feature. Two things leave it and one stays.
+
+The intent switch and the transition record become `runOrderCommand` in `app/services/`, since
+turning a posted intent into an endpoint call is not route wiring and is worth testing on its own.
+The three near-identical `CommandDialog` blocks become one `OrderEditDialog`, which owns the mapping
+from a command to its title and its fields, so the route renders one element instead of three
+branches. The label map behind both that dialog and the action column moves onto the intent enum as
+`editCommandLabels`, declared `as const satisfies` so the typed locale keys survive.
+
+`shouldRevalidate` stays. It is a route module export that React Router reads off the route, its
+body is route policy in five lines, and moving it would leave the export behind as a forwarder.
+
+No test changes: the behaviour is identical and the existing suite is what proves it.
 
 **J4b. Dialog state in the URL.** Open question 1, settled on 2026-09-22 in favour of taking it:
 `?edit=details` and friends, opening as a link, the action redirecting to the bare path on success
