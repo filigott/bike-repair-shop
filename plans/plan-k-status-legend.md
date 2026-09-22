@@ -10,13 +10,16 @@ for this feature and read by nothing.
 
 ## Progress
 
+Complete. The branch is ready for its manual check and sits behind the detail-page batch in the
+stack.
+
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
 | K1. Status catalogue endpoint | ✅ | `Features/OrderStatuses` mirroring the service catalogue |
 | K2. The legend above the table | ✅ | Badges at rest, edges on disclosure, both locales |
-| K3. Drop the per-order transitions | 🟡 | Off the response, off the fixtures, out of CLAUDE.md |
+| K3. Drop the per-order transitions | ✅ | Off the response, off the fixtures, out of CLAUDE.md |
 
 ## Context
 
@@ -74,9 +77,13 @@ regenerate `openapi.generated.ts`, drop the field from the front-end test fixtur
 of the list of projected fields in `CLAUDE.md`. `AllowedActions` stays: the action column renders
 from it.
 
-Reconfirm at implementation time: whether the catalogue returns action names as well as target
-statuses. K2 needs only the targets, but the shape is cheap to include and the alternative is a
-second endpoint change later.
+Settled on 2026-09-22: **the catalogue returns targets only.** The rule applied to the order
+response applies to the catalogue as well, and nothing in the queue reads action names off it: the
+legend reads targets, the detail page reads `allowedActions` off the order, and the status history
+(#5) will read its own rows. Keeping the field on the argument that something might want it later is
+the reasoning this step exists to reject. The entity's `AllowedTransitions` passthrough went with it,
+having existed only to fill the response; the status-level extension stays, being what the catalogue
+is built from.
 
 ## Out of scope
 
