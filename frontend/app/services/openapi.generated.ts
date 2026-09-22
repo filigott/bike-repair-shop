@@ -680,6 +680,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/order-statuses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["OrderStatusItem"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/service-types": {
         parameters: {
             query?: never;
@@ -774,6 +809,11 @@ export interface components {
         OrderAction: "Start" | "Complete" | "Cancel" | "Reopen";
         /** @enum {unknown} */
         OrderStatus: "Received" | "InProgress" | "Completed" | "Cancelled";
+        OrderStatusItem: {
+            status: components["schemas"]["OrderStatus"];
+            allowedActions: components["schemas"]["OrderAction"][];
+            allowedTransitions: components["schemas"]["OrderStatus"][];
+        };
         PagedResponseOfMaintenanceOrderSummary: {
             items: components["schemas"]["MaintenanceOrderSummary"][];
             /** Format: int32 */
