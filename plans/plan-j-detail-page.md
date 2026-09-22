@@ -16,7 +16,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Step | Status | Notes |
 |---|---|---|
 | J1. Rekey the state machine by action | ✅ | One edge table; allowedActions on the response |
-| J2. Action area with the lifecycle moves | 🟡 | Four actions as confirms; inline forms stay |
+| J2. Action area with the lifecycle moves | ✅ | Four actions as confirms; inline forms stay |
 | J3. Edit commands move into dialogs | ⏳ | Page goes read-only; three more buttons on the bar |
 | J4. Delete, layout and the duplication | ⏳ | Delete on the page, back link, type, facts once |
 
