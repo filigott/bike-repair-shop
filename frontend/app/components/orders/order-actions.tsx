@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import type { OrderAction } from "~/services/endpoints/orders";
-import { type EditCommand, OrderIntent } from "~/types/intents/orders";
+import { type EditCommand, editCommandLabels } from "~/types/intents/orders";
 import { EDIT_PARAM, editParams } from "~/types/params/orders";
 
 export type ActionTone = "primary" | "error";
@@ -31,11 +31,6 @@ export function OrderActions({
   onDelete: () => void;
 }) {
   const { t } = useTranslation();
-  const editLabels: Record<EditCommand, string> = {
-    [OrderIntent.CorrectDetails]: t("orders.correctDetails.action"),
-    [OrderIntent.ChangeService]: t("orders.changeService.action"),
-    [OrderIntent.Reschedule]: t("orders.reschedule.action"),
-  };
 
   const groups = [
     {
@@ -59,7 +54,7 @@ export function OrderActions({
           to={`?${EDIT_PARAM}=${editParams[command]}`}
           className="btn btn-soft btn-secondary w-full"
         >
-          {editLabels[command]}
+          {t(editCommandLabels[command])}
         </Link>
       )),
     },

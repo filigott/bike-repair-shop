@@ -9,39 +9,25 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router";
-import { CommandDialog } from "~/components/orders/command-dialog";
 import { ConfirmDialog } from "~/components/orders/confirm-dialog";
 import { DeleteOrderDialog } from "~/components/orders/delete-order-dialog";
 import { OrderActions, toneOf } from "~/components/orders/order-actions";
 import { OrderContactCard } from "~/components/orders/order-contact-card";
-import {
-  DueDateField,
-  OrderDetailsFields,
-  type OrderFormField,
-  ServiceTypeField,
-} from "~/components/orders/order-fields";
+import { OrderEditDialog } from "~/components/orders/order-edit-dialog";
+import type { OrderFormField } from "~/components/orders/order-fields";
 import { OrderSummaryCard } from "~/components/orders/order-summary-card";
 import { actionFailureFrom } from "~/services/action-errors";
-import type {
-  MaintenanceOrderResponse,
-  OrderAction,
-  ServiceType,
-} from "~/services/endpoints/orders";
-import {
-  cancelOrder,
-  changeOrderService,
-  completeOrder,
-  correctOrderDetails,
-  deleteOrder,
-  getOrder,
-  reopenOrder,
-  rescheduleOrder,
-  startOrder,
-} from "~/services/endpoints/orders";
+import type { OrderAction } from "~/services/endpoints/orders";
+import { getOrder } from "~/services/endpoints/orders";
 import { listServiceTypes } from "~/services/endpoints/service-types";
-import { optionalTextOf, textOf } from "~/services/form-data";
+import { textOf } from "~/services/form-data";
+import { runOrderCommand } from "~/services/order-commands";
 import { actionSuccess, isActionFailure } from "~/types/action-result";
-import { editCommands, OrderIntent } from "~/types/intents/orders";
+import {
+  editCommands,
+  OrderIntent,
+  orderIntentOf,
+} from "~/types/intents/orders";
 import {
   EDIT_PARAM,
   editCommandOf,
@@ -63,10 +49,10 @@ export async function clientAction({
   request,
 }: Route.ClientActionArgs) {
   const form = await request.formData();
-  const intent = textOf(form, "intent") as OrderIntent;
+  const intent = orderIntentOf(textOf(form, "intent"));
 
   try {
-    await runIntent(params.id, intent, form);
+    await runOrderCommand(params.id, intent, form);
   } catch (error) {
     return actionFailureFrom<OrderFormField>(error);
   }
@@ -156,43 +142,13 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
         </div>
       </div>
 
-      {editing === OrderIntent.CorrectDetails && (
-        <CommandDialog
-          intent={OrderIntent.CorrectDetails}
-          title={t("orders.correctDetails.action")}
-          submitLabel={t("common.save")}
+      {editing && (
+        <OrderEditDialog
+          command={editing}
+          order={order}
+          serviceTypes={serviceTypes}
           onClose={closeDialog}
-        >
-          {(errors) => <OrderDetailsFields defaults={order} errors={errors} />}
-        </CommandDialog>
-      )}
-
-      {editing === OrderIntent.ChangeService && (
-        <CommandDialog
-          intent={OrderIntent.ChangeService}
-          title={t("orders.changeService.action")}
-          submitLabel={t("common.save")}
-          onClose={closeDialog}
-        >
-          {(errors) => (
-            <ServiceTypeField
-              serviceTypes={serviceTypes}
-              defaults={order}
-              errors={errors}
-            />
-          )}
-        </CommandDialog>
-      )}
-
-      {editing === OrderIntent.Reschedule && (
-        <CommandDialog
-          intent={OrderIntent.Reschedule}
-          title={t("orders.reschedule.action")}
-          submitLabel={t("common.save")}
-          onClose={closeDialog}
-        >
-          {(errors) => <DueDateField defaults={order} errors={errors} />}
-        </CommandDialog>
+        />
       )}
 
       {deleting && (
@@ -227,43 +183,4 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
       )}
     </section>
   );
-}
-
-const transitions: Record<
-  OrderAction,
-  (id: string) => Promise<MaintenanceOrderResponse>
-> = {
-  Start: startOrder,
-  Complete: completeOrder,
-  Cancel: cancelOrder,
-  Reopen: reopenOrder,
-};
-
-function runIntent(
-  id: string,
-  intent: OrderIntent,
-  form: FormData,
-): Promise<unknown> {
-  switch (intent) {
-    case OrderIntent.Transition:
-      return transitions[textOf(form, "action") as OrderAction](id);
-    case OrderIntent.CorrectDetails:
-      return correctOrderDetails(id, {
-        customerName: textOf(form, "customerName"),
-        phoneNumber: textOf(form, "phoneNumber"),
-        email: textOf(form, "email"),
-        bikeBrand: textOf(form, "bikeBrand"),
-        notes: optionalTextOf(form, "notes"),
-      });
-    case OrderIntent.ChangeService:
-      return changeOrderService(id, {
-        serviceType: textOf(form, "serviceType") as ServiceType,
-      });
-    case OrderIntent.Reschedule:
-      return rescheduleOrder(id, { dueDate: optionalTextOf(form, "dueDate") });
-    case OrderIntent.Delete:
-      return deleteOrder(id);
-    default:
-      throw new Error(`Unknown order intent: ${intent}`);
-  }
 }
