@@ -14,38 +14,35 @@ running `docker compose up`. Everything currently planned lives in
 
 ## Next up
 
-Everything below is beyond the brief, which is met. Ordered on 2026-09-21 after a second look at
-the priorities; the reasoning is under `Why this order` below. The first three came off the queue on
-2026-09-22 and are recorded under `Landed` further down.
+Everything below is beyond the brief, which is met. Reordered on 2026-09-22 for a repository that is
+about to be read by someone else: visible defects first, then signal, then polish.
 
-1. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
-   a described-by message, clearing a stale message when its input changes, a clear-search control
-   the empty state also offers, and `autocomplete` on the contact fields.
-2. Localized validation messages from the API (#11). The only strings the front end cannot key.
-3. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
+1. **Localized validation messages from the API (#11).** The only user-visible defect left. Switch
+   to Norwegian, submit a due date in the past, and the message comes back in English. It is also
+   the only string the front end cannot key, so nothing else can fix it.
+2. **CI (#6).** A workflow running both suites on every pull request. Disproportionate signal for
+   the work, and the rule that everything lands through a pull request has nothing enforcing it yet.
+   Optimistic concurrency is the other half of the issue and can wait; the README half shipped.
+3. **C4b (#2)**, the four items left from the phase B pass: field error styling with `aria-invalid`
+   and a described-by message, clearing a stale message when its input changes, a clear-search
+   control the empty state also offers, and `autocomplete` on the contact fields.
+4. **Search by service and due date (#4).** Searching by customer already works, so this widens a
+   feature rather than adding one. The order number should become searchable here.
+5. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
-4. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
-   and when, plus somewhere to show it. The brief never asks for it, so it is scoped on its own
-   rather than folded into the transitions. #5 stays open until this lands.
-5. Search, concurrency and CI (#4, #6), the remaining original phases. The order number
-   should become searchable here rather than in #9.
+6. **Status change history (#5).** A second table recording who moved an order and when, plus
+   somewhere to show it. The brief never asks for it, so it is scoped on its own. #5 stays open
+   until this lands.
 
 ### Why this order
 
-The state machine was the one piece of real domain logic in an otherwise CRUD-shaped problem, and
-nothing could reach it: the matrix was written and tested, `allowedTransitions` was projected onto
-every response, the status colours were on screen, and no caller existed. The demo seeder had to
-call the domain methods in process to produce a completed order. That gap is closed, which is why
-the detail rework went first and why the legend can go next.
+The earlier ordering optimised for depth: it put the state machine, the lifecycle and the detail
+page first because those were the only real domain logic in an otherwise CRUD-shaped problem. That
+work is done, and the audience has changed. What matters now is that someone opening the repository
+finds nothing obviously broken and sees the process working, which puts the one visible defect first
+and CI second.
 
-The rework waited for the transitions rather than preceding them because it builds an action area,
-and half the actions belonging in it did not exist. They are also a different shape: a transition is
-a confirm, not a form in a dialog. Building the area for three commands and returning for the other
-four was avoided by doing them in one pass.
-
-Splitting #5 kept that unit reviewable. The transitions unblocked both the detail page and the
-legend; the history is a table, a migration and a view that nothing else waits on, so it sits far
-down the queue.
+Everything from item 3 down is polish, and none of it is load-bearing for anything else.
 
 ## Landed
 
@@ -67,25 +64,35 @@ down the queue.
 
 ## State
 
-As of 2026-09-22, end of day five. Nothing commits to `main` any more, so the work went out as two
-stacked pull requests, both open and awaiting merge:
+As of 2026-09-22, end of day five. **Everything is merged and `main` is the only branch.** Pull
+requests 14, 15 and 16 landed the order reference, the lifecycle API, the detail page rework, the
+status legend, the root README and the development record. Verified on merged `main`: backend 163
+tests, front-end `verify` green at 50, and the packaged stack brought up from `docker compose down
+-v` with the schema migrated, 26 demo orders seeded and the page answering on 8080.
 
-| Pull request | Holds | Base |
-|---|---|---|
-| 14, `feat/10-detail-page-rework` | 29 commits: #9, #5 and #10 | `main` |
-| 15, `feat/13-status-legend` | the legend, the README and the AI record | pull request 14, retargeting to `main` when that merges |
+The brief has been met since day three. Every open issue is work beyond it, so none of them is an
+unfinished deliverable.
 
-Merge 14 first. The second manual pass ran clean against the packaged stack before either was
-pushed. Backend 163 tests green, front-end `verify` green at 50 tests.
+### Start here next session
 
-The packaged stack was verified on day five from `docker compose down -v`: three services up from an
-empty volume, the schema migrated on start, 26 demo orders seeded, the catalogue endpoint served
-through Caddy and the page answering on 8080. It is still running, so the manual pass can be taken
-against it rather than the dev loop.
+1. Verify rather than trust this file: confirm `README.md`, `docs/ai-development.md` and the status
+   legend are on `main`, and that the tracker shows #9, #10 and #13 closed.
+2. Take `Next up` item 1 below. Ask before writing a plan.
+3. The `db` container is the only thing that should be running. Bring the API and the front end up
+   yourself when you need them.
 
-**The remaining gate is the second manual pass**, covering only what changed since the last one: the
-edit dialogs now open from a link and close on a redirect, delete is on the detail page, and the
-legend is new.
+### The trap that cost an hour on day five
+
+A stacked pull request merged before GitHub has retargeted it lands on its **parent branch**, not on
+`main`. Pull request 15 merged nine seconds after 14 and went into `feat/10-detail-page-rework`, so
+the legend, the README and the development record were absent from `main` while every local check
+said they were fine. Recovering it took a third pull request. **Merge one, wait for the retarget to
+show `main` as the base, then merge the next.**
+
+Two smaller ones from the same hour. `Closes #9, #10` in a pull request body closes only the first
+issue: GitHub needs a keyword per issue, `Closes #9, closes #10`. And a phase letter is claimed when
+the phase is identified, not when it is written, so check the master plan's table before naming a new
+plan file.
 
 ## Delivery line
 
@@ -172,9 +179,9 @@ it.** Nothing commits straight to `main`. Settled on 2026-09-22: holding issues 
 pushing the work itself to `main` unreviewed was the inconsistency that prompted it. Phase D already
 ran this way on `feat/3-docker-packaging` through pull request 12.
 
-The work that predates the rule sits on `feat/10-detail-page-rework`: 29 commits covering #9, #5 and
-#10, moved off `main` rather than pushed to it. `main` is back at its pushed state, and that branch
-becomes one batch pull request covering the whole range once the second manual pass is clean.
+One exemption, so the rule does not tax its own bookkeeping: a commit touching **only `plans/`** may
+go on a `chore/` branch without an issue behind it. It still goes through a pull request, because
+`plans/` is committed and a branch costs nothing.
 
 ## Parked, toolchain
 

@@ -124,4 +124,12 @@ standard while the work itself went straight to `main` unreviewed. Everything ru
 request off an issue from now on, and the 29 commits that predate the rule moved to a branch rather
 than being pushed to `main`.
 
-Running total: **14h00 across five days**.
+A third correction came out of the delivery route itself. Two stacked pull requests were merged
+within nine seconds, and the second landed on its parent branch rather than on `main`, so the
+legend, the README and the development record were missing from `main` while every local check
+passed. It took a third pull request to recover, and the rule it leaves behind is in the roadmap:
+merge one, wait for the retarget, then merge the next. The wider lesson is the same one day four
+produced about relocating a problem. Stacking pull requests moves the sequencing risk from the
+branches to the merge button, and the cheaper shape is to merge the first and let the second rebase.
+
+Running total: **14h30 across five days**.
