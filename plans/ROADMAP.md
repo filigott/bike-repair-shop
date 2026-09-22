@@ -67,15 +67,16 @@ down the queue.
 
 ## State
 
-As of 2026-09-22, end of day five. Nothing commits to `main` any more, so the work sits in a stack
-of two branches, neither pushed:
+As of 2026-09-22, end of day five. Nothing commits to `main` any more, so the work went out as two
+stacked pull requests, both open and awaiting merge:
 
-| Branch | Holds | Waiting on |
+| Pull request | Holds | Base |
 |---|---|---|
-| `feat/10-detail-page-rework` | 29 commits: #9, #5 and #10 | the second manual pass, then one batch pull request |
-| `feat/13-status-legend` | the legend, the README and the AI record, stacked on the above | the same pass, then its own pull request |
+| 14, `feat/10-detail-page-rework` | 29 commits: #9, #5 and #10 | `main` |
+| 15, `feat/13-status-legend` | the legend, the README and the AI record | pull request 14, retargeting to `main` when that merges |
 
-`main` is back at its pushed state. Backend 163 tests green, front-end `verify` green at 50 tests.
+Merge 14 first. The second manual pass ran clean against the packaged stack before either was
+pushed. Backend 163 tests green, front-end `verify` green at 50 tests.
 
 The packaged stack was verified on day five from `docker compose down -v`: three services up from an
 empty volume, the schema migrated on start, 26 demo orders seeded, the catalogue endpoint served
