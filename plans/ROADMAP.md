@@ -155,9 +155,14 @@ and gains two labelled groups in C2, since placing an order is one command rathe
 stages, and a wizard would buy step state and partial validation for seven fields that fit on one
 screen.
 
-Work lands on `main` and is pushed as it goes. Phase D ran on `feat/3-docker-packaging` and merged
-through pull request 12, so the repository shows that flow once; there is no need to repeat it for
-every phase.
+**Every unit of work lands through a pull request from now on, off an issue, on a branch named for
+it.** Nothing commits straight to `main`. Settled on 2026-09-22: holding issues to a standard while
+pushing the work itself to `main` unreviewed was the inconsistency that prompted it. Phase D already
+ran this way on `feat/3-docker-packaging` through pull request 12.
+
+The work that predates the rule sits on `feat/10-detail-page-rework`: 29 commits covering #9, #5 and
+#10, moved off `main` rather than pushed to it. `main` is back at its pushed state, and that branch
+becomes one batch pull request covering the whole range once the second manual pass is clean.
 
 ## Parked, toolchain
 
