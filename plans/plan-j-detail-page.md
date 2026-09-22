@@ -17,7 +17,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|---|---|
 | J1. Rekey the state machine by action | ✅ | One edge table; allowedActions on the response |
 | J2. Action area with the lifecycle moves | ✅ | Four actions as confirms; inline forms stay |
-| J3. Edit commands move into dialogs | 🟡 | Page goes read-only; three more buttons on the bar |
+| J3. Edit commands move into dialogs | ✅ | Page goes read-only; three more buttons on the bar |
 | J4. Delete, layout and the duplication | ⏳ | Delete on the page, back link, type, facts once |
 
 ## Context
@@ -123,5 +123,18 @@ withhold it once an order is cancelled.
 
 ## Open questions
 
-None outstanding. The layout, delete's place and the closed-order behaviour were settled on
-2026-09-22.
+1. **Should the open dialog live in the URL rather than in component state?** Today `CommandDialog`
+   closes itself with the codebase's only `useEffect`, watching the fetcher for an accepted command.
+   Native HTML cannot replace it: `dialog`, `popover` and the invoker attributes all close on a
+   gesture, and this close depends on the server's answer, because a rejected command has to keep
+   the dialog open with its message and the typed input.
+
+   The alternative that does remove it is `/orders/{id}?edit=details`. Opening is a link, the
+   action redirects to the bare path on success so the dialog unmounts through a navigation, and a
+   failure returns as usual so the param and the dialog stay. Post, redirect, get, with the server
+   deciding when the dialog closes, plus a linkable dialog and a back button that shuts it.
+
+   Cost: a short param enum, a redirect inside an action that otherwise always answers with
+   `ActionResult`, and a navigation per open and close. Current assumption: take it in J4 if the
+   manual pass gives no louder work, otherwise leave the effect and note it, since it is five lines
+   and correct.
