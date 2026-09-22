@@ -7,12 +7,20 @@ namespace BikeRepairShop.Database.Configurations;
 public sealed class MaintenanceOrderConfiguration : IEntityTypeConfiguration<MaintenanceOrder>
 {
     public const int EnumMaxLength = 32;
+    public const long OrderNumberStartValue = 1000;
 
     public void Configure(EntityTypeBuilder<MaintenanceOrder> builder)
     {
         builder.ToTable("orders");
 
         builder.HasKey(o => o.Id);
+
+        builder.Property(o => o.OrderNumber)
+            .UseIdentityByDefaultColumn()
+            .HasIdentityOptions(startValue: OrderNumberStartValue);
+
+        builder.HasIndex(o => o.OrderNumber)
+            .IsUnique();
 
         builder.Property(o => o.CustomerName)
             .HasMaxLength(MaintenanceOrder.CustomerNameMaxLength);

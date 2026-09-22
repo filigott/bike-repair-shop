@@ -14,6 +14,9 @@ public sealed class MaintenanceOrder
 
     public Guid Id { get; init; }
 
+    // Assigned by the database on insert, so it reads 0 until SaveChanges returns.
+    public long OrderNumber { get; private set; }
+
     public string CustomerName { get; private set; } = null!;
 
     public PhoneNumber PhoneNumber { get; private set; } = null!;

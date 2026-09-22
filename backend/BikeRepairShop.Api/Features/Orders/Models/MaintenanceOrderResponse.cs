@@ -4,6 +4,7 @@ namespace BikeRepairShop.Api.Features.Orders.Models;
 
 public sealed record MaintenanceOrderResponse(
     Guid Id,
+    long OrderNumber,
     string CustomerName,
     string PhoneNumber,
     string Email,
@@ -21,6 +22,7 @@ public sealed record MaintenanceOrderResponse(
     {
         return new MaintenanceOrderResponse(
             order.Id,
+            order.OrderNumber,
             order.CustomerName,
             order.PhoneNumber.Value,
             order.Email.Value,

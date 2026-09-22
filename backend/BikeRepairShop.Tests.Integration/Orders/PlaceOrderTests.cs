@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using AwesomeAssertions;
 using BikeRepairShop.Api.Features.Orders.Models;
 using BikeRepairShop.Database;
+using BikeRepairShop.Database.Configurations;
 using BikeRepairShop.Domain;
 using BikeRepairShop.Domain.Orders;
 using BikeRepairShop.Tests.Integration.Fixtures;
@@ -62,6 +63,41 @@ public class PlaceOrderTests(DatabaseFixture database) : IntegrationTest(databas
     }
 
     [Fact]
+    public async Task Placing_an_order_assigns_an_order_number_that_the_response_carries()
+    {
+        // Arrange
+        using var client = Database.Factory.CreateClient();
+        var request = PlaceOrderRequests.Valid(Clock);
+
+        // Act
+        var response = await client.PostAsJsonAsync("/api/orders", request, Json.Options, TestContext.Current.CancellationToken);
+
+        // Assert
+        var body = await response.Content.ReadFromJsonAsync<MaintenanceOrderResponse>(Json.Options, TestContext.Current.CancellationToken);
+        body!.OrderNumber.Should().BeGreaterThanOrEqualTo(MaintenanceOrderConfiguration.OrderNumberStartValue);
+
+        await using var scope = Database.CreateScope();
+        var saved = await scope.ServiceProvider.GetRequiredService<BikeRepairShopDbContext>()
+            .Orders.SingleAsync(o => o.Id == body.Id, TestContext.Current.CancellationToken);
+        saved.OrderNumber.Should().Be(body.OrderNumber);
+    }
+
+    [Fact]
+    public async Task Placing_a_second_order_assigns_it_a_higher_order_number()
+    {
+        // Arrange
+        using var client = Database.Factory.CreateClient();
+        var request = PlaceOrderRequests.Valid(Clock);
+
+        // Act
+        var first = await PlaceAsync(client, request);
+        var second = await PlaceAsync(client, request);
+
+        // Assert
+        second.OrderNumber.Should().BeGreaterThan(first.OrderNumber);
+    }
+
+    [Fact]
     public async Task Placing_an_order_without_a_due_date_reports_the_field_rather_than_the_binder()
     {
         // Arrange
@@ -91,5 +127,12 @@ public class PlaceOrderTests(DatabaseFixture database) : IntegrationTest(databas
         response.StatusCode.Should().Be(HttpStatusCode.UnprocessableContent);
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>(Json.Options, TestContext.Current.CancellationToken);
         problem!.Detail.Should().Be("The due date cannot be before today.");
+    }
+
+    private static async Task<MaintenanceOrderResponse> PlaceAsync(HttpClient client, PlaceOrderRequest request)
+    {
+        var response = await client.PostAsJsonAsync("/api/orders", request, Json.Options, TestContext.Current.CancellationToken);
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        return (await response.Content.ReadFromJsonAsync<MaintenanceOrderResponse>(Json.Options, TestContext.Current.CancellationToken))!;
     }
 }
