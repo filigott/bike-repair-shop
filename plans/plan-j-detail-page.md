@@ -133,6 +133,23 @@ rejection was written before the button count was known. It is seven on an open 
 roughly the height of the two cards, so the argument that a column would be mostly empty no longer
 holds. What it costs is one breakpoint.
 
+Settled on 2026-09-22, all four:
+
+- **The actions stand in a right-hand column**, `md:grid-cols-[1fr_16rem]`, stacking under the facts
+  below that width. The alternative was a horizontal row under the order number, which keeps one
+  column but makes the page open with what can be done before it says what the order is.
+- **Delete is an outline error button.** Ghost with no fill made it the one action that disappeared.
+  Outline gives it the weight of the others while the fill difference keeps it from reading as
+  another lifecycle move, and it stays distinguishable from `Cancel order`, which is soft red.
+- **The three kinds of action are separated by a rule, not a label.** The buttons name themselves,
+  and the honest group names are jargon a counter does not use about a bike.
+- **A fact keeps its row when it has no value**, and the value side is simply empty. `notes` is the
+  only nullable field on the response. A worded placeholder was the alternative; an empty cell was
+  preferred as quieter, at the cost of looking the same as a value that failed to arrive.
+
+The component is renamed from `OrderActionBar` to `OrderActions` with it, since a grouped vertical
+column is not a bar.
+
 **J4b. Dialog state in the URL.** Open question 1, settled on 2026-09-22 in favour of taking it:
 `?edit=details` and friends, opening as a link, the action redirecting to the bare path on success
 so the dialog unmounts through a navigation, and a failure returning as usual so the param and the
