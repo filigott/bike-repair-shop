@@ -10,30 +10,26 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, H and I done, C all but its polish; the brief is met and everything left is extra |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, H, I and J done, C all but its polish; the brief is met and everything left is extra |
 
 ## Next up
 
 Everything below is beyond the brief, which is met. Ordered on 2026-09-21 after a second look at
-the priorities; the reasoning is under `Why this order` below. The first two came off the queue on
+the priorities; the reasoning is under `Why this order` below. The first three came off the queue on
 2026-09-22 and are recorded under `Landed` further down.
 
-1. Detail page rework (#10), planned in [plan-j-detail-page.md](plan-j-detail-page.md). Three of
-   its four steps are done: the state machine is rekeyed by action, the lifecycle moves are on the
-   page, and the page is read-only with one dialog per edit command. Only J4 is left, and it waits
-   on the manual pass.
-2. A status legend above the orders table. Its transitions come from the API, read off the domain's
+1. A status legend above the orders table. Its transitions come from the API, read off the domain's
    matrix the way the service catalogue is, never written out in both locale files.
-3. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
+2. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
    a described-by message, clearing a stale message when its input changes, a clear-search control
    the empty state also offers, and `autocomplete` on the contact fields.
-4. Localized validation messages from the API (#11). The only strings the front end cannot key.
-5. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
+3. Localized validation messages from the API (#11). The only strings the front end cannot key.
+4. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
-6. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
+5. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
    and when, plus somewhere to show it. The brief never asks for it, so it is scoped on its own
    rather than folded into the transitions. #5 stays open until this lands.
-7. Search, concurrency, CI and the README (#4, #6), the remaining original phases. The order number
+6. Search, concurrency, CI and the README (#4, #6), the remaining original phases. The order number
    should become searchable here rather than in #9.
 
 ### Why this order
@@ -42,12 +38,12 @@ The state machine was the one piece of real domain logic in an otherwise CRUD-sh
 nothing could reach it: the matrix was written and tested, `allowedTransitions` was projected onto
 every response, the status colours were on screen, and no caller existed. The demo seeder had to
 call the domain methods in process to produce a completed order. That gap is closed, which is why
-the detail rework is now first.
+the detail rework went first and why the legend can go next.
 
 The rework waited for the transitions rather than preceding them because it builds an action area,
 and half the actions belonging in it did not exist. They are also a different shape: a transition is
 a confirm, not a form in a dialog. Building the area for three commands and returning for the other
-four is avoidable by doing them in one pass, which is now possible.
+four was avoided by doing them in one pass.
 
 Splitting #5 kept that unit reviewable. The transitions unblocked both the detail page and the
 legend; the history is a table, a migration and a view that nothing else waits on, so it sits far
@@ -55,6 +51,10 @@ down the queue.
 
 ## Landed
 
+- **Detail page rework (#10)**, 2026-09-22, [plan-j-detail-page.md](plan-j-detail-page.md). The
+  lifecycle keyed by action rather than target status, all seven commands on the page, the page
+  read-only with a dialog per edit, the actions standing beside the facts, and the open dialog held
+  in the URL. The route module was thinned back to a route at the end of it.
 - **Order reference (#9)**, 2026-09-22, [plan-i-order-reference.md](plan-i-order-reference.md). A
   `bigint` identity column starting at 1000, carried through to the table, the detail heading and
   the delete confirmation. Both manual passes before it had to search by customer name.
@@ -64,19 +64,16 @@ down the queue.
 
 ## State
 
-As of 2026-09-22, end of session. `main` carries 15 commits that are **not pushed**, because the
-manual pass gates the push. Backend 160 tests green, front-end `verify` green at 36 tests. No branch
-is in flight. The `db` container is up, which is its resting state; the API and the front end are
-not running.
+As of 2026-09-22, day five. The batched manual pass ran clean, and phase J is finished: delete on
+the page, the actions beside the facts, the dialogs in the URL, and the route thinned back down.
+`main` carries 28 commits that are **not pushed**. Backend 160 tests green, front-end `verify` green
+at 48 tests. No branch is in flight. The `db` container is up, which is its resting state; the API
+and the front end are not running.
 
-**The next action is yours, not the agent's: the batched manual pass.** Its checklist is at the end
-of [plan-j-detail-page.md](plan-j-detail-page.md). It covers everything since the last pass, which
-is phases I and F and the first three steps of J. Nothing is pushed, merged or started on J4 until
-it comes back.
-
-J4 was deliberately left until after the pass. It is delete on the detail page plus the back link,
-the type scale and the remaining duplication, which is exactly the work the pass should steer rather
-than review after the fact.
+**A second short manual pass over the detail page comes before the push.** J4b changed how the edit
+dialogs open and close, so the steps worth rerunning are the dialog ones: open from a button, open
+from a pasted URL, reject a past due date and confirm the message and the typed value survive, save
+and watch the page show the new value, and the back button closing a dialog.
 
 ## Delivery line
 

@@ -26,7 +26,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ⏳ |
 | H. Demo data | [plan-h-demo-data.md](plan-h-demo-data.md) | #8 | ✅ |
 | I. Order reference | [plan-i-order-reference.md](plan-i-order-reference.md) | #9 | ✅ |
-| J. Detail page rework | [plan-j-detail-page.md](plan-j-detail-page.md) | #10 | 🟡 |
+| J. Detail page rework | [plan-j-detail-page.md](plan-j-detail-page.md) | #10 | ✅ |
 | K. Localized API messages | not yet written | #11 | ⏳ |
 
 Each phase plan carries its own step table. From B on, the last step of a phase ends in a manual

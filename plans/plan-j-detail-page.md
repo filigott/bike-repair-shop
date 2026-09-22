@@ -11,6 +11,9 @@ that by rekeying the domain's state machine from target statuses to named action
 
 ## Progress
 
+Complete. What remains is a second manual pass over the page before anything is pushed, since J4b
+changed how the dialogs open and close.
+
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
@@ -21,7 +24,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | J4a. Delete, layout and the duplication | ✅ | Delete on the page, back link, type, facts once |
 | J4c. Actions column and the empty rows | ✅ | Actions beside the facts, grouped; every fact keeps its row |
 | J4b. Dialog state in the URL | ✅ | `?edit=` param, redirect on success, no effect left |
-| J4d. Thin the route module | 🟡 | Command dispatch and the edit dialogs leave the route |
+| J4d. Thin the route module | ✅ | Dispatch and dialogs leave the route; the casts go with them |
 
 ## Context
 
