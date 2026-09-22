@@ -10,58 +10,62 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D and H done, C all but its polish; the brief is met and everything left is extra |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, H and I done, C all but its polish; the brief is met and everything left is extra |
 
 ## Next up
 
-Everything below is beyond the brief, which is met. Reordered on 2026-09-21 after a second look at
-the priorities; the reasoning is under `Why this order` below.
+Everything below is beyond the brief, which is met. Ordered on 2026-09-21 after a second look at
+the priorities; the reasoning is under `Why this order` below. The first two came off the queue on
+2026-09-22 and are recorded under `Landed` further down.
 
-1. Order reference (#9), planned in [plan-i-order-reference.md](plan-i-order-reference.md). A
-   database-generated sequential number, so an order can be read out over the phone. First because
-   both manual passes on 2026-09-21 had to search by customer name, and because the detail page is
-   meant to lead with it.
-2. Order lifecycle, the API half only (#5). `start`, `complete` and `cancel` as commands over HTTP,
-   calling the domain methods that already exist and are already unit-tested. No UI in this unit and
-   no history table.
-3. Detail page rework (#10). The page goes read-only and every command becomes an action: three edit
-   commands opening a dialog with their own form, and three transitions that are a confirm rather
-   than a form. Built once, with all six in hand.
-4. A status legend above the orders table. Its transitions come from the API, read off the domain's
+1. Detail page rework (#10). The page goes read-only and every command becomes an action: three edit
+   commands opening a dialog with their own form, and four transitions that are a confirm rather
+   than a form. Built once, with all seven in hand, now that the transition endpoints exist.
+2. A status legend above the orders table. Its transitions come from the API, read off the domain's
    matrix the way the service catalogue is, never written out in both locale files.
-5. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
+3. C4b (#2), the four items left from the phase B pass: field error styling with `aria-invalid` and
    a described-by message, clearing a stale message when its input changes, a clear-search control
    the empty state also offers, and `autocomplete` on the contact fields.
-6. Localized validation messages from the API (#11). The only strings the front end cannot key.
-7. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
+4. Localized validation messages from the API (#11). The only strings the front end cannot key.
+5. Bike brand suggestions on the place form, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
-8. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
+6. Status change history, split out of #5 on 2026-09-21. A second table recording who moved an order
    and when, plus somewhere to show it. The brief never asks for it, so it is scoped on its own
-   rather than folded into the transitions.
-9. Search, concurrency, CI and the README (#4, #6), the remaining original phases. The order
-   number from item 1 should become searchable here rather than in #9.
+   rather than folded into the transitions. #5 stays open until this lands.
+7. Search, concurrency, CI and the README (#4, #6), the remaining original phases. The order number
+   should become searchable here rather than in #9.
 
 ### Why this order
 
-The state machine is the one piece of real domain logic in an otherwise CRUD-shaped problem, and
-nothing can currently reach it: the transition matrix is written and tested, `allowedTransitions` is
-projected onto every response, the status colours are on screen, and no caller exists. The demo
-seeder had to call the domain methods directly to produce a completed order. That is the largest
-functional gap left, which is why the lifecycle API moved from fifth place to second.
+The state machine was the one piece of real domain logic in an otherwise CRUD-shaped problem, and
+nothing could reach it: the matrix was written and tested, `allowedTransitions` was projected onto
+every response, the status colours were on screen, and no caller existed. The demo seeder had to
+call the domain methods in process to produce a completed order. That gap is closed, which is why
+the detail rework is now first.
 
-The detail rework follows it rather than preceding it because that rework builds an action area, and
-half the actions belonging in it did not exist. They are also a different shape: a transition is a
-confirm, not a form in a dialog. Building the area for three commands and returning for the other
-three is avoidable by doing them in one pass.
+The rework waited for the transitions rather than preceding them because it builds an action area,
+and half the actions belonging in it did not exist. They are also a different shape: a transition is
+a confirm, not a form in a dialog. Building the area for three commands and returning for the other
+four is avoidable by doing them in one pass, which is now possible.
 
-Splitting #5 keeps that unit reviewable. Transitions make the state machine reachable and unblock
-both the detail page and the legend; the history is a table, a migration and a view that nothing
-else waits on.
+Splitting #5 kept that unit reviewable. The transitions unblocked both the detail page and the
+legend; the history is a table, a migration and a view that nothing else waits on, so it sits far
+down the queue.
 
-Starting state at the end of 2026-09-21: `main` is clean, pushed and carries everything including
-the merged packaging pull request. The suites are green at 134 backend tests and the front-end
-`verify` gate. No branch is in flight. `docker compose up --build` serves all four staff tasks from
-an empty volume.
+## Landed
+
+- **Order reference (#9)**, 2026-09-22, [plan-i-order-reference.md](plan-i-order-reference.md). A
+  `bigint` identity column starting at 1000, carried through to the table, the detail heading and
+  the delete confirmation. Both manual passes before it had to search by customer name.
+- **Order lifecycle, the API half (#5)**, 2026-09-22, [plan-f-lifecycle.md](plan-f-lifecycle.md).
+  `start`, `complete`, `cancel` and `reopen` as POST commands answering with the updated order. The
+  issue stays open for the history.
+
+## State
+
+As of 2026-09-22: `main` carries everything above and is **not pushed**, because the manual pass is
+outstanding. The suites are green at 148 backend tests and the front-end `verify` gate. No branch is
+in flight. The `db` container is up, which is its resting state; nothing else is running.
 
 ## Delivery line
 
@@ -71,14 +75,15 @@ green. From phase B on, each phase is a thin vertical through API and front end 
 manual smoke test, so there is always a shippable state and something to try by hand.
 
 Issues #8 to #11 came out of the phase C pass and sit between the product phases and the depth
-phases. Only #8 comes before packaging, because packaging cannot be demonstrated on an empty table.
+phases. #8 went before packaging, because packaging cannot be demonstrated on an empty table; the
+rest follow it.
 
 ## Pace
 
-Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). 7h30
-across three days. All four staff tasks work end to end in a browser and the manual pass confirmed
-four of them, so packaging is the last gap in the brief. Phases E through G stay untouched until
-`docker compose up` serves all four.
+Measured against the brief in [reference/time-and-scope.md](reference/time-and-scope.md). The brief
+is met: all four staff tasks work end to end in a browser and `docker compose up --build` serves
+them from an empty volume. Everything in `Next up` is beyond it, which is why the manual pass can be
+batched rather than gating each unit.
 
 ## Parked from the phase C smoke test
 

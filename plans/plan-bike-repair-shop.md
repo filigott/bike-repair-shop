@@ -22,18 +22,21 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | C. Find, edit and delete | [plan-c-find-edit-delete.md](plan-c-find-edit-delete.md) | #2 | 🟡 |
 | D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ✅ |
 | E. Search | [plan-e-search.md](plan-e-search.md) | #4 | ⏳ |
-| F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ⏳ |
+| F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ✅ |
 | G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ⏳ |
 | H. Demo data | [plan-h-demo-data.md](plan-h-demo-data.md) | #8 | ✅ |
-| I. Order reference | [plan-i-order-reference.md](plan-i-order-reference.md) | #9 | 🟡 |
+| I. Order reference | [plan-i-order-reference.md](plan-i-order-reference.md) | #9 | ✅ |
 | J. Detail page rework | not yet written | #10 | ⏳ |
 | K. Localized API messages | not yet written | #11 | ⏳ |
 
 Each phase plan carries its own step table. From B on, the last step of a phase ends in a manual
-smoke test through the running API and front end before the phase is called done.
+smoke test through the running API and front end before the phase is called done. Phases I and F
+are code-complete and gated, with their manual passes batched into one run rather than taken per
+phase; the roadmap's `Blockers` names what that pass owes. Phase F covers the API half of #5 only,
+so the issue stays open for the status history.
 
 The letters record when a phase was identified, not the order it runs in. H through K came out of
-the phase C smoke test, and the running order is now C, H, D, I, J, the rest of C, K, then E, F, G.
+the phase C smoke test, and the running order so far has been A, B, C, H, D, I, F, with J next.
 The roadmap's `Next up` is the one place that order lives.
 
 ## Context
