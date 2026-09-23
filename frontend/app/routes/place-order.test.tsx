@@ -115,7 +115,9 @@ describe("PlaceOrder", () => {
       new ApiError(400, {
         title: "Validation failed",
         status: 400,
-        errors: { email: ["Email is not valid"] },
+        errors: { email: ["'Email' must be a valid email address."] },
+        errorCodes: { email: ["InvalidEmail"] },
+        code: "InvalidRequest",
       }),
     );
     renderForm();
@@ -125,6 +127,12 @@ describe("PlaceOrder", () => {
     await userEvent.click(screen.getByRole("button", { name: "Place order" }));
 
     // Assert
-    expect(await screen.findByText("Email is not valid")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Enter a valid email address."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Some fields need attention.")).toBeInTheDocument();
+    expect(
+      screen.queryByText("'Email' must be a valid email address."),
+    ).not.toBeInTheDocument();
   });
 });

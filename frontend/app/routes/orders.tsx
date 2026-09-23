@@ -7,6 +7,7 @@ import { OrderSearchForm } from "~/components/orders/order-search-form";
 import { OrderStatusLegend } from "~/components/orders/order-status-legend";
 import { OrdersPager } from "~/components/orders/orders-pager";
 import { OrdersTable } from "~/components/orders/orders-table";
+import { ProblemAlert } from "~/components/problem-alert";
 import { actionFailureFrom } from "~/services/action-errors";
 import {
   getDemoDataStatus,
@@ -83,11 +84,7 @@ export default function Orders({ loaderData }: Route.ComponentProps) {
       </div>
       <OrderStatusLegend statuses={statuses} />
       <OrderSearchForm search={search} />
-      {failure && (
-        <p role="alert" className="alert alert-error">
-          {failure.detail ?? failure.title}
-        </p>
-      )}
+      {failure && <ProblemAlert failure={failure} />}
       {items.length === 0 ? (
         <p className="text-base-content/70">{t("orders.empty")}</p>
       ) : (

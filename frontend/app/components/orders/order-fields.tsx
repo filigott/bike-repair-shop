@@ -5,10 +5,13 @@ import type {
   PlaceOrderRequest,
 } from "~/services/endpoints/orders";
 import type { ServiceTypeItem } from "~/services/endpoints/service-types";
+import type { ValidationCode } from "~/types/problems";
 
 export type OrderFormField = keyof PlaceOrderRequest;
 
-export type OrderFieldErrors = Partial<Record<OrderFormField, string[]>>;
+export type OrderFieldErrors = Partial<
+  Record<OrderFormField, ValidationCode[]>
+>;
 
 export type OrderDefaults = Partial<
   Pick<

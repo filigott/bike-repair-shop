@@ -1,11 +1,9 @@
 namespace BikeRepairShop.Api.Exceptions;
 
-public sealed class ConflictException(string message) : Exception(message)
+public sealed class ConflictException(ApiErrorCode code, string message) : ApiException(code, message)
 {
-    public const string OrderChangedMessage = "The order has changed since it was loaded.";
-
     public static ConflictException OrderChanged()
     {
-        return new ConflictException(OrderChangedMessage);
+        return new ConflictException(ApiErrorCode.OrderChanged, "The order has changed since it was loaded.");
     }
 }

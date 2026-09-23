@@ -128,7 +128,7 @@ public sealed class MaintenanceOrder
     {
         if (!Status.IsEditable)
         {
-            throw new BusinessRuleViolationException($"A {Status} order cannot be changed.");
+            throw new BusinessRuleViolationException(DomainErrorCode.OrderNotEditable, $"A {Status} order cannot be changed.");
         }
     }
 
@@ -163,7 +163,7 @@ public sealed class MaintenanceOrder
     {
         if (dueDate < today)
         {
-            throw new BusinessRuleViolationException("The due date cannot be before today.");
+            throw new BusinessRuleViolationException(DomainErrorCode.DueDateInPast, "The due date cannot be before today.");
         }
 
         DueDate = dueDate;

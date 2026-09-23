@@ -97,6 +97,12 @@ its subtypes (`BusinessRuleViolationException`, `InvalidStateTransitionException
 `NotFoundException`, `ConflictException` and friends live in the API layer only and are mapped to
 ProblemDetails by one middleware. "Not found" is never a domain exception.
 
+**Every problem carries a machine `code`; `detail` is English for other clients.** A domain exception
+carries a `DomainErrorCode` and the API's own exceptions derive from `ApiException` with an
+`ApiErrorCode`. A validation failure is `InvalidRequest` and adds `errorCodes` beside `errors`, one
+`ValidationErrorCode` per message, set on each rule with `WithErrorCode`; a rule without one reports
+`Invalid`, so FluentValidation's own names never reach the contract.
+
 **DTO names carry the shape**: `Response`, `Request`, `Summary`, `Item`, `View`. Never a bare `Dto`.
 Mapping is a static factory: `MaintenanceOrderSummary.From(order)`.
 
@@ -141,7 +147,8 @@ in `app/types/intents/`, namespaced so two slices on one route cannot collide.
 and consumers narrow with `isActionFailure`. No `success` or `message` keys. A command whose success
 takes the user somewhere else redirects instead, which is how a dialog held in the URL closes.
 ProblemDetails mapping is a single shared helper: 5xx rethrows to the error boundary, 4xx becomes a
-typed failure the form renders.
+typed failure the form renders. The failure carries the problem's `code` and the per-field
+`errorCodes`, parsed into enums at `ApiError` with `Unknown` and `Invalid` as the fallbacks.
 
 **Transport is `openapi-fetch` typed by the generated `paths`.** One core module owns the client, a
 per-call timeout and `unwrap`, which turns the `{ data, error }` result into a value or an `ApiError`
@@ -179,7 +186,8 @@ command it names, never trusting the string. DaisyUI semantic tokens only (`prim
 at all: there is none in the app. Never mirror a prop into state.
 
 **i18n keys only.** `t("key")` with no inline English fallback. Both locales and the key union change
-in the same commit. Generic words reuse `common.*`.
+in the same commit. Generic words reuse `common.*`. Text from the API is never rendered: a failure
+shows `problems.<code>` through `ProblemAlert`, and a field shows `validation.<code>`.
 
 ## Testing
 

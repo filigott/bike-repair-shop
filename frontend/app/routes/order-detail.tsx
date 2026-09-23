@@ -16,6 +16,7 @@ import { OrderContactCard } from "~/components/orders/order-contact-card";
 import { OrderEditDialog } from "~/components/orders/order-edit-dialog";
 import type { OrderFormField } from "~/components/orders/order-fields";
 import { OrderSummaryCard } from "~/components/orders/order-summary-card";
+import { ProblemAlert } from "~/components/problem-alert";
 import { actionFailureFrom } from "~/services/action-errors";
 import type { OrderAction } from "~/services/endpoints/orders";
 import { getOrder } from "~/services/endpoints/orders";
@@ -119,11 +120,7 @@ export default function OrderDetail({ loaderData }: Route.ComponentProps) {
             {t("common.actions")}
           </h2>
 
-          {failure && (
-            <p role="alert" className="alert alert-error">
-              {failure.detail ?? failure.title}
-            </p>
-          )}
+          {failure && <ProblemAlert failure={failure} />}
 
           {!order.isEditable && (
             <p role="alert" className="alert alert-warning">

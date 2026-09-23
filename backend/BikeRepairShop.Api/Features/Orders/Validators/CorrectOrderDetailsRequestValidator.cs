@@ -1,4 +1,6 @@
+using BikeRepairShop.Api.Configuration;
 using BikeRepairShop.Api.Features.Orders.Models;
+using BikeRepairShop.Api.Models;
 using FluentValidation;
 
 namespace BikeRepairShop.Api.Features.Orders.Validators;
@@ -14,6 +16,6 @@ public sealed class CorrectOrderDetailsRequestValidator : AbstractValidator<Corr
         RuleFor(r => r.Email).ValidEmail();
         RuleFor(r => r.BikeBrand).ValidBikeBrand();
         RuleFor(r => r.Notes).ValidNotes();
-        RuleFor(r => r.Version).NotNull();
+        RuleFor(r => r.Version).NotNull().WithErrorCode(ValidationErrorCode.Required);
     }
 }

@@ -28,12 +28,25 @@ public sealed class ProblemDetailsExceptionHandler(IProblemDetailsService proble
             return false;
         }
 
+        var problem = new ProblemDetails { Status = status, Detail = exception.Message };
+        problem.Extensions["code"] = CodeOf(exception);
+
         httpContext.Response.StatusCode = status.Value;
         return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
             Exception = exception,
-            ProblemDetails = new ProblemDetails { Status = status, Detail = exception.Message },
+            ProblemDetails = problem,
         });
+    }
+
+    private static string? CodeOf(Exception exception)
+    {
+        return exception switch
+        {
+            DomainException domain => domain.Code.ToString(),
+            ApiException api => api.Code.ToString(),
+            _ => null,
+        };
     }
 }
