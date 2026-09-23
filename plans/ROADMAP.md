@@ -10,24 +10,19 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, G, H, I, J, K and L done, C all but its polish; the brief is met and everything left is extra |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, G, H, I, J, K, L and M done; the brief is met and everything left is extra |
 
 ## Next up
 
 Everything below is beyond the brief, which is met. CI now enforces both suites on every pull
-request, and no known defect is left, so the queue is polish and depth.
+request, no known defect is left and the smoke-test polish has landed, so the queue is depth.
 
-1. **Form and list polish (#18).** The place page still runs the small DaisyUI `fieldset` type and a
-   narrow left-aligned layout the detail page left behind in #10. Then field error styling with
-   `input-error`, `aria-invalid` and a described-by message, `autocomplete` on the contact fields,
-   and a clear-search control the empty state also offers. Clearing a stale message on input is the
-   one item that needs a design first: done naively it mirrors a prop into state.
-2. **Search by service and due date (#4).** Moves to the top if the original brief names these as
+1. **Search by service and due date (#4).** Moves to the top if the original brief names these as
    search criteria; that has not been checked against the source document. The order number should
    become searchable here.
-3. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
+2. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
-4. **Status change history (#5).** A second table recording who moved an order and when, plus
+3. **Status change history (#5).** A second table recording who moved an order and when, plus
    somewhere to show it. The brief never asks for it, so it is scoped on its own and #5 stays open
    until it lands.
 
@@ -35,6 +30,9 @@ Nothing here is load-bearing for anything else.
 
 ## Landed
 
+- **Form and list polish (#18)**, 2026-09-23, [plan-m-form-and-list-polish.md](plan-m-form-and-list-polish.md).
+  The place page at the detail page's type scale, rejected fields marked on the input and cleared
+  once edited, autofill on the contact fields, and a way back from any search.
 - **Localized API messages (#11)**, 2026-09-23, [plan-k-localized-api-messages.md](plan-k-localized-api-messages.md).
   Every problem carries a machine code, validation adds `errorCodes` beside `errors`, and the front
   end renders only locale copy. No English sentence from the API reaches the screen.
@@ -63,9 +61,9 @@ Nothing here is load-bearing for anything else.
 
 As of 2026-09-23. `main` is the only branch and carries everything: the four staff tasks, the order
 reference, the lifecycle, the detail page, the status legend, optimistic concurrency, localized API
-messages, CI, the README and the development record.
+messages, the form and list polish, CI, the README and the development record.
 
-Green on `main`: backend 169 tests, `dotnet format` clean, front-end `verify` at 57, and the CI
+Green on `main`: backend 169 tests, `dotnet format` clean, front-end `verify` at 62, and the CI
 workflow on the merge. The packaged stack was last verified from an empty volume on 2026-09-22 and
 is due again before the repository is handed over.
 

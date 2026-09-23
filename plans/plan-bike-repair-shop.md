@@ -29,7 +29,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | J. Detail page rework | [plan-j-detail-page.md](plan-j-detail-page.md) | #10 | ✅ |
 | K. Localized API messages | [plan-k-localized-api-messages.md](plan-k-localized-api-messages.md) | #11 | ✅ |
 | L. Status legend | [plan-l-status-legend.md](plan-l-status-legend.md) | #13 | ✅ |
-| M. Form and list polish | [plan-m-form-and-list-polish.md](plan-m-form-and-list-polish.md) | #18 | 🟡 |
+| M. Form and list polish | [plan-m-form-and-list-polish.md](plan-m-form-and-list-polish.md) | #18 | ✅ |
 
 Each phase plan carries its own step table. From B on, the last step of a phase ends in a manual
 smoke test through the running API and front end before the phase is called done. Phase F covers the

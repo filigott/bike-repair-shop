@@ -9,7 +9,7 @@ anything not green by then stays on #18.
 
 ## Progress
 
-Complete and smoke-tested step by step. PR pending.
+Complete. Merged on 2026-09-23 through #22.
 
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
