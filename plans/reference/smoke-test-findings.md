@@ -76,9 +76,9 @@ it.** Nothing commits straight to `main`. Settled on 2026-09-22: holding issues 
 pushing the work itself to `main` unreviewed was the inconsistency that prompted it. Phase D already
 ran this way on `feat/3-docker-packaging` through pull request 12.
 
-One exemption, so the rule does not tax its own bookkeeping: a commit touching **only `plans/`** may
-go on a `chore/` branch without an issue behind it. It still goes through a pull request, because
-`plans/` is committed and a branch costs nothing.
+One exemption, so the rule does not tax its own bookkeeping: a commit touching **only `plans/`**
+goes straight to `main`, with no issue, branch or pull request behind it. Settled on 2026-09-23: a
+pull request per roadmap tick was ceremony without a reviewer to read it.
 
 ## Parked, toolchain
 
