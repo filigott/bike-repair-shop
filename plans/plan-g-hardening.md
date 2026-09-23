@@ -9,13 +9,15 @@ step that is not green by then is dropped, not rushed.
 
 ## Progress
 
+Complete, smoke-tested by hand on 2026-09-23 with two tabs and both locales. PR pending.
+
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
 | G1. CI workflow | ✅ | Committed; first run on GitHub proves it |
 | G2a. Concurrency, API | ✅ | `xmin` token, `version` on response and edit requests, 409 |
-| G2b. Concurrency, UI | 🟡 | Conflict message in the edit dialogs |
+| G2b. Concurrency, UI | ✅ | Conflict message in the edit dialogs |
 | G3. README and docs pass | ✅ | Shipped with the development record on 2026-09-22 |
 
 ## Context
