@@ -1,5 +1,7 @@
 # Bike Repair Shop
 
+[![CI](https://github.com/filigott/bike-repair-shop/actions/workflows/ci.yml/badge.svg)](https://github.com/filigott/bike-repair-shop/actions/workflows/ci.yml)
+
 A maintenance-order manager for a bicycle workshop. Staff place, find, edit and delete orders for
 the three services the shop offers, and move each order through its lifecycle. It is a .NET HTTP API
 holding the business logic, a React single-page front end that consumes it, and PostgreSQL behind
@@ -44,6 +46,8 @@ npm --prefix frontend run verify                     # lint, typecheck, test and
 The backend suite is xUnit: unit tests on the domain, and integration tests against a real
 PostgreSQL container through Testcontainers, migrated through the API's own startup path. The front
 end is Vitest with Testing Library, mocking the endpoint layer rather than `fetch`.
+
+CI runs both suites, `dotnet format` and the front-end `verify` on every pull request and on `main`.
 
 ## How it is built
 
