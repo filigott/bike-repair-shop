@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Form, useActionData, useNavigation } from "react-router";
+import { ProblemAlert } from "~/components/problem-alert";
 import type { ActionResult } from "~/types/action-result";
-import { isActionFailure, isConflict } from "~/types/action-result";
+import { isActionFailure } from "~/types/action-result";
 import type { OrderIntent } from "~/types/intents/orders";
 import type { OrderFieldErrors, OrderFormField } from "./order-fields";
 
@@ -39,13 +40,7 @@ export function CommandDialog({
         <Form method="post" className="flex flex-col gap-3 pt-4">
           <input type="hidden" name="intent" value={intent} />
 
-          {failure && (
-            <p role="alert" className="alert alert-error">
-              {isConflict(failure)
-                ? t("orders.detail.conflict")
-                : (failure.detail ?? failure.title)}
-            </p>
-          )}
+          {failure && <ProblemAlert failure={failure} />}
 
           {children(failure?.fieldErrors ?? {})}
 

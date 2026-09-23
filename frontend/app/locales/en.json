@@ -61,8 +61,7 @@
     "detail": {
       "action": "Open",
       "placedAt": "Placed",
-      "closed": "A {{status}} order can no longer be changed.",
-      "conflict": "Someone else changed this order while you had it open. The page now shows their changes: save again to replace them, or cancel."
+      "closed": "A {{status}} order can no longer be changed."
     },
     "empty": "No orders found",
     "fields": {
@@ -115,5 +114,22 @@
       "Cancelled": "Cancelled"
     },
     "title": "Orders"
+  },
+  "problems": {
+    "InvalidRequest": "Some fields need attention.",
+    "OrderNotFound": "This order no longer exists. Someone may have deleted it.",
+    "OrderChanged": "Someone else changed this order while you had it open. The page now shows their changes: save again to replace them, or cancel.",
+    "DueDateInPast": "The due date cannot be before today.",
+    "OrderNotEditable": "This order can no longer be changed.",
+    "InvalidTransition": "That action is no longer possible for this order. Reload the page to see its current status.",
+    "Unknown": "The request could not be completed."
+  },
+  "validation": {
+    "Invalid": "This value is not valid.",
+    "Required": "This field is required.",
+    "TooLong": "This is too long.",
+    "InvalidPhoneNumber": "Enter 8 to 15 digits, optionally starting with +.",
+    "InvalidEmail": "Enter a valid email address.",
+    "UnknownValue": "Choose one of the options."
   }
 }

@@ -322,6 +322,7 @@ describe("Orders", () => {
         title: "Not found",
         status: 404,
         detail: "No order with that id.",
+        code: "OrderNotFound",
       }),
     );
     renderOrders();
@@ -333,7 +334,9 @@ describe("Orders", () => {
 
     // Assert
     expect(
-      await screen.findByText("No order with that id."),
+      await screen.findByText(
+        "This order no longer exists. Someone may have deleted it.",
+      ),
     ).toBeInTheDocument();
     expect(screen.getByText("Ada Lovelace")).toBeInTheDocument();
   });

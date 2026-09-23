@@ -1,3 +1,5 @@
+import type { ProblemCode, ValidationCode } from "~/types/problems";
+
 export enum ActionResultKind {
   Success = "success",
   Failure = "failure",
@@ -8,9 +10,8 @@ export type ActionSuccess<T> = { kind: ActionResultKind.Success; data: T };
 export type ActionFailure<TField extends string = string> = {
   kind: ActionResultKind.Failure;
   status: number;
-  title: string;
-  detail?: string;
-  fieldErrors: Partial<Record<TField, string[]>>;
+  code: ProblemCode;
+  fieldErrors: Partial<Record<TField, ValidationCode[]>>;
 };
 
 export type ActionResult<T, TField extends string = string> =
@@ -19,10 +20,6 @@ export type ActionResult<T, TField extends string = string> =
 
 export function actionSuccess<T>(data: T): ActionSuccess<T> {
   return { kind: ActionResultKind.Success, data };
-}
-
-export function isConflict(failure: ActionFailure): boolean {
-  return failure.status === 409;
 }
 
 export function isActionFailure<T, TField extends string>(

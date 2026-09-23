@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { ProblemCode, ValidationCode } from "~/types/problems";
 import { actionFailureFrom } from "./action-errors";
 import { listOrders, placeOrder } from "./endpoints/orders";
 import { ApiError } from "./http";
@@ -58,7 +59,9 @@ describe("the API client", () => {
     stubFetch(400, {
       title: "Validation failed",
       status: 400,
-      errors: { email: ["Invalid"] },
+      errors: { email: ["'Email' must be a valid email address."] },
+      errorCodes: { email: ["InvalidEmail", "SomethingNew"] },
+      code: "InvalidRequest",
     });
 
     // Act
@@ -75,17 +78,21 @@ describe("the API client", () => {
     // Assert
     await expect(act).rejects.toMatchObject({
       status: 400,
-      fieldErrors: { email: ["Invalid"] },
+      code: ProblemCode.InvalidRequest,
+      fieldErrors: {
+        email: [ValidationCode.InvalidEmail, ValidationCode.Invalid],
+      },
     });
   });
 });
 
 describe("actionFailureFrom", () => {
-  it("turns a 4xx ApiError into a failure with field errors", () => {
+  it("turns a 4xx ApiError into a failure carrying its code", () => {
     // Arrange
     const error = new ApiError(422, {
       title: "Unprocessable",
       detail: "Too late",
+      code: "DueDateInPast",
     });
 
     // Act
@@ -94,9 +101,19 @@ describe("actionFailureFrom", () => {
     // Assert
     expect(failure).toMatchObject({
       status: 422,
-      detail: "Too late",
+      code: ProblemCode.DueDateInPast,
       fieldErrors: {},
     });
+  });
+
+  it("reads a code it does not know, or none at all, as unknown", () => {
+    // Act & Assert
+    expect(
+      actionFailureFrom(new ApiError(400, { title: "Bad", code: "Melted" })),
+    ).toMatchObject({ code: ProblemCode.Unknown });
+    expect(
+      actionFailureFrom(new ApiError(400, { title: "Bad" })),
+    ).toMatchObject({ code: ProblemCode.Unknown });
   });
 
   it("rethrows anything that is not a 4xx", () => {

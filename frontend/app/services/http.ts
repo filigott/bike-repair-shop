@@ -1,9 +1,21 @@
 import createClient from "openapi-fetch";
+import {
+  type ProblemCode,
+  problemCodeOf,
+  type ValidationCode,
+  validationCodesOf,
+} from "~/types/problems";
 import type { components, paths } from "./openapi.generated";
 
 export type ProblemDetails = components["schemas"]["ProblemDetails"];
 export type ValidationProblemDetails =
   components["schemas"]["ValidationProblemDetails"];
+
+// The API adds these as ProblemDetails extensions, which the OpenAPI schema does not describe.
+type ProblemExtensions = { code?: unknown; errorCodes?: unknown };
+
+export type Problem = (ProblemDetails | ValidationProblemDetails) &
+  ProblemExtensions;
 
 type FetchResult<T> = {
   data?: T;
@@ -16,14 +28,18 @@ const REQUEST_TIMEOUT_MS = 10_000;
 export class ApiError extends Error {
   constructor(
     readonly status: number,
-    readonly problem: ProblemDetails | ValidationProblemDetails,
+    readonly problem: Problem,
   ) {
     super(problem.title ?? `Request failed with status ${status}`);
     this.name = "ApiError";
   }
 
-  get fieldErrors(): Record<string, string[]> {
-    return "errors" in this.problem ? (this.problem.errors ?? {}) : {};
+  get code(): ProblemCode {
+    return problemCodeOf(this.problem.code);
+  }
+
+  get fieldErrors(): Record<string, ValidationCode[]> {
+    return validationCodesOf(this.problem.errorCodes);
   }
 }
 
@@ -47,8 +63,8 @@ export async function unwrap<T>(call: Promise<FetchResult<T>>): Promise<T> {
   return data as T;
 }
 
-function toProblem(error: unknown, response: Response): ProblemDetails {
+function toProblem(error: unknown, response: Response): Problem {
   return error && typeof error === "object"
-    ? (error as ProblemDetails)
+    ? (error as Problem)
     : { status: response.status, title: response.statusText };
 }

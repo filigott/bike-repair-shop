@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Form, Link, useNavigation } from "react-router";
+import { ProblemAlert } from "~/components/problem-alert";
 import type { ServiceTypeItem } from "~/services/endpoints/service-types";
 import type { ActionFailure } from "~/types/action-result";
 import type { OrderFormField } from "./order-fields";
@@ -26,11 +27,7 @@ export function OrderForm({
 
   return (
     <Form method="post" className="flex max-w-xl flex-col gap-4">
-      {failure && (
-        <p role="alert" className="alert alert-error">
-          {failure.detail ?? failure.title}
-        </p>
-      )}
+      {failure && <ProblemAlert failure={failure} />}
 
       <fieldset className="fieldset flex flex-col gap-3">
         <legend className="fieldset-legend">

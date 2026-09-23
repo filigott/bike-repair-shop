@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import i18n from "~/i18n";
 import type { MaintenanceOrderResponse } from "~/services/endpoints/orders";
 import {
   cancelOrder,
@@ -16,6 +17,7 @@ import {
 } from "~/services/endpoints/orders";
 import { listServiceTypes } from "~/services/endpoints/service-types";
 import { ApiError } from "~/services/http";
+import { Locale } from "~/types/locale";
 import OrderDetail, {
   clientAction,
   clientLoader,
@@ -294,31 +296,30 @@ describe("OrderDetail", () => {
     expect(correctOrderDetails).not.toHaveBeenCalled();
   });
 
-  it("shows a rejected field on the form that was submitted", async () => {
+  it("explains a broken rule in the user's language, never the API's English", async () => {
     // Arrange
+    await i18n.changeLanguage(Locale.Nb);
     vi.mocked(rescheduleOrder).mockRejectedValue(
       new ApiError(422, {
         title: "Unprocessable entity",
         status: 422,
         detail: "The due date cannot be before today.",
+        code: "DueDateInPast",
       }),
     );
-    renderPage();
-    await userEvent.click(
-      await screen.findByRole("link", { name: "Reschedule" }),
-    );
-    const dueDate = screen.getByLabelText("Due date");
-    await userEvent.clear(dueDate);
-    await userEvent.type(dueDate, "2020-01-01");
+    renderPage(`/orders/${ORDER_ID}?edit=due-date`);
+    await screen.findByLabelText("Frist");
 
     // Act
-    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    await userEvent.click(screen.getByRole("button", { name: "Lagre" }));
 
     // Assert
     expect(
-      await screen.findByText("The due date cannot be before today."),
+      await screen.findByText("Fristen kan ikke være før i dag."),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("Due date")).toBeInTheDocument();
+    expect(
+      screen.queryByText("The due date cannot be before today."),
+    ).not.toBeInTheDocument();
   });
 
   it("explains a conflicting edit, shows the latest order and saves against it on retry", async () => {
@@ -331,6 +332,7 @@ describe("OrderDetail", () => {
         title: "Conflict",
         status: 409,
         detail: "The order has changed since it was loaded.",
+        code: "OrderChanged",
       }),
     );
     renderPage();
