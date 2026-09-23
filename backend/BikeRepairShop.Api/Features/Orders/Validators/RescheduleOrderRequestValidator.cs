@@ -8,5 +8,6 @@ public sealed class RescheduleOrderRequestValidator : AbstractValidator<Reschedu
     public RescheduleOrderRequestValidator()
     {
         RuleFor(r => r.DueDate).NotNull();
+        RuleFor(r => r.Version).NotNull();
     }
 }

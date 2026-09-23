@@ -35,6 +35,9 @@ public sealed class MaintenanceOrder
 
     public DateTimeOffset PlacedAt { get; private set; }
 
+    // PostgreSQL's xmin, rewritten by the database on every update.
+    public uint Version { get; private set; }
+
     public IReadOnlyList<OrderAction> AllowedActions => Status.AllowedActions;
 
 

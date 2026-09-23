@@ -49,6 +49,10 @@ public sealed class MaintenanceOrderConfiguration : IEntityTypeConfiguration<Mai
             .HasConversion<string>()
             .HasMaxLength(EnumMaxLength);
 
+        builder.Property(o => o.Version)
+            .IsRowVersion()
+            .HasColumnName("xmin");
+
         builder.HasOne<ServiceTypeDefinition>()
             .WithMany()
             .HasForeignKey(o => o.ServiceType)

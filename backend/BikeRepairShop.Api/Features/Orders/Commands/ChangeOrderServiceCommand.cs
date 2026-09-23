@@ -3,10 +3,12 @@ using BikeRepairShop.Domain.Orders;
 
 namespace BikeRepairShop.Api.Features.Orders.Commands;
 
-public sealed record ChangeOrderServiceCommand(Guid Id, ServiceType ServiceType)
+public sealed record ChangeOrderServiceCommand(Guid Id, ServiceType ServiceType, uint Version)
 {
     public static ChangeOrderServiceCommand From(Guid id, ChangeOrderServiceRequest request)
     {
-        return new ChangeOrderServiceCommand(id, request.ServiceType);
+        ArgumentNullException.ThrowIfNull(request.Version);
+
+        return new ChangeOrderServiceCommand(id, request.ServiceType, request.Version.Value);
     }
 }

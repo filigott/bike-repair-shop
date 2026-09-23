@@ -5,4 +5,5 @@ public sealed record CorrectOrderDetailsRequest(
     string PhoneNumber,
     string Email,
     string BikeBrand,
-    string? Notes);
+    string? Notes,
+    uint? Version);

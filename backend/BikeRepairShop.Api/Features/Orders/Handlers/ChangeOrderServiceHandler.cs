@@ -14,6 +14,11 @@ public sealed class ChangeOrderServiceHandler(BikeRepairShopDbContext db, IShopC
         var order = await db.Orders.SingleOrDefaultAsync(o => o.Id == command.Id, cancellationToken)
             ?? throw NotFoundException.Order(command.Id);
 
+        if (order.Version != command.Version)
+        {
+            throw ConflictException.OrderChanged();
+        }
+
         order.ChangeService(command.ServiceType);
         await db.SaveChangesAsync(cancellationToken);
 

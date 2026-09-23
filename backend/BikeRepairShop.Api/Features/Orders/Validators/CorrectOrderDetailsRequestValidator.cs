@@ -14,5 +14,6 @@ public sealed class CorrectOrderDetailsRequestValidator : AbstractValidator<Corr
         RuleFor(r => r.Email).ValidEmail();
         RuleFor(r => r.BikeBrand).ValidBikeBrand();
         RuleFor(r => r.Notes).ValidNotes();
+        RuleFor(r => r.Version).NotNull();
     }
 }

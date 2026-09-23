@@ -8,5 +8,6 @@ public sealed class ChangeOrderServiceRequestValidator : AbstractValidator<Chang
     public ChangeOrderServiceRequestValidator()
     {
         RuleFor(r => r.ServiceType).IsInEnum();
+        RuleFor(r => r.Version).NotNull();
     }
 }

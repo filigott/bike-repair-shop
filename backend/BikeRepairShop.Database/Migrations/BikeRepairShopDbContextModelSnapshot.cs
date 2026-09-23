@@ -75,6 +75,12 @@ namespace BikeRepairShop.Database.Migrations
                         .HasColumnType("character varying(32)")
                         .HasColumnName("status");
 
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Email", "BikeRepairShop.Domain.Orders.MaintenanceOrder.Email#EmailAddress", b1 =>
                         {
                             b1.IsRequired();

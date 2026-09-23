@@ -14,6 +14,11 @@ public sealed class CorrectOrderDetailsHandler(BikeRepairShopDbContext db, IShop
         var order = await db.Orders.SingleOrDefaultAsync(o => o.Id == command.Id, cancellationToken)
             ?? throw NotFoundException.Order(command.Id);
 
+        if (order.Version != command.Version)
+        {
+            throw ConflictException.OrderChanged();
+        }
+
         order.CorrectDetails(command.CustomerName, command.PhoneNumber, command.Email, command.BikeBrand, command.Notes);
         await db.SaveChangesAsync(cancellationToken);
 
