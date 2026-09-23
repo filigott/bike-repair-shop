@@ -60,8 +60,8 @@ practice page, the packaged stack and `main` agree on the day.
 
 ## Steps
 
-**1. Drift audit.** Findings and the open decisions are below. Read the repo `CLAUDE.md`, `plans/README.md` and the project memory against the
-global file. Known candidates: plans committed here (deliberate, keep), plans over issues in memory
+**1. Drift audit.** Read the repo `CLAUDE.md`, `plans/README.md` and the project memory against the
+global file; the findings and the open decisions are below. Known candidates: plans committed here (deliberate, keep), plans over issues in memory
 against the global "issue before any work", and the rules restated in both, such as error handling,
 CQRS and the React rules. Each difference ends as recorded-as-deliberate, fixed here, or a question
 for the developer about the global rule. Prose only.
