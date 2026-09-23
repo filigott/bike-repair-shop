@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* A rejected control takes DaisyUI's error colour from its aria state, so the two cannot disagree. */
+:is(.input, .select, .textarea)[aria-invalid="true"] {
+  --input-color: var(--color-error);
+}
