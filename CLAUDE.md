@@ -97,6 +97,12 @@ its subtypes (`BusinessRuleViolationException`, `InvalidStateTransitionException
 `NotFoundException`, `ConflictException` and friends live in the API layer only and are mapped to
 ProblemDetails by one middleware. "Not found" is never a domain exception.
 
+**Every problem carries a machine `code`; `detail` is English for other clients.** A domain exception
+carries a `DomainErrorCode` and the API's own exceptions derive from `ApiException` with an
+`ApiErrorCode`. A validation failure is `InvalidRequest` and adds `errorCodes` beside `errors`, one
+`ValidationErrorCode` per message, set on each rule with `WithErrorCode`; a rule without one reports
+`Invalid`, so FluentValidation's own names never reach the contract.
+
 **DTO names carry the shape**: `Response`, `Request`, `Summary`, `Item`, `View`. Never a bare `Dto`.
 Mapping is a static factory: `MaintenanceOrderSummary.From(order)`.
 

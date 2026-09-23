@@ -1,4 +1,6 @@
+using BikeRepairShop.Api.Configuration;
 using BikeRepairShop.Api.Features.Orders.Models;
+using BikeRepairShop.Api.Models;
 using FluentValidation;
 
 namespace BikeRepairShop.Api.Features.Orders.Validators;
@@ -7,7 +9,7 @@ public sealed class RescheduleOrderRequestValidator : AbstractValidator<Reschedu
 {
     public RescheduleOrderRequestValidator()
     {
-        RuleFor(r => r.DueDate).NotNull();
-        RuleFor(r => r.Version).NotNull();
+        RuleFor(r => r.DueDate).NotNull().WithErrorCode(ValidationErrorCode.Required);
+        RuleFor(r => r.Version).NotNull().WithErrorCode(ValidationErrorCode.Required);
     }
 }

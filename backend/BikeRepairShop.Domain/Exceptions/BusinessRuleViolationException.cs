@@ -1,3 +1,3 @@
 namespace BikeRepairShop.Domain.Exceptions;
 
-public sealed class BusinessRuleViolationException(string message) : DomainException(message);
+public sealed class BusinessRuleViolationException(DomainErrorCode code, string message) : DomainException(code, message);
