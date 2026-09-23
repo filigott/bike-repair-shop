@@ -14,8 +14,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Step | Status | Notes |
 |---|---|---|
 | M1. Place page type scale and layout | ✅ | DaisyUI `fieldset` renders its legends at 12px |
-| M2. Field error state and autocomplete | 🟡 | `aria-invalid` styling, described-by, clear on edit, `autocomplete` |
-| M3. Clear-search control | ⏳ | A link, beside the box and in the empty state |
+| M2. Field error state and autocomplete | ✅ | `aria-invalid` styling, described-by, clear on edit, `autocomplete` |
+| M3. Clear-search control | 🟡 | A link, beside the box and in the empty state |
 
 ## Context
 
