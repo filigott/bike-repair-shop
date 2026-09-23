@@ -9,13 +9,15 @@ step that is not green by then is dropped, not rushed.
 
 ## Progress
 
+Complete, smoke-tested by hand on 2026-09-23 with two tabs and both locales. PR pending.
+
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
 | G1. CI workflow | ✅ | Committed; first run on GitHub proves it |
-| G2a. Concurrency, API | 🟡 | `xmin` token, `version` on response and edit requests, 409 |
-| G2b. Concurrency, UI | ⏳ | Conflict message in the edit dialogs |
+| G2a. Concurrency, API | ✅ | `xmin` token, `version` on response and edit requests, 409 |
+| G2b. Concurrency, UI | ✅ | Conflict message in the edit dialogs |
 | G3. README and docs pass | ✅ | Shipped with the development record on 2026-09-22 |
 
 ## Context
@@ -45,8 +47,9 @@ Node 24 matches the front-end Dockerfile.
 the same order the local commands need. Verified by the PR's own run; the README gains the badge.
 
 **G2a. Concurrency, API.** `xmin` mapped as the order's row version, `version` projected onto the
-order response, required on the edit requests, set as the original value before save so EF's own
-check raises the conflict. `DbUpdateConcurrencyException` maps to 409 ProblemDetails in the existing
+order response, required on the edit requests. The handler compares it with the loaded order, since
+EF skips the `xmin` check when an edit changes nothing; the token still catches a race between load
+and save. Npgsql emits no DDL for `xmin`, so the migration only records itself. `DbUpdateConcurrencyException` maps to 409 ProblemDetails in the existing
 middleware. Integration test: two writers holding the same version, the second gets 409 and the
 first write survives a fresh read.
 
@@ -61,8 +64,8 @@ both locales.
 
 ## Open questions
 
-1. Which commands carry `version`? (Assumed: the three edit commands. The lifecycle commands and
+1. RESOLVED 2026-09-23: the three edit commands only. Which commands carry `version`? (Assumed: the three edit commands. The lifecycle commands and
    delete are already guarded by the state machine, and the token on the entity still catches a
    race between load and save for every command.)
-2. `version` as a property on the entity or an EF shadow property? (Assumed: a `uint` with a private
+2. RESOLVED 2026-09-23: entity property. `version` as a property on the entity or an EF shadow property? (Assumed: a `uint` with a private
    setter on the entity, so `Summary.From(order)` can project it without the context.)

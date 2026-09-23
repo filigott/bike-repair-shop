@@ -57,6 +57,7 @@ function order(
     isOverdue: false,
     isEditable: true,
     allowedActions: ["Start", "Complete", "Cancel"],
+    version: 7,
     ...overrides,
   };
 }
@@ -239,6 +240,7 @@ describe("OrderDetail", () => {
         email: "ada@example.com",
         bikeBrand: "Bianchi",
         notes: "Squeaks when braking",
+        version: 7,
       }),
     );
     expect(changeOrderService).not.toHaveBeenCalled();
@@ -263,6 +265,7 @@ describe("OrderDetail", () => {
     await waitFor(() =>
       expect(changeOrderService).toHaveBeenCalledWith(ORDER_ID, {
         serviceType: "WheelAdjustment",
+        version: 7,
       }),
     );
     expect(correctOrderDetails).not.toHaveBeenCalled();
@@ -285,6 +288,7 @@ describe("OrderDetail", () => {
     await waitFor(() =>
       expect(rescheduleOrder).toHaveBeenCalledWith(ORDER_ID, {
         dueDate: "2026-10-02",
+        version: 7,
       }),
     );
     expect(correctOrderDetails).not.toHaveBeenCalled();
@@ -315,6 +319,38 @@ describe("OrderDetail", () => {
       await screen.findByText("The due date cannot be before today."),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Due date")).toBeInTheDocument();
+  });
+
+  it("explains a conflicting edit, shows the latest order and saves against it on retry", async () => {
+    // Arrange
+    vi.mocked(getOrder)
+      .mockResolvedValueOnce(order())
+      .mockResolvedValue(order({ bikeBrand: "Colnago", version: 8 }));
+    vi.mocked(correctOrderDetails).mockRejectedValueOnce(
+      new ApiError(409, {
+        title: "Conflict",
+        status: 409,
+        detail: "The order has changed since it was loaded.",
+      }),
+    );
+    renderPage();
+    await userEvent.click(
+      await screen.findByRole("link", { name: "Edit details" }),
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    // Act
+    await screen.findByText(/Someone else changed this order/);
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    // Assert
+    expect(screen.getByText("Colnago")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(correctOrderDetails).toHaveBeenLastCalledWith(
+        ORDER_ID,
+        expect.objectContaining({ version: 8 }),
+      ),
+    );
   });
 
   it("closes the dialog once the command is accepted", async () => {

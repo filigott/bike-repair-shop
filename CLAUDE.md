@@ -116,7 +116,10 @@ so there is no second way to construct an order. A test host sets the flag itsel
 inheriting it from the Development settings file.
 
 **Optimistic concurrency is a `version` field on the DTO**, backed by the PostgreSQL `xmin` system
-column. The update request carries it back and a mismatch is a 409. Deliberately not an ETag with
+column. The three edit requests (details, service, due date) carry it back, the handler compares it
+with the loaded order, and a mismatch is a 409; a write racing between load and save trips EF's own
+`xmin` check and maps to the same 409. The lifecycle commands and delete carry no version, since the
+state machine already refuses a stale transition. Deliberately not an ETag with
 `If-Match`: that requires strong comparison, and a strong validator asserts byte-identical
 representations, which stops being true as soon as a response varies.
 

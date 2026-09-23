@@ -51,6 +51,7 @@ public sealed class OrdersController : ControllerBase
     [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<MaintenanceOrderResponse>> CorrectDetails(
         [FromServices] CorrectOrderDetailsHandler handler,
@@ -65,6 +66,7 @@ public sealed class OrdersController : ControllerBase
     [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<MaintenanceOrderResponse>> ChangeService(
         [FromServices] ChangeOrderServiceHandler handler,
@@ -79,6 +81,7 @@ public sealed class OrdersController : ControllerBase
     [ProducesResponseType<MaintenanceOrderResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<MaintenanceOrderResponse>> Reschedule(
         [FromServices] RescheduleOrderHandler handler,

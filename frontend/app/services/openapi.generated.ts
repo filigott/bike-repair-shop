@@ -302,6 +302,15 @@ export interface paths {
                         "application/json": components["schemas"]["ProblemDetails"];
                     };
                 };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
                 /** @description Unprocessable Entity */
                 422: {
                     headers: {
@@ -372,6 +381,15 @@ export interface paths {
                         "application/json": components["schemas"]["ProblemDetails"];
                     };
                 };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
                 /** @description Unprocessable Entity */
                 422: {
                     headers: {
@@ -435,6 +453,15 @@ export interface paths {
                 };
                 /** @description Not Found */
                 404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -756,6 +783,8 @@ export interface components {
     schemas: {
         ChangeOrderServiceRequest: {
             serviceType: components["schemas"]["ServiceType"];
+            /** Format: uint32 */
+            version: null | number | string;
         };
         CorrectOrderDetailsRequest: {
             customerName: string;
@@ -763,6 +792,8 @@ export interface components {
             email: string;
             bikeBrand: string;
             notes: null | string;
+            /** Format: uint32 */
+            version: null | number | string;
         };
         DemoDataStatus: {
             enabled: boolean;
@@ -788,6 +819,8 @@ export interface components {
             isOverdue: boolean;
             isEditable: boolean;
             allowedActions: components["schemas"]["OrderAction"][];
+            /** Format: uint32 */
+            version: number | string;
         };
         MaintenanceOrderSummary: {
             /** Format: uuid */
@@ -842,6 +875,8 @@ export interface components {
         RescheduleOrderRequest: {
             /** Format: date */
             dueDate: null | string;
+            /** Format: uint32 */
+            version: null | number | string;
         };
         /** @enum {unknown} */
         ServiceType: "WheelAdjustment" | "ChainReplacement" | "BrakeMaintenance";

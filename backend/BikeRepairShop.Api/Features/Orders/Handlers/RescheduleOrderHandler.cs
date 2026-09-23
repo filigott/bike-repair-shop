@@ -14,6 +14,11 @@ public sealed class RescheduleOrderHandler(BikeRepairShopDbContext db, IShopCloc
         var order = await db.Orders.SingleOrDefaultAsync(o => o.Id == command.Id, cancellationToken)
             ?? throw NotFoundException.Order(command.Id);
 
+        if (order.Version != command.Version)
+        {
+            throw ConflictException.OrderChanged();
+        }
+
         order.Reschedule(command.DueDate, clock);
         await db.SaveChangesAsync(cancellationToken);
 

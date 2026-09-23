@@ -21,6 +21,10 @@ export function actionSuccess<T>(data: T): ActionSuccess<T> {
   return { kind: ActionResultKind.Success, data };
 }
 
+export function isConflict(failure: ActionFailure): boolean {
+  return failure.status === 409;
+}
+
 export function isActionFailure<T, TField extends string>(
   result: ActionResult<T, TField>,
 ): result is ActionFailure<TField> {
