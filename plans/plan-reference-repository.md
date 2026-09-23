@@ -1,0 +1,99 @@
+# Reference repository (#4, #5, issues to come)
+
+## At a glance
+
+The brief is met and the interview moved to 2026-10-14 at 14:30, so this repository now has a second
+purpose: a real-world example of how the developer builds software with an agent, to point future
+projects at. The global `~/.claude/CLAUDE.md` stays the standalone source of every rule; this repo
+shows them applied and adds the patterns a real product has and this one still lacks. No code before
+the next session, and a freeze before the interview.
+
+## Progress
+
+Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
+
+| Step | Status | Notes |
+|---|---|---|
+| 1. Drift audit | ⏳ | Repo `CLAUDE.md` against the global file |
+| 2. Search and sorted paging (#4) | ⏳ | Check the brief first |
+| 3. End-to-end tests in CI | ⏳ | Issue to create |
+| 4. Cheap hardening | ⏳ | Issue to create |
+| 5. Interview freeze | ⏳ | Around 2026-10-07 |
+| 6. Authentication | ⏳ | After the interview; issue to create |
+| 7. Status history (#5) | ⏳ | On top of step 6 |
+| 8. Observability and image builds | ⏳ | After the interview |
+
+## Context
+
+Planned on 2026-09-23, the day the interview was postponed. Nothing was built that day beyond this
+plan. The repository has not been shared with the interviewers yet, so work lands on `main` through
+the usual issue, branch, PR and smoke-test route until the freeze.
+
+Settled with the developer the same day:
+
+- The global `CLAUDE.md` stands alone. The repo is another real-world example, not the canonical
+  copy, and a change to a global rule must not force a change here.
+- Drift is still unwanted. The mechanism is in the design decisions below.
+- Plans stay committed in this repo exactly as they are. Globally, committing plans is a per-project
+  opt-in, with a lean against it once a repo is shared with other people.
+- Extracting the workflow into skills, hooks or templates waits for a second project, which is the
+  only honest test of what gets reused.
+
+## Design decisions
+
+**Rules live globally, the repo shows them.** The global file wins every disagreement. The repo's
+`CLAUDE.md` keeps project facts, worked examples and its deliberate deviations; anything else it
+says that contradicts the global file is drift.
+
+**Drift is found by reading, not by syncing.** A deviation the repo makes on purpose is stated in its
+own `CLAUDE.md`, as committing plans already is. Any other difference is drift, and a session that
+meets it flags it rather than copies it. Step 1 does one full pass so the baseline is clean; after
+that the flag-on-sight rule, recorded in the global file, is the whole mechanism. No script, no
+generated section, nothing to maintain when a global rule changes.
+
+**Each code step is a pattern worth lifting**, ranked by how often a new project needs it: a paged
+list, a browser test, a lock file, then auth and an audit trail. Depth for its own sake stays out.
+
+**Anything that lands before the interview changes the walkthrough.** The freeze exists so the
+practice page, the packaged stack and `main` agree on the day.
+
+## Steps
+
+**1. Drift audit.** Read the repo `CLAUDE.md`, `plans/README.md` and the project memory against the
+global file. Known candidates: plans committed here (deliberate, keep), plans over issues in memory
+against the global "issue before any work", and the rules restated in both, such as error handling,
+CQRS and the React rules. Each difference ends as recorded-as-deliberate, fixed here, or a question
+for the developer about the global rule. Prose only.
+
+**2. Search by service and due date, with sorted paging (#4).** Check the original brief's wording
+for "find" first; if it names these criteria, this was a gap in the brief rather than depth. The
+order number becomes searchable here, as the ROADMAP already notes. TDD on the specification.
+
+**3. End-to-end tests.** Playwright against the packaged stack, the four staff tasks as the
+scenarios, run as a third CI job. Create the issue first.
+
+**4. Cheap hardening.** Architecture tests for the layer references `CLAUDE.md` states, NuGet lock
+files so CI can cache restores, and Dependabot for both ecosystems. One issue, small commits.
+
+**5. Interview freeze.** Cold start from `docker compose down -v`, the five-step smoke test, refresh
+the practice page (a private artifact, outside the repo) against whatever landed, and bring the
+ROADMAP state and `reference/time-and-scope.md` up to date.
+
+**6. Authentication.** Staff sign-in; the mechanism is an open question for its own plan.
+
+**7. Status history (#5).** Who moved an order and when, which needs step 6 for the who.
+
+**8. Observability and image builds.** OpenTelemetry traces and metrics, and CI building the images.
+
+## Out of scope
+
+- Deployment to a hosted environment. Building the images in CI is as far as this plan goes.
+- Skills, hooks or templates extracted from this repo, until a second project asks for them.
+- Bike brand suggestions stay in the ROADMAP queue as product depth, not a reference pattern.
+
+## Open questions
+
+- Freeze date (assumed 2026-10-07, a week ahead, leaving time to practise on what is actually there).
+- Whether steps 3 and 4 go before the freeze at all (assumed yes if step 2 lands in one session,
+  otherwise they wait for after the interview).
+- Where the original brief lives. The ROADMAP notes it is not in the repository; step 2 needs it.

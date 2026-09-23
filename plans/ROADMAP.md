@@ -2,29 +2,27 @@
 
 ## At a glance
 
-One track is active: build the maintenance-order application end to end, from the domain model to a
-running `docker compose up`. Everything currently planned lives in
-[plan-bike-repair-shop.md](plan-bike-repair-shop.md).
+The application is built and the brief is met. The interview moved to 2026-10-14 at 14:30, so the
+active track is now making this repository a reference for future projects:
+[plan-reference-repository.md](plan-reference-repository.md). The application's own history lives in
+[plan-bike-repair-shop.md](plan-bike-repair-shop.md). Work freezes around 2026-10-07 so the practice
+material and `main` agree on the day.
 
 ## In flight
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, G, H, I, J, K, L and M done; the brief is met and everything left is extra |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | ✅ A, B, D, F, G, H, I, J, K, L and M done; the brief is met and everything left is extra |
+| Reference repository | `plan-reference-repository.md` | ⏳ Planned 2026-09-23; step 1 is the drift audit |
 
 ## Next up
 
-Everything below is beyond the brief, which is met. CI now enforces both suites on every pull
-request, no known defect is left and the smoke-test polish has landed, so the queue is depth.
+The order is set by [plan-reference-repository.md](plan-reference-repository.md): the drift audit,
+then search with sorted paging (#4), end-to-end tests, cheap hardening, and the freeze. Auth and the
+status history (#5) come after the interview. Outside that plan, still queued as product depth:
 
-1. **Search by service and due date (#4).** Moves to the top if the original brief names these as
-   search criteria; that has not been checked against the source document. The order number should
-   become searchable here.
-2. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
+1. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
-3. **Status change history (#5).** A second table recording who moved an order and when, plus
-   somewhere to show it. The brief never asks for it, so it is scoped on its own and #5 stays open
-   until it lands.
 
 Nothing here is load-bearing for anything else.
 
@@ -65,7 +63,8 @@ messages, the form and list polish, CI, the README and the development record.
 
 Green on `main`: backend 169 tests, `dotnet format` clean, front-end `verify` at 62, and the CI
 workflow on the merge. The packaged stack was last verified from an empty volume on 2026-09-22 and
-is due again before the repository is handed over.
+is due again at the freeze, before the repository is handed over. The repository has not been
+shared with the interviewers yet.
 
 The brief has been met since day three, so every open issue is work beyond it rather than an
 unfinished deliverable. What the brief asked for is listed in
@@ -75,7 +74,7 @@ document itself is not in this repository, which is worth fixing if a copy exist
 ### Start here next session
 
 1. Verify rather than trust this file: `git log --oneline -3`, then confirm both suites are green.
-2. Take `Next up` item 1 below. Ask before writing a plan.
+2. Open [plan-reference-repository.md](plan-reference-repository.md) and take the first pending step.
 3. The `db` container is the only thing that should be running. Bring the API and the front end up
    yourself when you need them.
 

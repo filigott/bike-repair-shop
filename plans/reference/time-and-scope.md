@@ -1,7 +1,7 @@
 > **Reference doc: load only when working in this area**
 > - **Covers:** what the build has cost so far and how far the result is from the brief
 > - **Used by:** [ROADMAP.md](../ROADMAP.md) and [plan-bike-repair-shop.md](../plan-bike-repair-shop.md); read before adding a phase or a design decision
-> - **Updated:** 2026-09-22
+> - **Updated:** 2026-09-23
 
 # Time and scope, measured
 
@@ -19,8 +19,8 @@ structure honest by measuring it against that list rather than against its own t
 | Day one, 21:30 to 22:00 | 0h30 | Phase B3: the orders list page |
 | Day two, 12:10 to 14:27 | 1h00 | Phase C: order by id, the three edit commands, delete, the detail page with one form per command, delete from the list |
 | Day three, 19:30 to 21:45 | 1h30 | The phase C smoke test, demo data end to end, the visual pass, and phase D packaging |
-| Day four, 09:15 to 13:16 | 4h00 | The order reference (#9), the lifecycle API (#5), and three of the four detail-page steps (#10) including the state-machine rekey |
-| Day five, 15:13 onward | 2h00 | The detail page finished and its route thinned, the status legend end to end (#13), the pull request rule, the root README and the AI development record |
+| Day four, 09:15 into the evening | 2h00 | The order reference (#9), the lifecycle API (#5), the detail page rework (#10) including the state-machine rekey, the status legend (#13), the pull request rule, the root README and the AI development record |
+| Day five | 1h30 | CI and optimistic concurrency (#6), localized API messages (#11), the form and list polish (#18) |
 
 Day one total: 5h30 and 32 commits. Two of those hours preceded the first commit, and ten of the
 commits touch only plans or conventions.
@@ -34,11 +34,13 @@ Day three is counted the way day two was, as focused time rather than wall clock
 evening the brief was finally met, and two manual passes drove most of it, which is the trade those
 passes are supposed to make: both turned up things no test was ever going to.
 
-Day four is wall clock read off the commit stamps, not self-reported focused time, so it is the one
-row measured differently from the two before it. The window is 4h01 and the longest gap in it is
-71 minutes, which carried the state-machine rekey and its plan, so nothing suggests a stretch where
-the session was idle. Running total: **12h00 across four days**, 16 commits on day four of which
-seven touch code.
+Day four is counted as focused time too. The commit stamps run from 09:15 into the evening across
+46 commits, but the day was shared with other work throughout, and 2h00 is the developer's figure
+for it. Wall clock read off the stamps overstated it by a factor of three, which is why every row
+here is focused time rather than a commit window. Running total: 10h00 across four days.
+
+Day five is the same measure: 1h30 for 23 commits, the last day before the original interview date.
+Running total: **11h30 across five days**, of which the brief took the first 8h00.
 
 ## Against the brief
 
@@ -111,7 +113,7 @@ replacement is one form per command on a detail page, an intent read from `FormD
 35 minutes, and the rule it confirms is already in `CLAUDE.md` under actions being explicit on the
 API and in the UI alike. Check a screen against that rule before building it, not after.
 
-## What day five cost
+## What the rest of day four cost
 
 Two corrections came from the developer rather than from a test, and both were about the shape of
 the code rather than its behaviour. Form values were being cast to their enum types, which asserts
@@ -136,5 +138,3 @@ Two smaller ones from the same hour, both cheap to avoid next time. `Closes #9, 
 request body closes only the first issue, because GitHub wants a keyword per issue. And a phase
 letter belongs to the phase that claimed it when it was identified, not to the one written first,
 which is why the legend plan had to be renamed from K to L after the fact.
-
-Running total: **14h30 across five days**.
