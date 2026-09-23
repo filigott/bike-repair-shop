@@ -200,6 +200,9 @@ shop's day forward and reach rules that only fire with time, such as an overdue 
 in a `Fixtures/` folder of the test project that owns them, never as private helpers inside a test
 class.
 
+`.github/workflows/ci.yml` runs the same gates on every pull request and on `main`: build,
+`dotnet format --verify-no-changes`, the unfiltered backend suite, and the front-end `verify`.
+
 Front-end tests are co-located `*.test.tsx`, mock the endpoint layer rather than `fetch`, and query by
 role, text or label.
 
