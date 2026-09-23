@@ -14,7 +14,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| 1. Drift audit | ⏳ | Repo `CLAUDE.md` against the global file |
+| 1a. Drift audit, clear fixes | ✅ | 2026-09-23 |
+| 1b. Drift audit, decisions | ⏳ | Six questions below |
 | 2. Search and sorted paging (#4) | ⏳ | Check the brief first |
 | 3. End-to-end tests in CI | ⏳ | Issue to create |
 | 4. Cheap hardening | ⏳ | Issue to create |
@@ -59,11 +60,53 @@ practice page, the packaged stack and `main` agree on the day.
 
 ## Steps
 
-**1. Drift audit.** Read the repo `CLAUDE.md`, `plans/README.md` and the project memory against the
+**1. Drift audit.** Findings and the open decisions are below. Read the repo `CLAUDE.md`, `plans/README.md` and the project memory against the
 global file. Known candidates: plans committed here (deliberate, keep), plans over issues in memory
 against the global "issue before any work", and the rules restated in both, such as error handling,
 CQRS and the React rules. Each difference ends as recorded-as-deliberate, fixed here, or a question
 for the developer about the global rule. Prose only.
+
+### Drift audit findings, 2026-09-23
+
+Read: the repo `CLAUDE.md`, `plans/README.md`, `README.md`, `docs/`, the project memory, and the
+global file and plan template. Consistent and left alone: AAA markers, commit format, comment rules,
+round-trip assertions, exception layering, CQRS slices, i18n keys, `useLocale`, semantic colours,
+plan skeleton and status rules. No icons are used, so the Lucide rule has nothing to apply to.
+
+Fixed on the spot:
+
+- Repo `CLAUDE.md` now states its three deliberate departures: `README` and `docs/` point into
+  `plans/`; plans-only commits go straight to `main` without an issue or PR; the agent may start the
+  API to regenerate the OpenAPI types.
+- Memory `plans-over-github-issues` rewritten: it still claimed issues never gate work, which the PR
+  route overturned on 2026-09-22.
+- Memory `autocommit-plan-and-doc-updates`: the merge waiver covered #19 to #22, not #19 to #21.
+- Global file contradicted its own template on where plans live (project root against `plans/`).
+
+Left for step 1b, each one the developer's call because it changes a global rule:
+
+1. **Mutations answer with the order, not 204.** Global says POST, PATCH and DELETE return 204
+   because the router reloads after an action. Here place answers 201 with the order, and the edits
+   and lifecycle commands answer with the updated order; only delete is 204. Check whether the front
+   end reads those bodies, then either state it as a departure here or relax the global rule.
+2. **Form dialogs held in the URL.** Global prescribes `selectedItem: T | null` in the parent for
+   every modal. The repo keeps that for confirm-only dialogs and holds form dialogs in a search
+   param. Promotion candidate.
+3. **Value objects as `ComplexProperty`.** Global says `HasConversion`; the repo uses complex types
+   because a converted value cannot be searched with `LIKE`. Promotion candidate, as "complex type
+   when queried".
+4. **Rules learned here that the global file lacks:** no `useEffect` and never mirror a prop; API
+   text never rendered, only `problems.<code>`; the UI never recomputes a server rule; a lifecycle
+   table keyed by action; concurrency as a version field rather than an ETag; a new test shown red
+   before it counts; one `verify` script as the front-end gate. Promote each, or leave it as a
+   worked example.
+5. **Design questions.** The repo says an open design question is answered by picking the
+   recommended option and saying so; the global file leans on asking. Probably compatible (design
+   calls against business rules), but worth one line in whichever file owns it.
+6. **Dated stack line.** "Checked 2026-09-20" in the repo `CLAUDE.md` against the timeless-docs
+   rule. Likely fine as a verification stamp; confirm.
+
+Not fixable: early commit subjects carry plan vocabulary (`close phase M's steps`). History stays.
 
 **2. Search by service and due date, with sorted paging (#4).** Check the original brief's wording
 for "find" first; if it names these criteria, this was a gap in the brief rather than depth. The

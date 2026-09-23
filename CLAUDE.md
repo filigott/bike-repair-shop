@@ -14,7 +14,8 @@ it, and PostgreSQL behind both, packaged so `docker compose up` runs the whole s
    phase plan it points to, its At a glance and Progress sections first.
 
 Plans and this file are committed on purpose. They are the record of how the solution was designed
-and built, not scratch notes.
+and built, not scratch notes, which is also why the README and `docs/` may point into `plans/`.
+Code, commit messages and pull requests still carry no plan vocabulary.
 
 ## Stack
 
@@ -234,7 +235,7 @@ npm --prefix frontend run verify         # lint, typecheck, test and build: the 
 npm --prefix frontend run codefix
 npm --prefix frontend run typecheck
 npm --prefix frontend run test
-npm --prefix frontend run generate:api   # regenerates the OpenAPI types; needs the API running on 5260
+npm --prefix frontend run generate:api   # regenerates the OpenAPI types; needs the API on 5260, which the agent may start for this and stop
 
 # Whole stack
 docker compose up --build              # everything containerised on http://localhost:8080
@@ -274,7 +275,9 @@ are not: stop those when a packaged run is finished, with `docker compose stop a
   line, flags risks, then gives the commit message in a fenced block.
 - Commits are conventional and end the subject with the issue number: `feat(orders): ... (#4)`.
   Body is one summary sentence then three to six verb-first bullets.
-- An issue exists before the work does.
+- An issue exists before code work does. A commit touching only `plans/` needs none, and goes
+  straight to `main` without a branch or pull request; anything with source, tests or configuration
+  in it takes the pull request route.
 - Repo docs change in the same commit as the code that invalidated them.
 - Comments explain a non-obvious why in one line, or they do not exist. A comment that needs a
   paragraph is a sign the code needs a better name or an extracted method.
