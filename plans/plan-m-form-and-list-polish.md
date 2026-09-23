@@ -9,13 +9,15 @@ anything not green by then stays on #18.
 
 ## Progress
 
+Complete and smoke-tested step by step. PR pending.
+
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| M1. Place page type scale and layout | 🟡 | DaisyUI `fieldset` renders its legends at 12px |
-| M2. Field error state and autocomplete | ⏳ | `input-error`, `aria-invalid`, described-by, `autocomplete` |
-| M3. Clear-search control | ⏳ | A link, beside the box and in the empty state |
+| M1. Place page type scale and layout | ✅ | DaisyUI `fieldset` renders its legends at 12px |
+| M2. Field error state and autocomplete | ✅ | `aria-invalid` styling, described-by, clear on edit, `autocomplete` |
+| M3. Clear-search control | ✅ | A link, beside the box and in the empty state |
 
 ## Context
 
@@ -29,6 +31,11 @@ because they set `text-base` themselves.
 **The field wires its own accessibility.** `FormField` owns the label and the messages, so it also
 owns the message id, and hands the input `aria-invalid`, `aria-describedby` and the error class
 through a render prop. No input repeats the wiring.
+
+**An edit clears its field's error; nothing validates in the browser.** Asked for by the user on
+2026-09-23 after the M2 smoke test. `FormField` records which errors array the user has edited past;
+each rejected submit yields a fresh array, so a new failure shows again with no effect and no prop
+copied into state. The server still judges every submit.
 
 **Clearing the search is a link to the bare list**, which drops the page along with the term. The
 search lives in the URL, so there is no state to reset.
@@ -47,6 +54,4 @@ asserts both lead to the unfiltered list.
 
 ## Out of scope
 
-- Clearing a stale message as its input changes. Without re-validating in the browser it needs
-  per-field state reset on each new failure, which mirrors a prop into state; it needs a design of
-  its own and stays on #18.
+- Validating in the browser, as #18 says. Clearing on edit is dismissal, not a verdict.

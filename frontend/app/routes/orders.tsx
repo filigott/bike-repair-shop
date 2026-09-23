@@ -86,7 +86,7 @@ export default function Orders({ loaderData }: Route.ComponentProps) {
       <OrderSearchForm search={search} />
       {failure && <ProblemAlert failure={failure} />}
       {items.length === 0 ? (
-        <p className="text-base-content/70">{t("orders.empty")}</p>
+        <EmptyOrders search={search} />
       ) : (
         <>
           <OrdersTable items={items} onDelete={setSelected} />
@@ -138,4 +138,23 @@ function runIntent(form: FormData): Promise<unknown> {
     default:
       throw new Error(`Unknown intent: ${intent}`);
   }
+}
+
+function EmptyOrders({ search }: { search: string }) {
+  const { t } = useTranslation();
+
+  if (!search) {
+    return <p className="text-base-content/70">{t("orders.empty")}</p>;
+  }
+
+  return (
+    <div className="flex flex-col items-start gap-2">
+      <p className="text-base-content/70">
+        {t("orders.search.noMatches", { search })}
+      </p>
+      <Link to="/" className="btn btn-outline btn-sm">
+        {t("orders.search.showAll")}
+      </Link>
+    </div>
+  );
 }

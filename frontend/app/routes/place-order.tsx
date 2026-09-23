@@ -34,7 +34,7 @@ export default function PlaceOrder({
   const { t } = useTranslation();
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <h1 className="text-2xl font-bold">{t("orders.place.title")}</h1>
       <OrderForm
         serviceTypes={loaderData.serviceTypes}

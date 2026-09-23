@@ -176,6 +176,54 @@ describe("Orders", () => {
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 
+  it("clears an active search back to the first page of every order", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(page([summary()], 40));
+    renderOrders("/?search=Hopper&page=2");
+    await screen.findByText("Ada Lovelace");
+
+    // Act
+    await userEvent.click(screen.getByRole("link", { name: "Clear search" }));
+
+    // Assert
+    await waitFor(() =>
+      expect(listOrders).toHaveBeenLastCalledWith({
+        search: undefined,
+        page: 1,
+        pageSize: 20,
+      }),
+    );
+    expect(
+      screen.queryByRole("link", { name: "Clear search" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("searchbox", { name: "Search orders" }),
+    ).toHaveValue("");
+  });
+
+  it("names the term that found nothing and offers every order instead", async () => {
+    // Arrange
+    vi.mocked(listOrders).mockResolvedValue(page([]));
+    renderOrders("/?search=Nobody");
+    expect(
+      await screen.findByText("No orders match “Nobody”."),
+    ).toBeInTheDocument();
+
+    // Act
+    await userEvent.click(
+      screen.getByRole("link", { name: "Show all orders" }),
+    );
+
+    // Assert
+    await waitFor(() =>
+      expect(listOrders).toHaveBeenLastCalledWith({
+        search: undefined,
+        page: 1,
+        pageSize: 20,
+      }),
+    );
+  });
+
   it("sends the typed term as the search parameter", async () => {
     // Arrange
     vi.mocked(listOrders).mockResolvedValue(page([summary()]));

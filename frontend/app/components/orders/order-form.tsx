@@ -26,18 +26,18 @@ export function OrderForm({
   const errors = failure?.fieldErrors ?? {};
 
   return (
-    <Form method="post" className="flex max-w-xl flex-col gap-4">
+    <Form method="post" className="flex flex-col gap-6">
       {failure && <ProblemAlert failure={failure} />}
 
-      <fieldset className="fieldset flex flex-col gap-3">
-        <legend className="fieldset-legend">
+      <fieldset className="fieldset gap-4 rounded-box border border-base-300 bg-base-200 p-6 text-base">
+        <legend className="fieldset-legend text-lg">
           {t("orders.groups.details")}
         </legend>
         <OrderDetailsFields errors={errors} />
       </fieldset>
 
-      <fieldset className="fieldset flex flex-col gap-3">
-        <legend className="fieldset-legend">
+      <fieldset className="fieldset gap-4 rounded-box border border-base-300 bg-base-200 p-6 text-base">
+        <legend className="fieldset-legend text-lg">
           {t("orders.groups.schedule")}
         </legend>
         <ServiceTypeField serviceTypes={serviceTypes} errors={errors} />

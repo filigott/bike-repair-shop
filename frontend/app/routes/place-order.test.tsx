@@ -135,4 +135,89 @@ describe("PlaceOrder", () => {
       screen.queryByText("'Email' must be a valid email address."),
     ).not.toBeInTheDocument();
   });
+
+  it("marks a rejected field invalid and describes it by its message", async () => {
+    // Arrange
+    vi.mocked(placeOrder).mockRejectedValue(
+      new ApiError(400, {
+        title: "Validation failed",
+        status: 400,
+        errorCodes: { email: ["InvalidEmail"] },
+        code: "InvalidRequest",
+      }),
+    );
+    renderForm();
+    await fillTheForm();
+
+    // Act
+    await userEvent.click(screen.getByRole("button", { name: "Place order" }));
+
+    // Assert
+    const email = await screen.findByLabelText("Email");
+    await waitFor(() => expect(email).toHaveAttribute("aria-invalid", "true"));
+    expect(email).toHaveAccessibleDescription("Enter a valid email address.");
+    expect(screen.getByLabelText("Customer name")).not.toHaveAttribute(
+      "aria-invalid",
+    );
+  });
+
+  it("clears a field's error once it is edited, leaving the other fields' errors alone", async () => {
+    // Arrange
+    vi.mocked(placeOrder).mockRejectedValue(
+      new ApiError(400, {
+        title: "Validation failed",
+        status: 400,
+        errorCodes: {
+          email: ["InvalidEmail"],
+          phoneNumber: ["InvalidPhoneNumber"],
+        },
+        code: "InvalidRequest",
+      }),
+    );
+    renderForm();
+    await fillTheForm();
+    await userEvent.click(screen.getByRole("button", { name: "Place order" }));
+    const email = await screen.findByLabelText("Email");
+    await waitFor(() => expect(email).toHaveAttribute("aria-invalid", "true"));
+
+    // Act
+    await userEvent.type(email, "x");
+
+    // Assert
+    expect(email).not.toHaveAttribute("aria-invalid");
+    expect(
+      screen.queryByText("Enter a valid email address."),
+    ).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Phone number")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+  });
+
+  it("shows the error again when the next submit is rejected too", async () => {
+    // Arrange
+    vi.mocked(placeOrder).mockRejectedValue(
+      new ApiError(400, {
+        title: "Validation failed",
+        status: 400,
+        errorCodes: { email: ["InvalidEmail"] },
+        code: "InvalidRequest",
+      }),
+    );
+    renderForm();
+    await fillTheForm();
+    await userEvent.click(screen.getByRole("button", { name: "Place order" }));
+    const email = await screen.findByLabelText("Email");
+    await waitFor(() => expect(email).toHaveAttribute("aria-invalid", "true"));
+    await userEvent.type(email, "x");
+
+    // Act
+    await userEvent.click(screen.getByRole("button", { name: "Place order" }));
+
+    // Assert
+    await waitFor(() => expect(email).toHaveAttribute("aria-invalid", "true"));
+    expect(
+      screen.getByText("Enter a valid email address."),
+    ).toBeInTheDocument();
+  });
 });
