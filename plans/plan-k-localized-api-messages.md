@@ -9,12 +9,14 @@ comes from a validator or a domain rule.
 
 ## Progress
 
+Complete, smoke-tested by hand on 2026-09-23 in both locales. PR pending.
+
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
 | K1. Codes from the API | ✅ | `errorCodes` beside `errors`, `code` on every problem |
-| K2. Codes into copy | 🟡 | Parse codes at the boundary, render keys only |
+| K2. Codes into copy | ✅ | Parse codes at the boundary, render keys only |
 
 ## Context
 
