@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Form, useActionData, useNavigation } from "react-router";
 import type { ActionResult } from "~/types/action-result";
-import { isActionFailure } from "~/types/action-result";
+import { isActionFailure, isConflict } from "~/types/action-result";
 import type { OrderIntent } from "~/types/intents/orders";
 import type { OrderFieldErrors, OrderFormField } from "./order-fields";
 
@@ -41,7 +41,9 @@ export function CommandDialog({
 
           {failure && (
             <p role="alert" className="alert alert-error">
-              {failure.detail ?? failure.title}
+              {isConflict(failure)
+                ? t("orders.detail.conflict")
+                : (failure.detail ?? failure.title)}
             </p>
           )}
 

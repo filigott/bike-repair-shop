@@ -61,7 +61,8 @@
     "detail": {
       "action": "Åpne",
       "placedAt": "Registrert",
-      "closed": "En ordre med status {{status}} kan ikke endres."
+      "closed": "En ordre med status {{status}} kan ikke endres.",
+      "conflict": "Noen andre endret denne ordren mens du hadde den åpen. Siden viser nå endringene deres: lagre på nytt for å erstatte dem, eller avbryt."
     },
     "empty": "Ingen ordrer funnet",
     "fields": {

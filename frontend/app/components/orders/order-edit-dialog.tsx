@@ -34,7 +34,12 @@ export function OrderEditDialog({
       submitLabel={t("common.save")}
       onClose={onClose}
     >
-      {(errors) => fieldsFor(command, order, serviceTypes, errors)}
+      {(errors) => (
+        <>
+          <input type="hidden" name="version" value={order.version} />
+          {fieldsFor(command, order, serviceTypes, errors)}
+        </>
+      )}
     </CommandDialog>
   );
 }

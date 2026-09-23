@@ -13,7 +13,11 @@ import {
   rescheduleOrder,
   startOrder,
 } from "~/services/endpoints/orders";
-import { optionalTextOf, textOf } from "~/services/form-data";
+import {
+  optionalIntegerOf,
+  optionalTextOf,
+  textOf,
+} from "~/services/form-data";
 import { OrderIntent } from "~/types/intents/orders";
 
 const transitions: Record<
@@ -52,13 +56,18 @@ export function runOrderCommand(
         email: textOf(form, "email"),
         bikeBrand: textOf(form, "bikeBrand"),
         notes: optionalTextOf(form, "notes"),
+        version: optionalIntegerOf(form, "version"),
       });
     case OrderIntent.ChangeService:
       return changeOrderService(id, {
         serviceType: textOf(form, "serviceType") as ServiceType,
+        version: optionalIntegerOf(form, "version"),
       });
     case OrderIntent.Reschedule:
-      return rescheduleOrder(id, { dueDate: optionalTextOf(form, "dueDate") });
+      return rescheduleOrder(id, {
+        dueDate: optionalTextOf(form, "dueDate"),
+        version: optionalIntegerOf(form, "version"),
+      });
     case OrderIntent.Delete:
       return deleteOrder(id);
   }

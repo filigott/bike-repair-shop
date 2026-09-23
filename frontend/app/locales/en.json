@@ -61,7 +61,8 @@
     "detail": {
       "action": "Open",
       "placedAt": "Placed",
-      "closed": "A {{status}} order can no longer be changed."
+      "closed": "A {{status}} order can no longer be changed.",
+      "conflict": "Someone else changed this order while you had it open. The page now shows their changes: save again to replace them, or cancel."
     },
     "empty": "No orders found",
     "fields": {
