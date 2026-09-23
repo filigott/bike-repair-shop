@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form } from "react-router";
+import { Form, Link } from "react-router";
 
 export function OrderSearchForm({ search }: { search: string }) {
   const { t } = useTranslation();
@@ -7,6 +7,7 @@ export function OrderSearchForm({ search }: { search: string }) {
   return (
     <Form method="get" role="search" className="join">
       <input
+        key={search}
         type="search"
         name="search"
         defaultValue={search}
@@ -17,6 +18,11 @@ export function OrderSearchForm({ search }: { search: string }) {
       <button type="submit" className="btn btn-primary join-item">
         {t("orders.search.submit")}
       </button>
+      {search && (
+        <Link to="/" className="btn btn-ghost join-item">
+          {t("orders.search.clear")}
+        </Link>
+      )}
     </Form>
   );
 }

@@ -100,7 +100,10 @@
     "search": {
       "label": "Søk i ordrer",
       "placeholder": "Navn, telefon eller e-post",
-      "submit": "Søk"
+      "submit": "Søk",
+      "clear": "Tøm søket",
+      "noMatches": "Ingen ordrer samsvarer med «{{search}}».",
+      "showAll": "Vis alle ordrer"
     },
     "serviceType": {
       "WheelAdjustment": "Hjuljustering",

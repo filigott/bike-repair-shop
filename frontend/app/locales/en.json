@@ -100,7 +100,10 @@
     "search": {
       "label": "Search orders",
       "placeholder": "Name, phone or email",
-      "submit": "Search"
+      "submit": "Search",
+      "clear": "Clear search",
+      "noMatches": "No orders match “{{search}}”.",
+      "showAll": "Show all orders"
     },
     "serviceType": {
       "WheelAdjustment": "Wheel adjustment",
