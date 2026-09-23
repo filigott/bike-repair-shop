@@ -9,7 +9,7 @@ comes from a validator or a domain rule.
 
 ## Progress
 
-Complete, smoke-tested by hand on 2026-09-23 in both locales. PR pending.
+Complete. Merged on 2026-09-23 through #21.
 
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 

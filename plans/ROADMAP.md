@@ -10,43 +10,39 @@ running `docker compose up`. Everything currently planned lives in
 
 | Track | Plan | Status |
 |---|---|---|
-| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, H, I and J done, C all but its polish; the brief is met and everything left is extra |
+| Maintenance orders end to end | `plan-bike-repair-shop.md` | 🟡 A, B, D, F, G, H, I, J, K and L done, C all but its polish; the brief is met and everything left is extra |
 
 ## Next up
 
-Everything below is beyond the brief, which is met. Ordered for a repository about to be read by
-someone else: enforcement and visible defects first, polish behind them.
+Everything below is beyond the brief, which is met. CI now enforces both suites on every pull
+request, and no known defect is left, so the queue is polish and depth.
 
-1. **CI (#6).** A workflow running both suites on every pull request. The repository's claim is that
-   nothing lands unreviewed and untested, and nothing currently enforces it. Highest signal for the
-   effort. Optimistic concurrency is the issue's other half and can wait; its README half shipped.
-2. **Localized validation messages from the API (#11).** The only user-visible defect: a Norwegian
-   user submitting a bad due date gets an English message back. It is also the only string the front
-   end cannot key, so nothing else can fix it.
-3. **Search by service and due date (#4).** Searching by customer name, phone and email already
-   works and satisfies what the brief asks for, so this widens a feature rather than adding one. The
-   order number should become searchable here.
-4. **Form and list polish (#18).** Field error styling with `aria-invalid` and a described-by
-   message, clearing a stale message when its input changes, a clear-search control the empty state
-   also offers, and `autocomplete` on the contact fields.
-5. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
+1. **Form and list polish (#18).** The place page still runs the small DaisyUI `fieldset` type and a
+   narrow left-aligned layout the detail page left behind in #10. Then field error styling with
+   `input-error`, `aria-invalid` and a described-by message, `autocomplete` on the contact fields,
+   and a clear-search control the empty state also offers. Clearing a stale message on input is the
+   one item that needs a design first: done naively it mirrors a prop into state.
+2. **Search by service and due date (#4).** Moves to the top if the original brief names these as
+   search criteria; that has not been checked against the source document. The order number should
+   become searchable here.
+3. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
-6. **Status change history (#5).** A second table recording who moved an order and when, plus
+4. **Status change history (#5).** A second table recording who moved an order and when, plus
    somewhere to show it. The brief never asks for it, so it is scoped on its own and #5 stays open
    until it lands.
 
-### Why this order
-
-The earlier ordering optimised for depth, putting the state machine, the lifecycle and the detail
-page first because they held the only real domain logic in an otherwise CRUD-shaped problem. That
-work is done and the audience has changed. What matters now is that a reader finds nothing obviously
-broken and sees the process actually working, which is why CI leads and the one visible defect
-follows it.
-
-Nothing from item 3 down is load-bearing for anything else.
+Nothing here is load-bearing for anything else.
 
 ## Landed
 
+- **Localized API messages (#11)**, 2026-09-23, [plan-k-localized-api-messages.md](plan-k-localized-api-messages.md).
+  Every problem carries a machine code, validation adds `errorCodes` beside `errors`, and the front
+  end renders only locale copy. No English sentence from the API reaches the screen.
+- **Optimistic concurrency and CI (#6)**, 2026-09-23, [plan-g-hardening.md](plan-g-hardening.md).
+  `xmin` as the order version on the three edits, a stale one refused with 409 and explained in the
+  dialog; a GitHub Actions workflow running both suites and `dotnet format` on every pull request.
+  #19, #20 and #21 were merged by the agent on the developer's explicit one-off waiver of the
+  never-merge rule; the rule itself stands.
 - **Status legend (#13)**, 2026-09-22, [plan-l-status-legend.md](plan-l-status-legend.md). A status
   catalogue endpoint publishing the matrix whole, a native disclosure above the orders table showing
   the badges at rest and the edges on request, and the retirement of two projections nothing read.
@@ -65,12 +61,13 @@ Nothing from item 3 down is load-bearing for anything else.
 
 ## State
 
-As of 2026-09-22. `main` is the only branch and carries everything: the four staff tasks, the order
-reference, the lifecycle over HTTP, the detail page built around one action at a time, the status
-legend, the README and the development record.
+As of 2026-09-23. `main` is the only branch and carries everything: the four staff tasks, the order
+reference, the lifecycle, the detail page, the status legend, optimistic concurrency, localized API
+messages, CI, the README and the development record.
 
-Green on `main`: backend 163 tests, front-end `verify` at 50, and the packaged stack up from an empty
-volume with its schema migrated, 26 demo orders seeded and the page answering on 8080.
+Green on `main`: backend 169 tests, `dotnet format` clean, front-end `verify` at 57, and the CI
+workflow on the merge. The packaged stack was last verified from an empty volume on 2026-09-22 and
+is due again before the repository is handed over.
 
 The brief has been met since day three, so every open issue is work beyond it rather than an
 unfinished deliverable. What the brief asked for is listed in
@@ -104,8 +101,7 @@ batched rather than gating each unit.
 
 ## Blockers
 
-Nothing. Everything is merged, both suites are green on `main` and the packaged stack has been
-verified from an empty volume.
+Nothing. Everything is merged and both suites are green on `main`, locally and in CI.
 
 What the smoke tests raised and how each item was settled is in
 [reference/smoke-test-findings.md](reference/smoke-test-findings.md).

@@ -9,7 +9,7 @@ step that is not green by then is dropped, not rushed.
 
 ## Progress
 
-Complete, smoke-tested by hand on 2026-09-23 with two tabs and both locales. PR pending.
+Complete. Merged on 2026-09-23 through #19 (CI) and #20 (concurrency).
 
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 

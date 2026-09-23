@@ -23,11 +23,11 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | D. Packaging | [plan-d-packaging.md](plan-d-packaging.md) | #3 | ✅ |
 | E. Search | [plan-e-search.md](plan-e-search.md) | #4 | ⏳ |
 | F. Lifecycle | [plan-f-lifecycle.md](plan-f-lifecycle.md) | #5 | ✅ |
-| G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ⏳ |
+| G. Hardening | [plan-g-hardening.md](plan-g-hardening.md) | #6 | ✅ |
 | H. Demo data | [plan-h-demo-data.md](plan-h-demo-data.md) | #8 | ✅ |
 | I. Order reference | [plan-i-order-reference.md](plan-i-order-reference.md) | #9 | ✅ |
 | J. Detail page rework | [plan-j-detail-page.md](plan-j-detail-page.md) | #10 | ✅ |
-| K. Localized API messages | [plan-k-localized-api-messages.md](plan-k-localized-api-messages.md) | #11 | 🟡 |
+| K. Localized API messages | [plan-k-localized-api-messages.md](plan-k-localized-api-messages.md) | #11 | ✅ |
 | L. Status legend | [plan-l-status-legend.md](plan-l-status-legend.md) | #13 | ✅ |
 
 Each phase plan carries its own step table. From B on, the last step of a phase ends in a manual
