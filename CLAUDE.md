@@ -87,6 +87,12 @@ owns, `init` on `Id` and immutable foreign keys. Mutators are named for the task
 `CorrectDetails`), never a bare `Update`, and every one guards the lifecycle. An order's status moves
 only through domain methods.
 
+**A value with a rule is parsed once, into a type.** A request carries primitives. Its validator
+delegates to the value object's `TryParse` (`OrderFieldRules`), so the 400 and the domain share one
+rule. `<Command>.From(request)` parses into `EmailAddress`, `PhoneNumber` and enums, and the domain
+factory and mutators accept only those types. A string whose only rule is a length stays a string,
+guarded by the entity.
+
 **The lifecycle is one table of edges, keyed by the action.** `(from, action) to` in
 `OrderStatus.cs` is the single source: `AllowedActions`, `AllowedTransitions` and `CanTransitionTo`
 are all derived from it, and the entity's `Start`, `Complete`, `Cancel` and `Reopen` are wrappers
