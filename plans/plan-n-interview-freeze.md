@@ -13,13 +13,13 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
 |---|---|---|
-| N1. Docs match the code | 🟡 | README, CLAUDE.md, development record, time and scope |
-| N2. List params and the edit param bug (#23) | ⏳ | `OrdersParam` enum, `Object.hasOwn` |
+| N1. Docs match the code | ✅ | README, CLAUDE.md, development record, time and scope |
+| N2. List params and the parse bugs (#23) | ⏳ | `OrdersParam`, `Object.hasOwn`, `serviceTypeOf` |
 | N3. Demo data reset | ⏳ | Code on the 404, gate in the slice, atomic |
 | N4a. One confirm dialog | ⏳ | Droppable |
 | N4b. One key per field | ⏳ | Droppable |
 | N4c. One date formatter | ⏳ | Droppable |
-| N4d. One parsed form reader | ⏳ | `serviceTypeOf`; droppable |
+| N4d. One form reader | ⏳ | Droppable |
 | N5. Cold start and smoke test | ⏳ | `down -v` wipes the volume |
 | N6. Freeze record | ⏳ | ROADMAP, reference plan, practice page check |
 
@@ -62,7 +62,9 @@ and phase counts, the stale remaining-work list.
 
 **N2. List params and the edit param bug (#23).** One `OrdersParam` enum in `app/types/params/`
 read by the loader, the search form and the pager. `editCommandOf` stops falling through to
-`Object.prototype`; a test for `?edit=toString` shown red first.
+`Object.prototype`, and the service type is parsed rather than cast in both places that read it;
+each fix has a test shown red first. The development record already claims both, so this step makes
+it true.
 
 **N3. Demo data reset.** The enabled check moves into the slice and a disabled reset answers with
 an `ApiException` carrying its own code; delete and insert run in one transaction. Integration test
@@ -70,8 +72,7 @@ for the disabled case on the code, shown red.
 
 **N4a to N4d. Front-end consolidation.** Delete and reset render the one confirm dialog, moved out
 of `orders/`; table headers and form labels share one key per field in both locales; one module
-formats a calendar day and an instant; one function reads the order fields from `FormData` and
-parses the service type. Each a commit, each droppable at the cut-off.
+formats a calendar day and an instant; one function reads the order fields from `FormData`. Each a commit, each droppable at the cut-off.
 
 **N5. Cold start and smoke test.** `docker compose down -v`, `docker compose up --build`, then the
 developer runs the smoke checklist on 8080. Stop `api` and `web` afterwards; `db` stays up.

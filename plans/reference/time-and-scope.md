@@ -1,7 +1,7 @@
 > **Reference doc: load only when working in this area**
 > - **Covers:** what the build has cost so far and how far the result is from the brief
 > - **Used by:** [ROADMAP.md](../ROADMAP.md) and [plan-bike-repair-shop.md](../plan-bike-repair-shop.md); read before adding a phase or a design decision
-> - **Updated:** 2026-09-23
+> - **Updated:** 2026-10-13
 
 # Time and scope, measured
 
@@ -44,14 +44,14 @@ Running total: **11h30 across five days**, of which the brief took the first 8h0
 
 ## Against the brief
 
-| Requirement | State after day four |
+| Requirement | State |
 |---|---|
 | Place an order | Done end to end |
 | Find an order | Done end to end: list, customer search, paging |
 | Edit an order | Done end to end, confirmed by the manual pass |
 | Delete an order | Done end to end, confirmed by the manual pass |
 | React page consuming the API | Three routes: the list, the place form, the order detail page |
-| HTTP API with the business logic | Ten endpoints: the eight order and catalogue ones, plus demo data status and reset |
+| HTTP API with the business logic | Fifteen endpoints: eleven order commands and queries, the service and status catalogues, demo data status and reset |
 | Database holding the services | Done: seeded catalogue, migrations, integration tests |
 | `docker compose up` runs the stack | Done: three services from one command, verified from a deleted volume |
 
@@ -63,8 +63,8 @@ at a time.
 
 ## Where scope ran ahead of the brief
 
-- **Seven phases for a brief that needs three.** Search (E), lifecycle history (F) and hardening (G)
-  are additions made here, not asks.
+- **Thirteen phases for a brief that A to D cover.** Everything from E on is an addition made here,
+  not an ask.
 - **The order state machine was built first, in phase A.** Phase C finally reaches it: `isEditable`
   gates the detail page's forms, and a closed order shows a notice instead.
 - **Concurrency, paging and the queryable-value-object refactor precede their consumers**, the last
@@ -79,9 +79,8 @@ the typed client are what made phase C quick.
 - Plan status edits ride in the step's own commit instead of taking a commit of their own.
 - A new design decision needs a consumer in the current or next phase, or it waits.
 - Brief-complete as of day three. Everything still on the list is beyond what was asked.
-- Revised after day four. The order reference is done and the detail page rework is three steps of
-  four. What remains is about 2h: J4, C4b polish, the localized API messages (#11), the status
-  legend, the brand suggestions and the status history.
+- Revised after day five. Everything the day-four list named has landed except the brand
+  suggestions and the status history, both beyond the brief.
 - Day four's manual pass was batched rather than run per phase, which is a departure worth watching.
   It bought speed and it means three phases are unverified by hand at once.
 
