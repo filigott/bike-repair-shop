@@ -16,10 +16,10 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|---|---|
 | 1a. Drift audit, clear fixes | ✅ | 2026-09-23 |
 | 1b. Drift audit, decisions | ⏳ | Six questions below |
-| 2. Search and sorted paging (#4) | ⏳ | Check the brief first |
-| 3. End-to-end tests in CI | ⏳ | Issue to create |
-| 4. Cheap hardening | ⏳ | Issue to create |
-| 5. Interview freeze | ⏳ | Around 2026-10-07 |
+| 2. Search and sorted paging (#4) | ⏳ | After the interview |
+| 3. End-to-end tests in CI | ⏳ | After the interview |
+| 4. Cheap hardening | ⏳ | After the interview |
+| 5. Interview freeze | 🟡 | 2026-10-13, [plan-n-interview-freeze.md](plan-n-interview-freeze.md) |
 | 6. Authentication | ⏳ | After the interview; issue to create |
 | 7. Status history (#5) | ⏳ | On top of step 6 |
 | 8. Observability and image builds | ⏳ | After the interview |
@@ -136,7 +136,6 @@ ROADMAP state and `reference/time-and-scope.md` up to date.
 
 ## Open questions
 
-- Freeze date (assumed 2026-10-07, a week ahead, leaving time to practise on what is actually there).
-- Whether steps 3 and 4 go before the freeze at all (assumed yes if step 2 lands in one session,
-  otherwise they wait for after the interview).
+- RESOLVED: freeze date. The freeze ran on 2026-10-13, the evening before.
+- RESOLVED: steps 2 to 4 wait for after the interview; the freeze sweep took the last evening.
 - Where the original brief lives. The ROADMAP notes it is not in the repository; step 2 needs it.

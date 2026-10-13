@@ -13,7 +13,8 @@ material and `main` agree on the day.
 | Track | Plan | Status |
 |---|---|---|
 | Maintenance orders end to end | `plan-bike-repair-shop.md` | ✅ A, B, D, F, G, H, I, J, K, L and M done; the brief is met and everything left is extra |
-| Reference repository | `plan-reference-repository.md` | ⏳ Planned 2026-09-23; step 1 is the drift audit |
+| Reference repository | `plan-reference-repository.md` | 🟡 Step 5, the freeze, runs as phase N |
+| Interview freeze sweep | `plan-n-interview-freeze.md` | 🟡 Started 2026-10-13; cut-off 21:00 |
 
 ## Next up
 
