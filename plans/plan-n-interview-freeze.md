@@ -19,8 +19,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | N4a. One confirm dialog | ✅ | Shared, with a `ConfirmTone` enum |
 | N4b. One key per field | ✅ | Three identical pairs merged; short headers kept |
 | N4c. One date formatter | ✅ | The copies agreed; only the length sniff went |
-| N4d. One form reader | 🟡 | Droppable |
-| N5. Cold start and smoke test | ⏳ | `down -v` wipes the volume |
+| N4d. One form reader | ✅ | Own module, so the place route loads no lifecycle endpoints |
+| N5. Cold start and smoke test | 🟡 | Stack up from an empty volume; smoke test with the developer |
 | N6. Freeze record | ⏳ | ROADMAP, reference plan, practice page check |
 
 ## Context
