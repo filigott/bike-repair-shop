@@ -23,12 +23,12 @@ export function OrderSummaryCard({
         )}
       </dd>
 
-      <dt className="text-base-content/60">{t("orders.columns.service")}</dt>
+      <dt className="text-base-content/60">{t("orders.fields.serviceType")}</dt>
       <dd className="font-medium">
         {t(`orders.serviceType.${order.serviceType}`)}
       </dd>
 
-      <dt className="text-base-content/60">{t("orders.columns.due")}</dt>
+      <dt className="text-base-content/60">{t("orders.fields.dueDate")}</dt>
       <dd className="font-medium">{formatDay(order.dueDate, locale)}</dd>
 
       <dt className="text-base-content/60">{t("orders.detail.placedAt")}</dt>

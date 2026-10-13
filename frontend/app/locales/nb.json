@@ -38,9 +38,6 @@
       "reference": "Ordre",
       "customer": "Kunde",
       "phone": "Telefon",
-      "bike": "Sykkelmerke",
-      "service": "Tjeneste",
-      "due": "Frist",
       "status": "Status"
     },
     "confirm": {

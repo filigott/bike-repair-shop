@@ -38,9 +38,6 @@
       "reference": "Order",
       "customer": "Customer",
       "phone": "Phone",
-      "bike": "Bike brand",
-      "service": "Service",
-      "due": "Due date",
       "status": "Status"
     },
     "confirm": {
