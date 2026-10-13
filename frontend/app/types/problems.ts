@@ -2,6 +2,7 @@ export enum ProblemCode {
   InvalidRequest = "InvalidRequest",
   OrderNotFound = "OrderNotFound",
   OrderChanged = "OrderChanged",
+  DemoDataDisabled = "DemoDataDisabled",
   DueDateInPast = "DueDateInPast",
   OrderNotEditable = "OrderNotEditable",
   InvalidTransition = "InvalidTransition",

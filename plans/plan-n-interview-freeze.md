@@ -15,7 +15,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 |---|---|---|
 | N1. Docs match the code | ✅ | README, CLAUDE.md, development record, time and scope |
 | N2. List params and the parse bugs (#23) | ✅ | `OrdersParam`, `Object.hasOwn`, `serviceTypeOf` |
-| N3. Demo data reset | ⏳ | Code on the 404, gate in the slice, atomic |
+| N3. Demo data reset | ✅ | Code on the 404, gate in the slice, one SaveChanges |
 | N4a. One confirm dialog | ⏳ | Droppable |
 | N4b. One key per field | ⏳ | Droppable |
 | N4c. One date formatter | ⏳ | Droppable |
@@ -67,7 +67,9 @@ each fix has a test shown red first. The development record already claims both,
 it true.
 
 **N3. Demo data reset.** The enabled check moves into the slice and a disabled reset answers with
-an `ApiException` carrying its own code; delete and insert run in one transaction. Integration test
+an `ApiException` carrying its own code; delete and insert run in one `SaveChanges`. The
+developer chose `RemoveRange` over `ExecuteDelete` plus an explicit transaction: EF's docs advise
+against mixing tracked and `Execute*` writes, and the demo table is small. Integration test
 for the disabled case on the code, shown red.
 
 **N4a to N4d. Front-end consolidation.** Delete and reset render the one confirm dialog, moved out

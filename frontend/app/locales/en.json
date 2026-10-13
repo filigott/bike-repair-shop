@@ -122,6 +122,7 @@
     "InvalidRequest": "Some fields need attention.",
     "OrderNotFound": "This order no longer exists. Someone may have deleted it.",
     "OrderChanged": "Someone else changed this order while you had it open. The page now shows their changes: save again to replace them, or cancel.",
+    "DemoDataDisabled": "Demo data is switched off on this server.",
     "DueDateInPast": "The due date cannot be before today.",
     "OrderNotEditable": "This order can no longer be changed.",
     "InvalidTransition": "That action is no longer possible for this order. Reload the page to see its current status.",

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using AwesomeAssertions;
 using BikeRepairShop.Api.Features.DemoData;
 using BikeRepairShop.Api.Features.DemoData.Handlers;
@@ -88,7 +89,7 @@ public class DemoDataTests(DatabaseFixture database) : IntegrationTest(database)
         // Act
         await using (var scope = Database.CreateScope())
         {
-            await scope.ServiceProvider.GetRequiredService<ResetDemoDataHandler>()
+            await DemoDataFixtures.SwitchedOnReset(scope, Clock)
                 .HandleAsync(TestContext.Current.CancellationToken);
         }
 
@@ -96,6 +97,23 @@ public class DemoDataTests(DatabaseFixture database) : IntegrationTest(database)
         var orders = await LoadOrdersAsync();
         orders.Should().NotContain(order => order.CustomerName == "Placed by hand");
         orders.Count.Should().Be(DemoOrders.Build(Clock).Count);
+    }
+
+    [Fact]
+    public async Task A_reset_that_fails_after_clearing_the_table_keeps_the_orders_it_found()
+    {
+        // Arrange
+        await Database.SeedAsync(OrderFixtures.Place(Clock, customerName: "Placed by hand"));
+        using var cancellation = new CancellationTokenSource();
+        await using var scope = Database.CreateScope();
+        var handler = DemoDataFixtures.SwitchedOnReset(scope, new CancellingShopClock(Clock, cancellation));
+
+        // Act
+        var reset = () => handler.HandleAsync(cancellation.Token);
+
+        // Assert
+        await reset.Should().ThrowAsync<OperationCanceledException>();
+        (await LoadOrdersAsync()).Should().ContainSingle(order => order.CustomerName == "Placed by hand");
     }
 
     #endregion
@@ -127,6 +145,8 @@ public class DemoDataTests(DatabaseFixture database) : IntegrationTest(database)
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        var problem = await response.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken);
+        problem.GetProperty("code").GetString().Should().Be("DemoDataDisabled");
     }
 
     [Fact]
