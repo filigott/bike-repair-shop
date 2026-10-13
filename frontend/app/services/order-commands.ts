@@ -1,7 +1,6 @@
 import type {
   MaintenanceOrderResponse,
   OrderAction,
-  ServiceType,
 } from "~/services/endpoints/orders";
 import {
   cancelOrder,
@@ -16,6 +15,7 @@ import {
 import {
   optionalIntegerOf,
   optionalTextOf,
+  serviceTypeOf,
   textOf,
 } from "~/services/form-data";
 import { OrderIntent } from "~/types/intents/orders";
@@ -60,7 +60,7 @@ export function runOrderCommand(
       });
     case OrderIntent.ChangeService:
       return changeOrderService(id, {
-        serviceType: textOf(form, "serviceType") as ServiceType,
+        serviceType: serviceTypeOf(form, "serviceType"),
         version: optionalIntegerOf(form, "version"),
       });
     case OrderIntent.Reschedule:

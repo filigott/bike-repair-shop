@@ -3,13 +3,10 @@ import { redirect } from "react-router";
 import type { OrderFormField } from "~/components/orders/order-fields";
 import { OrderForm } from "~/components/orders/order-form";
 import { actionFailureFrom } from "~/services/action-errors";
-import type {
-  PlaceOrderRequest,
-  ServiceType,
-} from "~/services/endpoints/orders";
+import type { PlaceOrderRequest } from "~/services/endpoints/orders";
 import { placeOrder } from "~/services/endpoints/orders";
 import { listServiceTypes } from "~/services/endpoints/service-types";
-import { optionalTextOf, textOf } from "~/services/form-data";
+import { optionalTextOf, serviceTypeOf, textOf } from "~/services/form-data";
 import { isActionFailure } from "~/types/action-result";
 import type { Route } from "./+types/place-order";
 
@@ -53,7 +50,7 @@ function requestFrom(form: FormData): PlaceOrderRequest {
     phoneNumber: textOf(form, "phoneNumber"),
     email: textOf(form, "email"),
     bikeBrand: textOf(form, "bikeBrand"),
-    serviceType: textOf(form, "serviceType") as ServiceType,
+    serviceType: serviceTypeOf(form, "serviceType"),
     dueDate: optionalTextOf(form, "dueDate"),
     notes: optionalTextOf(form, "notes"),
   };

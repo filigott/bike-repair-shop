@@ -14,7 +14,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Step | Status | Notes |
 |---|---|---|
 | N1. Docs match the code | ✅ | README, CLAUDE.md, development record, time and scope |
-| N2. List params and the parse bugs (#23) | ⏳ | `OrdersParam`, `Object.hasOwn`, `serviceTypeOf` |
+| N2. List params and the parse bugs (#23) | ✅ | `OrdersParam`, `Object.hasOwn`, `serviceTypeOf` |
 | N3. Demo data reset | ⏳ | Code on the 404, gate in the slice, atomic |
 | N4a. One confirm dialog | ⏳ | Droppable |
 | N4b. One key per field | ⏳ | Droppable |
