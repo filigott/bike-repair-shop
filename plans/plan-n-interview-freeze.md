@@ -9,6 +9,8 @@ test, and freezes `main`. Cut-off 21:00: whatever has not landed by then is drop
 
 ## Progress
 
+Complete. Merged on 2026-10-13 through #24.
+
 Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 
 | Step | Status | Notes |
@@ -21,7 +23,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | N4c. One date formatter | ✅ | The copies agreed; only the length sniff went |
 | N4d. One form reader | ✅ | Own module, so the place route loads no lifecycle endpoints |
 | N5. Cold start and smoke test | ✅ | Clean on 2026-10-13 |
-| N6. Freeze record | 🟡 | ROADMAP and practice page recorded; delivery route pending |
+| N6. Freeze record | ✅ | Merged through #24, CI green |
 
 ## Context
 
@@ -89,4 +91,4 @@ that the practice page still matches what landed.
 
 ## Open questions
 
-- Push and open one PR at the end, or merge locally into `main`? (Asked at N6.)
+- RESOLVED: one PR, #24, merged by the developer on 2026-10-13.

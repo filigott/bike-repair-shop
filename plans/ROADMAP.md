@@ -14,7 +14,7 @@ active track is now making this repository a reference for future projects:
 |---|---|---|
 | Maintenance orders end to end | `plan-bike-repair-shop.md` | ✅ A, B, D, F, G, H, I, J, K, L and M done; the brief is met and everything left is extra |
 | Reference repository | `plan-reference-repository.md` | ⏸️ Frozen for the interview; step 1b and steps 2 to 8 after it |
-| Interview freeze sweep | `plan-n-interview-freeze.md` | 🟡 N1 to N5 done; delivery route pending |
+| Interview freeze sweep | `plan-n-interview-freeze.md` | ✅ Merged through #24 |
 
 ## Next up
 
@@ -30,7 +30,7 @@ Nothing here is load-bearing for anything else.
 
 ## Landed
 
-- **Interview freeze sweep (#23)**, 2026-10-13, [plan-n-interview-freeze.md](plan-n-interview-freeze.md).
+- **Interview freeze sweep (#23)**, 2026-10-13, merged through #24, [plan-n-interview-freeze.md](plan-n-interview-freeze.md).
   Docs brought in line with the code, the list's URL state named and parsed, the edit param and the
   service type parsed rather than cast, a refused demo reset given its code and made atomic, and one
   confirm dialog, one key per field, one date formatter and one form reader on the order pages.
@@ -64,11 +64,10 @@ Nothing here is load-bearing for anything else.
 
 ## State
 
-As of 2026-10-13. `main` carries the application; `chore/interview-freeze` carries the freeze sweep
-on top of it, local and not yet pushed, and `main` itself is ahead of `origin/main` by its own
-docs and plan commits.
+As of 2026-10-13. `main` carries everything, the freeze sweep included, merged through #24 with CI
+green.
 
-Green on the branch: backend 170 tests, `dotnet format` clean, front-end `verify` at 85. The
+Green on `main`: backend 170 tests, `dotnet format` clean, front-end `verify` at 85. The
 packaged stack came up from an empty volume on 2026-10-13 and the developer's smoke test ran clean
 against it. The repository will not be shared with the interviewers; the walkthrough runs from this
 laptop. On a fresh database the API logs a failed `__EFMigrationsHistory` query before migrating;
