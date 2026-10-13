@@ -20,8 +20,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | N4b. One key per field | ✅ | Three identical pairs merged; short headers kept |
 | N4c. One date formatter | ✅ | The copies agreed; only the length sniff went |
 | N4d. One form reader | ✅ | Own module, so the place route loads no lifecycle endpoints |
-| N5. Cold start and smoke test | 🟡 | Stack up from an empty volume; smoke test with the developer |
-| N6. Freeze record | ⏳ | ROADMAP, reference plan, practice page check |
+| N5. Cold start and smoke test | ✅ | Clean on 2026-10-13 |
+| N6. Freeze record | 🟡 | ROADMAP and practice page recorded; delivery route pending |
 
 ## Context
 

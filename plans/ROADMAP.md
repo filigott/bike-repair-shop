@@ -5,22 +5,23 @@
 The application is built and the brief is met. The interview moved to 2026-10-14 at 14:30, so the
 active track is now making this repository a reference for future projects:
 [plan-reference-repository.md](plan-reference-repository.md). The application's own history lives in
-[plan-bike-repair-shop.md](plan-bike-repair-shop.md). Work freezes around 2026-10-07 so the practice
-material and `main` agree on the day.
+[plan-bike-repair-shop.md](plan-bike-repair-shop.md). The freeze sweep ran on 2026-10-13
+([plan-n-interview-freeze.md](plan-n-interview-freeze.md)); nothing more lands before the interview.
 
 ## In flight
 
 | Track | Plan | Status |
 |---|---|---|
 | Maintenance orders end to end | `plan-bike-repair-shop.md` | ✅ A, B, D, F, G, H, I, J, K, L and M done; the brief is met and everything left is extra |
-| Reference repository | `plan-reference-repository.md` | 🟡 Step 5, the freeze, runs as phase N |
-| Interview freeze sweep | `plan-n-interview-freeze.md` | 🟡 Started 2026-10-13; cut-off 21:00 |
+| Reference repository | `plan-reference-repository.md` | ⏸️ Frozen for the interview; step 1b and steps 2 to 8 after it |
+| Interview freeze sweep | `plan-n-interview-freeze.md` | 🟡 N1 to N5 done; delivery route pending |
 
 ## Next up
 
-The order is set by [plan-reference-repository.md](plan-reference-repository.md): the drift audit,
-then search with sorted paging (#4), end-to-end tests, cheap hardening, and the freeze. Auth and the
-status history (#5) come after the interview. Outside that plan, still queued as product depth:
+Tomorrow, 2026-10-14 before 14:30: a prep session on what to showcase and what to say, starting
+from the practice page. After the interview, the order is set by
+[plan-reference-repository.md](plan-reference-repository.md): the drift decisions, search with sorted
+paging (#4), end-to-end tests, cheap hardening, auth and the status history (#5). Outside that plan, still queued as product depth:
 
 1. **Bike brand suggestions on the place form**, from a new endpoint returning the brands already on
    file. The values come from the database, not the loaded page and not a fixed list.
@@ -28,6 +29,11 @@ status history (#5) come after the interview. Outside that plan, still queued as
 Nothing here is load-bearing for anything else.
 
 ## Landed
+
+- **Interview freeze sweep (#23)**, 2026-10-13, [plan-n-interview-freeze.md](plan-n-interview-freeze.md).
+  Docs brought in line with the code, the list's URL state named and parsed, the edit param and the
+  service type parsed rather than cast, a refused demo reset given its code and made atomic, and one
+  confirm dialog, one key per field, one date formatter and one form reader on the order pages.
 
 - **Form and list polish (#18)**, 2026-09-23, [plan-m-form-and-list-polish.md](plan-m-form-and-list-polish.md).
   The place page at the detail page's type scale, rejected fields marked on the input and cleared
@@ -58,14 +64,19 @@ Nothing here is load-bearing for anything else.
 
 ## State
 
-As of 2026-09-23. `main` is the only branch and carries everything: the four staff tasks, the order
-reference, the lifecycle, the detail page, the status legend, optimistic concurrency, localized API
-messages, the form and list polish, CI, the README and the development record.
+As of 2026-10-13. `main` carries the application; `chore/interview-freeze` carries the freeze sweep
+on top of it, local and not yet pushed, and `main` itself is ahead of `origin/main` by its own
+docs and plan commits.
 
-Green on `main`: backend 169 tests, `dotnet format` clean, front-end `verify` at 62, and the CI
-workflow on the merge. The packaged stack was last verified from an empty volume on 2026-09-22 and
-is due again at the freeze, before the repository is handed over. The repository has not been
-shared with the interviewers yet.
+Green on the branch: backend 170 tests, `dotnet format` clean, front-end `verify` at 85. The
+packaged stack came up from an empty volume on 2026-10-13 and the developer's smoke test ran clean
+against it. The repository will not be shared with the interviewers; the walkthrough runs from this
+laptop. On a fresh database the API logs a failed `__EFMigrationsHistory` query before migrating;
+the migrations and the seeding complete after it.
+
+The practice page (a private artifact) is stale on the test count (231 against 255), the day count
+(six against the record's five), the red-before-green wording and its 2026-09-23 footer, and it
+does not mention the freeze sweep. The prep session updates it.
 
 The brief has been met since day three, so every open issue is work beyond it rather than an
 unfinished deliverable. What the brief asked for is listed in
@@ -75,8 +86,11 @@ document itself is not in this repository, which is worth fixing if a copy exist
 ### Start here next session
 
 1. Verify rather than trust this file: `git log --oneline -3`, then confirm both suites are green.
-2. Open [plan-reference-repository.md](plan-reference-repository.md) and take the first pending step.
-3. The `db` container is the only thing that should be running. Bring the API and the front end up
+2. Before the interview: the prep session, not code. Open the practice page and the freeze plan's
+   talking points ([plan-n-interview-freeze.md](plan-n-interview-freeze.md), Design decisions).
+3. After the interview: open [plan-reference-repository.md](plan-reference-repository.md) and take
+   the first pending step.
+4. The `db` container is the only thing that should be running. Bring the API and the front end up
    yourself when you need them.
 
 ## Delivery line
