@@ -79,8 +79,12 @@ does not mention the freeze sweep. The prep session updates it.
 
 The brief has been met since day three, so every open issue is work beyond it rather than an
 unfinished deliverable. What the brief asked for is listed in
-[reference/time-and-scope.md](reference/time-and-scope.md) under `Against the brief`; the original
-document itself is not in this repository, which is worth fixing if a copy exists.
+[reference/time-and-scope.md](reference/time-and-scope.md) under `Against the brief`. The original
+document is outside the repository, at `~/Downloads/from-windows/bike_repair_shop_2026_260914_114227.pdf`,
+and was checked line by line on 2026-10-13: every task and requirement is met. It expects 4 to 8
+hours against the 11h30 measured, which is worth naming before the interviewers do. #4 and #5 stay
+open: the brief asks only for finding an order for a customer, which is done, and for neither the
+service and due-date search nor the status history.
 
 ### Start here next session
 

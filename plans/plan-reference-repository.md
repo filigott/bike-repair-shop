@@ -159,4 +159,5 @@ stayed frozen; the developer chose to keep every one here rather than as issues.
 
 - RESOLVED: freeze date. The freeze ran on 2026-10-13, the evening before.
 - RESOLVED: steps 2 to 4 wait for after the interview; the freeze sweep took the last evening.
-- Where the original brief lives. The ROADMAP notes it is not in the repository; step 2 needs it.
+- RESOLVED: the original brief is outside the repository; the ROADMAP names its path. Its find task is
+  "find a maintenance order for a customer", so the service and due-date search in step 2 is depth.
