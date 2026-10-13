@@ -15,7 +15,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Step | Status | Notes |
 |---|---|---|
 | 1a. Drift audit, clear fixes | ✅ | 2026-09-23 |
-| 1b. Drift audit, decisions | ⏳ | Six questions below |
+| 1b. Drift audit, decisions | ⏳ | Seven questions below |
 | 2. Search and sorted paging (#4) | ⏳ | After the interview |
 | 3. End-to-end tests in CI | ⏳ | After the interview |
 | 4. Cheap hardening | ⏳ | After the interview |
@@ -105,6 +105,10 @@ Left for step 1b, each one the developer's call because it changes a global rule
    calls against business rules), but worth one line in whichever file owns it.
 6. **Dated stack line.** "Checked 2026-09-20" in the repo `CLAUDE.md` against the timeless-docs
    rule. Likely fine as a verification stamp; confirm.
+
+7. **Proving a test red.** The repo says "Break the exact line under test, watch it fail, restore";
+   the global rule says a test counts only once it fails against the code it replaces, and never
+   against an invented mutant. The repo line permits exactly that. Align the repo with the global.
 
 Not fixable: early commit subjects carry plan vocabulary (`close phase M's steps`). History stays.
 

@@ -18,8 +18,8 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | N3. Demo data reset | ✅ | Code on the 404, gate in the slice, one SaveChanges |
 | N4a. One confirm dialog | ✅ | Shared, with a `ConfirmTone` enum |
 | N4b. One key per field | ✅ | Three identical pairs merged; short headers kept |
-| N4c. One date formatter | ⏳ | Droppable |
-| N4d. One form reader | ⏳ | Droppable |
+| N4c. One date formatter | ✅ | The copies agreed; only the length sniff went |
+| N4d. One form reader | 🟡 | Droppable |
 | N5. Cold start and smoke test | ⏳ | `down -v` wipes the volume |
 | N6. Freeze record | ⏳ | ROADMAP, reference plan, practice page check |
 
@@ -47,6 +47,11 @@ what to showcase and what to say.
 - **Ordered by risk.** Docs first because they are the most visible and cannot break anything;
   the front-end consolidation last because it is the biggest diff and the easiest to drop.
 - **The `editCommandOf` fix rides with #23**: same file, adjacent defect.
+- **A step goes ✅ only after the developer confirms its commit**, in a plans-only commit that also
+  starts the next step. N1 to N4b carried their ✅ inside the step's own commit, which the global
+  rule does not allow; corrected from N4c on.
+- **N4c's tests are characterization tests**, not proven red: the replaced formatters behaved
+  correctly, and breaking a line to watch them fail is the invented mutant the global rule rejects.
 - **Left as talking points, not fixed tonight**: backend test helpers copied across classes, domain
   tests not asserting the error `code`, no LIKE-escape test, the drift questions in step 1b of the
   reference plan, and the memory contradictions the docs audit found.
