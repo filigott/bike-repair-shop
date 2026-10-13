@@ -23,6 +23,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | 6. Authentication | ⏳ | After the interview; issue to create |
 | 7. Status history (#5) | ⏳ | On top of step 6 |
 | 8. Observability and image builds | ⏳ | After the interview |
+| 9. Freeze sweep follow-ups | ⏳ | After the interview; list below |
 
 ## Context
 
@@ -131,6 +132,22 @@ ROADMAP state and `reference/time-and-scope.md` up to date.
 **7. Status history (#5).** Who moved an order and when, which needs step 6 for the who.
 
 **8. Observability and image builds.** OpenTelemetry traces and metrics, and CI building the images.
+
+**9. Freeze sweep follow-ups.** Found by the 2026-10-13 audits and deferred so the smoke-tested state
+stayed frozen; the developer chose to keep every one here rather than as issues.
+
+- Process and config: the `npm audit` high finding in `source-map-js`; `ci.yml` running on
+  plans-only pushes; four non-conventional PR titles (#14 to #17); the enum or `as const` rule; the
+  memory files that contradict the global file.
+- Backend: test helpers copied across integration classes; domain tests not asserting the error
+  `code`; six integration tests pinning the English `detail`; no LIKE-escape test; the shop time
+  zone not validated at startup; the search validator without `TooLong`; the phone message written
+  in two places; `DemoOrders` re-deriving the state machine from a target status; `OrderId` and
+  `OrderNumber` mixed in log fields; section comments in `Program.cs`; double blank lines.
+- Front end: dialog state as flags rather than one union per route; unchecked casts in `http.ts`
+  and `action-errors.ts`; `runIntent` switching on the raw intent; a justifying comment in
+  `http.ts`; the router's English `statusText` in `root.tsx`; `placedAt` shown in the viewer's time
+  zone rather than the shop's.
 
 ## Out of scope
 
