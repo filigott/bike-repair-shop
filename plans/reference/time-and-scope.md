@@ -21,6 +21,7 @@ structure honest by measuring it against that list rather than against its own t
 | Day three, 19:30 to 21:45 | 1h30 | The phase C smoke test, demo data end to end, the visual pass, and phase D packaging |
 | Day four, 09:15 into the evening | 2h00 | The order reference (#9), the lifecycle API (#5), the detail page rework (#10) including the state-machine rekey, the status legend (#13), the pull request rule, the root README and the AI development record |
 | Day five | 1h30 | CI and optimistic concurrency (#6), localized API messages (#11), the form and list polish (#18) |
+| Day six, 2026-10-13 | 3h30 | The re-audit against the current global rules and the freeze sweep (#23, through #24) |
 
 Day one total: 5h30 and 32 commits. Two of those hours preceded the first commit, and ten of the
 commits touch only plans or conventions.
@@ -40,7 +41,11 @@ for it. Wall clock read off the stamps overstated it by a factor of three, which
 here is focused time rather than a commit window. Running total: 10h00 across four days.
 
 Day five is the same measure: 1h30 for 23 commits, the last day before the original interview date.
-Running total: **11h30 across five days**, of which the brief took the first 8h00.
+Running total: 11h30 across five days, of which the brief took the first 8h00.
+
+Day six is the developer's figure, 3h30, for the evening before the interview; the agent session
+itself ran about 1h30 of it, across 14 commits. Running total: **about 15h00 across six days**,
+against the brief's estimate of 4 to 8 hours.
 
 ## Against the brief
 

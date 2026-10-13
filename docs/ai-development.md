@@ -81,7 +81,7 @@ keyed by.
 
 ## What it cost
 
-About eleven and a half hours of focused work across five days produced the application, its packaging, its
+About fifteen hours of focused work across six days produced the application, its packaging, its
 test suites and this record. The measured breakdown is in `plans/reference/time-and-scope.md`, which
 tracks the cost honestly, including the stretches that bought foundation rather than features.
 
