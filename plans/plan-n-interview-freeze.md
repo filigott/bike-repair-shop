@@ -16,7 +16,7 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | N1. Docs match the code | ✅ | README, CLAUDE.md, development record, time and scope |
 | N2. List params and the parse bugs (#23) | ✅ | `OrdersParam`, `Object.hasOwn`, `serviceTypeOf` |
 | N3. Demo data reset | ✅ | Code on the 404, gate in the slice, one SaveChanges |
-| N4a. One confirm dialog | ⏳ | Droppable |
+| N4a. One confirm dialog | ✅ | Shared, with a `ConfirmTone` enum |
 | N4b. One key per field | ⏳ | Droppable |
 | N4c. One date formatter | ⏳ | Droppable |
 | N4d. One form reader | ⏳ | Droppable |

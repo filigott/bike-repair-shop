@@ -1,21 +1,29 @@
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ConfirmTone } from "~/components/confirm-dialog";
 import type { OrderAction } from "~/services/endpoints/orders";
 import { type EditCommand, editCommandLabels } from "~/types/intents/orders";
 import { EDIT_PARAM, editParams } from "~/types/params/orders";
 
-export type ActionTone = "primary" | "error";
-
 // Class names are spelled out because Tailwind only emits what it finds literally in the source.
-const styles: Record<OrderAction, { tone: ActionTone; button: string }> = {
-  Start: { tone: "primary", button: "btn btn-soft btn-primary w-full" },
-  Complete: { tone: "primary", button: "btn btn-soft btn-primary w-full" },
-  Reopen: { tone: "primary", button: "btn btn-soft btn-primary w-full" },
-  Cancel: { tone: "error", button: "btn btn-soft btn-error w-full" },
+const styles: Record<OrderAction, { tone: ConfirmTone; button: string }> = {
+  Start: {
+    tone: ConfirmTone.Primary,
+    button: "btn btn-soft btn-primary w-full",
+  },
+  Complete: {
+    tone: ConfirmTone.Primary,
+    button: "btn btn-soft btn-primary w-full",
+  },
+  Reopen: {
+    tone: ConfirmTone.Primary,
+    button: "btn btn-soft btn-primary w-full",
+  },
+  Cancel: { tone: ConfirmTone.Error, button: "btn btn-soft btn-error w-full" },
 };
 
-export function toneOf(action: OrderAction): ActionTone {
+export function toneOf(action: OrderAction): ConfirmTone {
   return styles[action].tone;
 }
 
