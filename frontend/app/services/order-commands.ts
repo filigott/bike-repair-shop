@@ -18,6 +18,7 @@ import {
   serviceTypeOf,
   textOf,
 } from "~/services/form-data";
+import { orderDetailsFrom } from "~/services/order-form-data";
 import { OrderIntent } from "~/types/intents/orders";
 
 const transitions: Record<
@@ -51,11 +52,7 @@ export function runOrderCommand(
     }
     case OrderIntent.CorrectDetails:
       return correctOrderDetails(id, {
-        customerName: textOf(form, "customerName"),
-        phoneNumber: textOf(form, "phoneNumber"),
-        email: textOf(form, "email"),
-        bikeBrand: textOf(form, "bikeBrand"),
-        notes: optionalTextOf(form, "notes"),
+        ...orderDetailsFrom(form),
         version: optionalIntegerOf(form, "version"),
       });
     case OrderIntent.ChangeService:

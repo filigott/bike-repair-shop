@@ -6,7 +6,8 @@ import { actionFailureFrom } from "~/services/action-errors";
 import type { PlaceOrderRequest } from "~/services/endpoints/orders";
 import { placeOrder } from "~/services/endpoints/orders";
 import { listServiceTypes } from "~/services/endpoints/service-types";
-import { optionalTextOf, serviceTypeOf, textOf } from "~/services/form-data";
+import { optionalTextOf, serviceTypeOf } from "~/services/form-data";
+import { orderDetailsFrom } from "~/services/order-form-data";
 import { isActionFailure } from "~/types/action-result";
 import type { Route } from "./+types/place-order";
 
@@ -46,12 +47,8 @@ export default function PlaceOrder({
 
 function requestFrom(form: FormData): PlaceOrderRequest {
   return {
-    customerName: textOf(form, "customerName"),
-    phoneNumber: textOf(form, "phoneNumber"),
-    email: textOf(form, "email"),
-    bikeBrand: textOf(form, "bikeBrand"),
+    ...orderDetailsFrom(form),
     serviceType: serviceTypeOf(form, "serviceType"),
     dueDate: optionalTextOf(form, "dueDate"),
-    notes: optionalTextOf(form, "notes"),
   };
 }
