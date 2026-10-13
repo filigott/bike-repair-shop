@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Form, Link } from "react-router";
+import { OrdersParam } from "~/types/params/orders";
 
 export function OrderSearchForm({ search }: { search: string }) {
   const { t } = useTranslation();
@@ -9,7 +10,7 @@ export function OrderSearchForm({ search }: { search: string }) {
       <input
         key={search}
         type="search"
-        name="search"
+        name={OrdersParam.Search}
         defaultValue={search}
         aria-label={t("orders.search.label")}
         placeholder={t("orders.search.placeholder")}

@@ -24,10 +24,39 @@ export const editParams: Record<EditCommand, OrderEditParam> = {
   [OrderIntent.Reschedule]: OrderEditParam.DueDate,
 };
 
+const editParamValues = Object.values(OrderEditParam);
+
 export function editCommandOf(value: string | null): EditCommand | null {
-  return commands[value as OrderEditParam] ?? null;
+  const param = editParamValues.find((candidate) => candidate === value);
+
+  return param ? commands[param] : null;
 }
 
 export function isEditCommand(intent: OrderIntent): intent is EditCommand {
   return editCommands.includes(intent as EditCommand);
+}
+
+export enum OrdersParam {
+  Search = "search",
+  Page = "page",
+}
+
+export type OrdersQuery = { search: string; page: number };
+
+export function ordersQueryOf(params: URLSearchParams): OrdersQuery {
+  const page = Number(params.get(OrdersParam.Page));
+
+  return {
+    search: params.get(OrdersParam.Search)?.trim() ?? "",
+    page: Number.isSafeInteger(page) && page > 0 ? page : 1,
+  };
+}
+
+export function ordersHref({ search, page }: OrdersQuery): string {
+  const params = new URLSearchParams();
+  if (search) {
+    params.set(OrdersParam.Search, search);
+  }
+  params.set(OrdersParam.Page, String(page));
+  return `?${params}`;
 }

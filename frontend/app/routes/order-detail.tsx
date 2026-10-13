@@ -9,7 +9,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router";
-import { ConfirmDialog } from "~/components/orders/confirm-dialog";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import { DeleteOrderDialog } from "~/components/orders/delete-order-dialog";
 import { OrderActions, toneOf } from "~/components/orders/order-actions";
 import { OrderContactCard } from "~/components/orders/order-contact-card";

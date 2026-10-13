@@ -15,14 +15,15 @@ Legend: ⏳ pending · 🟡 in progress · ✅ done · ⏸️ blocked
 | Step | Status | Notes |
 |---|---|---|
 | 1a. Drift audit, clear fixes | ✅ | 2026-09-23 |
-| 1b. Drift audit, decisions | ⏳ | Six questions below |
-| 2. Search and sorted paging (#4) | ⏳ | Check the brief first |
-| 3. End-to-end tests in CI | ⏳ | Issue to create |
-| 4. Cheap hardening | ⏳ | Issue to create |
-| 5. Interview freeze | ⏳ | Around 2026-10-07 |
+| 1b. Drift audit, decisions | ⏳ | Seven questions below |
+| 2. Search and sorted paging (#4) | ⏳ | After the interview |
+| 3. End-to-end tests in CI | ⏳ | After the interview |
+| 4. Cheap hardening | ⏳ | After the interview |
+| 5. Interview freeze | 🟡 | 2026-10-13, [plan-n-interview-freeze.md](plan-n-interview-freeze.md) |
 | 6. Authentication | ⏳ | After the interview; issue to create |
 | 7. Status history (#5) | ⏳ | On top of step 6 |
 | 8. Observability and image builds | ⏳ | After the interview |
+| 9. Freeze sweep follow-ups | ⏳ | After the interview; list below |
 
 ## Context
 
@@ -106,6 +107,10 @@ Left for step 1b, each one the developer's call because it changes a global rule
 6. **Dated stack line.** "Checked 2026-09-20" in the repo `CLAUDE.md` against the timeless-docs
    rule. Likely fine as a verification stamp; confirm.
 
+7. **Proving a test red.** The repo says "Break the exact line under test, watch it fail, restore";
+   the global rule says a test counts only once it fails against the code it replaces, and never
+   against an invented mutant. The repo line permits exactly that. Align the repo with the global.
+
 Not fixable: early commit subjects carry plan vocabulary (`close phase M's steps`). History stays.
 
 **2. Search by service and due date, with sorted paging (#4).** Check the original brief's wording
@@ -128,6 +133,22 @@ ROADMAP state and `reference/time-and-scope.md` up to date.
 
 **8. Observability and image builds.** OpenTelemetry traces and metrics, and CI building the images.
 
+**9. Freeze sweep follow-ups.** Found by the 2026-10-13 audits and deferred so the smoke-tested state
+stayed frozen; the developer chose to keep every one here rather than as issues.
+
+- Process and config: the `npm audit` high finding in `source-map-js`; `ci.yml` running on
+  plans-only pushes; four non-conventional PR titles (#14 to #17); the enum or `as const` rule; the
+  memory files that contradict the global file.
+- Backend: test helpers copied across integration classes; domain tests not asserting the error
+  `code`; six integration tests pinning the English `detail`; no LIKE-escape test; the shop time
+  zone not validated at startup; the search validator without `TooLong`; the phone message written
+  in two places; `DemoOrders` re-deriving the state machine from a target status; `OrderId` and
+  `OrderNumber` mixed in log fields; section comments in `Program.cs`; double blank lines.
+- Front end: dialog state as flags rather than one union per route; unchecked casts in `http.ts`
+  and `action-errors.ts`; `runIntent` switching on the raw intent; a justifying comment in
+  `http.ts`; the router's English `statusText` in `root.tsx`; `placedAt` shown in the viewer's time
+  zone rather than the shop's.
+
 ## Out of scope
 
 - Deployment to a hosted environment. Building the images in CI is as far as this plan goes.
@@ -136,7 +157,6 @@ ROADMAP state and `reference/time-and-scope.md` up to date.
 
 ## Open questions
 
-- Freeze date (assumed 2026-10-07, a week ahead, leaving time to practise on what is actually there).
-- Whether steps 3 and 4 go before the freeze at all (assumed yes if step 2 lands in one session,
-  otherwise they wait for after the interview).
+- RESOLVED: freeze date. The freeze ran on 2026-10-13, the evening before.
+- RESOLVED: steps 2 to 4 wait for after the interview; the freeze sweep took the last evening.
 - Where the original brief lives. The ROADMAP notes it is not in the repository; step 2 needs it.

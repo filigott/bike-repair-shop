@@ -1,10 +1,23 @@
 import { useTranslation } from "react-i18next";
 
+export enum ConfirmTone {
+  Primary = "primary",
+  Warning = "warning",
+  Error = "error",
+}
+
+// Class names are spelled out because Tailwind only emits what it finds literally in the source.
+const confirmButtons: Record<ConfirmTone, string> = {
+  [ConfirmTone.Primary]: "btn btn-primary",
+  [ConfirmTone.Warning]: "btn btn-warning",
+  [ConfirmTone.Error]: "btn btn-error",
+};
+
 type ConfirmDialogProps = {
   title: string;
   message: string;
   confirmLabel: string;
-  tone: "primary" | "error";
+  tone: ConfirmTone;
   onClose: () => void;
   onConfirm: () => void;
 };
@@ -38,7 +51,7 @@ export function ConfirmDialog({
           </form>
           <button
             type="button"
-            className={tone === "error" ? "btn btn-error" : "btn btn-primary"}
+            className={confirmButtons[tone]}
             onClick={onConfirm}
           >
             {confirmLabel}

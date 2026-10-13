@@ -1,8 +1,6 @@
-using BikeRepairShop.Api.Features.DemoData;
 using BikeRepairShop.Api.Features.DemoData.Handlers;
 using BikeRepairShop.Api.Features.DemoData.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace BikeRepairShop.Api.Controllers;
 
@@ -25,14 +23,8 @@ public sealed class DemoDataController : ControllerBase
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<DemoDataStatus>> Reset(
         [FromServices] ResetDemoDataHandler handler,
-        [FromServices] IOptions<DemoDataOptions> options,
         CancellationToken cancellationToken)
     {
-        if (!options.Value.Enabled)
-        {
-            return NotFound();
-        }
-
-        return Ok(DemoDataStatus.From(true, await handler.HandleAsync(cancellationToken)));
+        return Ok(await handler.HandleAsync(cancellationToken));
     }
 }

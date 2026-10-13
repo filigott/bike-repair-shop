@@ -18,9 +18,9 @@ export function OrdersTable({
           <th>{t("orders.columns.reference")}</th>
           <th>{t("orders.columns.customer")}</th>
           <th>{t("orders.columns.phone")}</th>
-          <th>{t("orders.columns.bike")}</th>
-          <th>{t("orders.columns.service")}</th>
-          <th>{t("orders.columns.due")}</th>
+          <th>{t("orders.fields.bikeBrand")}</th>
+          <th>{t("orders.fields.serviceType")}</th>
+          <th>{t("orders.fields.dueDate")}</th>
           <th>{t("orders.columns.status")}</th>
           <th>{t("common.actions")}</th>
         </tr>

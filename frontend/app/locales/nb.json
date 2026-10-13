@@ -38,9 +38,6 @@
       "reference": "Ordre",
       "customer": "Kunde",
       "phone": "Telefon",
-      "bike": "Sykkelmerke",
-      "service": "Tjeneste",
-      "due": "Frist",
       "status": "Status"
     },
     "confirm": {
@@ -122,6 +119,7 @@
     "InvalidRequest": "Noen felt må rettes.",
     "OrderNotFound": "Denne ordren finnes ikke lenger. Noen kan ha slettet den.",
     "OrderChanged": "Noen andre endret denne ordren mens du hadde den åpen. Siden viser nå endringene deres: lagre på nytt for å erstatte dem, eller avbryt.",
+    "DemoDataDisabled": "Demodata er slått av på denne serveren.",
     "DueDateInPast": "Fristen kan ikke være før i dag.",
     "OrderNotEditable": "Denne ordren kan ikke lenger endres.",
     "InvalidTransition": "Denne handlingen er ikke lenger mulig for ordren. Last inn siden på nytt for å se gjeldende status.",

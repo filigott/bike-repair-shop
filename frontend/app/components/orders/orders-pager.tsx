@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { ordersHref } from "~/types/params/orders";
 
 type OrdersPagerProps = {
   search: string;
@@ -27,13 +28,16 @@ export function OrdersPager({
         })}
       </span>
       {page > 1 && (
-        <Link to={pageHref(search, page - 1)} className="btn btn-sm ml-auto">
+        <Link
+          to={ordersHref({ search, page: page - 1 })}
+          className="btn btn-sm ml-auto"
+        >
           {t("orders.paging.previous")}
         </Link>
       )}
       {page * pageSize < totalCount && (
         <Link
-          to={pageHref(search, page + 1)}
+          to={ordersHref({ search, page: page + 1 })}
           className="btn btn-sm last:ml-auto"
         >
           {t("orders.paging.next")}
@@ -41,13 +45,4 @@ export function OrdersPager({
       )}
     </nav>
   );
-}
-
-function pageHref(search: string, page: number): string {
-  const params = new URLSearchParams();
-  if (search) {
-    params.set("search", search);
-  }
-  params.set("page", String(page));
-  return `?${params}`;
 }

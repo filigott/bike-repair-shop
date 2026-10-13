@@ -5,4 +5,5 @@ public enum ApiErrorCode
     InvalidRequest,
     OrderNotFound,
     OrderChanged,
+    DemoDataDisabled,
 }

@@ -7,6 +7,12 @@ the three services the shop offers, and move each order through its lifecycle. I
 holding the business logic, a React single-page front end that consumes it, and PostgreSQL behind
 both, packaged so one command runs the whole stack.
 
+## Prerequisites
+
+Docker with Compose is all the packaged stack needs. The dev loop and the tests also need the .NET 10
+SDK (`global.json` pins 10.0.400 and rolls forward) and Node 24. The backend suite starts its own
+PostgreSQL container, so Docker has to be running for `dotnet test` too.
+
 ## Run it
 
 Everything containerised, served on <http://localhost:8080>:
@@ -44,7 +50,8 @@ npm --prefix frontend run verify                     # lint, typecheck, test and
 ```
 
 The backend suite is xUnit: unit tests on the domain, and integration tests against a real
-PostgreSQL container through Testcontainers, migrated through the API's own startup path. The front
+PostgreSQL container through Testcontainers, migrated through the API's own startup path, which is
+why the suite needs Docker. The front
 end is Vitest with Testing Library, mocking the endpoint layer rather than `fetch`.
 
 CI runs both suites, `dotnet format` and the front-end `verify` on every pull request and on `main`.
@@ -75,5 +82,17 @@ moves an order from one status to another.
 
 `CLAUDE.md` holds the conventions both halves follow. `plans/` holds the design record: what was
 built, in what order, and which alternatives were weighed and dropped.
-[docs/ai-development.md](docs/ai-development.md) describes how the repository was built with an AI
-assistant.
+
+## Not built yet
+
+- Search by order number, service or due date, and sorting the list. Search today matches the
+  customer name, phone number and email.
+- The history of who moved an order between statuses, and when.
+- Staff sign-in. Every visitor can do everything.
+
+## Built with an AI assistant
+
+The repository was written by a developer working with Claude Code: conventions in `CLAUDE.md`, one
+plan per phase under `plans/`, one reviewed unit at a time, and a manual pass in the running
+application that no test replaces. [docs/ai-development.md](docs/ai-development.md) describes the
+method, what it was good at, where it needed correcting, and what it cost.

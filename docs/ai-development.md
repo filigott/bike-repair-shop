@@ -38,12 +38,13 @@ Every unit ends the same way: build, lint, typecheck, the full test suites. A ne
 failing against the exact line it pins before it counts as coverage, because a test written
 alongside the code it tests passes on the first run for the wrong reasons more often than not.
 
-Nothing reaches `main` except through a pull request off an issue.
+Code reaches `main` only through a pull request. A commit that touches nothing but `plans/` goes
+straight to `main`, because it changes no behaviour and a pull request would only cost a CI run.
 
 ## What stays with the human
 
-The assistant does not run the manual pass. Every phase ends with a person clicking through the
-running application, and those passes have been the highest-yield step in the whole process. They
+The assistant does not run the manual pass. Work ends with a person clicking through the running
+application, after every phase at first and batched across a few phases later on, and those passes have been the highest-yield step in the whole process. They
 have surfaced things no test was going to: a detail page that showed three forms at once when it
 should have offered one action at a time, a back link nobody could see, a page pinned to the left
 edge of the screen while its dialogs centred themselves, an order with no human-readable number.
@@ -80,10 +81,10 @@ keyed by.
 
 ## What it cost
 
-About twelve hours of focused work across four days produced the application, its packaging, its
+About eleven and a half hours of focused work across five days produced the application, its packaging, its
 test suites and this record. The measured breakdown is in `plans/reference/time-and-scope.md`, which
 tracks the cost honestly, including the stretches that bought foundation rather than features.
 
-Slightly under half the commits touch only plans, conventions or documentation. That ratio is the
+About half the commits touch only plans, conventions or documentation. That ratio is the
 method, not overhead: the plans are what let a cold session resume without re-deriving the design,
 and they are why the reasoning behind a decision is still available months later.

@@ -20,14 +20,13 @@ import { textOf } from "~/services/form-data";
 import { actionSuccess, isActionFailure } from "~/types/action-result";
 import { DemoDataIntent } from "~/types/intents/demo-data";
 import { OrderIntent } from "~/types/intents/orders";
+import { ordersQueryOf } from "~/types/params/orders";
 import type { Route } from "./+types/orders";
 
 const PAGE_SIZE = 20;
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  const params = new URL(request.url).searchParams;
-  const search = params.get("search")?.trim() ?? "";
-  const page = Math.max(1, Number(params.get("page") ?? 1) || 1);
+  const { search, page } = ordersQueryOf(new URL(request.url).searchParams);
   const [orders, demoData, statuses] = await Promise.all([
     listOrders({ search: search || undefined, page, pageSize: PAGE_SIZE }),
     getDemoDataStatus(),

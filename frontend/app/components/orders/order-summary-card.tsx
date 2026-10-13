@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { OrderStatusBadge } from "~/components/orders/order-status-badge";
 import { useLocale } from "~/hooks/use-locale";
+import { formatCalendarDay, formatInstant } from "~/services/dates";
 import type { MaintenanceOrderResponse } from "~/services/endpoints/orders";
 
 export function OrderSummaryCard({
@@ -23,22 +24,18 @@ export function OrderSummaryCard({
         )}
       </dd>
 
-      <dt className="text-base-content/60">{t("orders.columns.service")}</dt>
+      <dt className="text-base-content/60">{t("orders.fields.serviceType")}</dt>
       <dd className="font-medium">
         {t(`orders.serviceType.${order.serviceType}`)}
       </dd>
 
-      <dt className="text-base-content/60">{t("orders.columns.due")}</dt>
-      <dd className="font-medium">{formatDay(order.dueDate, locale)}</dd>
+      <dt className="text-base-content/60">{t("orders.fields.dueDate")}</dt>
+      <dd className="font-medium">
+        {formatCalendarDay(order.dueDate, locale)}
+      </dd>
 
       <dt className="text-base-content/60">{t("orders.detail.placedAt")}</dt>
-      <dd className="font-medium">{formatDay(order.placedAt, locale)}</dd>
+      <dd className="font-medium">{formatInstant(order.placedAt, locale)}</dd>
     </dl>
-  );
-}
-
-function formatDay(value: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(
-    new Date(value.length === 10 ? `${value}T00:00:00` : value),
   );
 }

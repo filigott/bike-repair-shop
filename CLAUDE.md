@@ -9,7 +9,7 @@ it, and PostgreSQL behind both, packaged so `docker compose up` runs the whole s
 
 1. This file.
 2. `plans/ROADMAP.md`, whose `Next up` section is where a session starts, plus what is in flight,
-   what is parked and what is blocked.
+   what has landed and what is blocked.
 3. `plans/plan-bike-repair-shop.md` for the design decisions and the phase table, then the active
    phase plan it points to, its At a glance and Progress sections first.
 
@@ -19,8 +19,8 @@ Code, commit messages and pull requests still carry no plan vocabulary.
 
 ## Stack
 
-Current stable across the board, checked 2026-09-20. No pre-release packages: .NET 11 and
-AutoFixture 5 are at release candidate and are deliberately not used.
+Current stable across the board, checked 2026-09-20. No pre-release packages: .NET 11 is at
+release candidate and is deliberately not used.
 
 | Layer | Choice | Version |
 |---|---|---|
@@ -32,7 +32,7 @@ AutoFixture 5 are at release candidate and are deliberately not used.
 | Styling | Tailwind CSS plus DaisyUI, semantic colour tokens only | 4.3, DaisyUI 5.7 |
 | i18n | i18next plus react-i18next, typed resources | 26, 17 |
 | API contract | OpenAPI, browsed with Scalar, types from `openapi-typescript`, calls through `openapi-fetch` | Scalar 2.17, openapi-fetch 0.17 |
-| Backend tests | xUnit v3, Testcontainers, AwesomeAssertions, AutoFixture, Respawn | 4.0, 4.15, 9.6 |
+| Backend tests | xUnit v3, Testcontainers, AwesomeAssertions, Respawn | 4.0, 4.15, 9.6 |
 | Front-end tests | Vitest plus Testing Library | 5.0, RTL 16.3 |
 | Tooling | Biome for the front end, `dotnet format` for the back end | Biome 2.5 |
 | Packaging | Multi-stage Dockerfiles, one `docker-compose.yml` at the repo root | Node 24 LTS, Caddy 2 |
@@ -47,7 +47,7 @@ backend/
   BikeRepairShop.Tests.Unit/
   BikeRepairShop.Tests.Integration/
 frontend/
-  app/routes/                     one route per page, resource routes are action-only
+  app/routes/                     one route per page
   app/services/endpoints/         one wrapper file per API controller
   app/types/intents/              one intent enum per domain
   app/types/params/               one search-param enum per route that carries UI state
@@ -62,14 +62,14 @@ There are two test projects, not three. A shared-fixture project earns its keep 
 others consume it.
 
 Package versions are central: `backend/Directory.Packages.props` lists every version, and a
-`PackageReference` in a project carries no `Version`. Build properties shared by all six projects
+`PackageReference` in a project carries no `Version`. Build properties shared by all five projects
 live in `backend/Directory.Build.props`.
 
 Two settings are load-bearing and were established by running them, not by reading docs:
 
 - `global.json` sets `"test": { "runner": "Microsoft.Testing.Platform" }`. Without it `dotnet test`
   fails outright on the .NET 10 SDK with xunit v3, because the VSTest target is gone.
-- EF Core is pinned to 10.0.4. Npgsql 10.0.3 floors it there, and 10.0.0 fails restore with NU1605.
+- EF Core cannot go below 10.0.4. Npgsql 10.0.3 floors it there, and 10.0.0 fails restore with NU1605.
 
 ## Backend conventions
 
@@ -86,6 +86,12 @@ business action (`MaintenanceOrder.Place()`) that validates, `private set` on an
 owns, `init` on `Id` and immutable foreign keys. Mutators are named for the task (`Reschedule`,
 `CorrectDetails`), never a bare `Update`, and every one guards the lifecycle. An order's status moves
 only through domain methods.
+
+**A value with a rule is parsed once, into a type.** A request carries primitives. Its validator
+delegates to the value object's `TryParse` (`OrderFieldRules`), so the 400 and the domain share one
+rule. `<Command>.From(request)` parses into `EmailAddress`, `PhoneNumber` and enums, and the domain
+factory and mutators accept only those types. A string whose only rule is a length stays a string,
+guarded by the entity.
 
 **The lifecycle is one table of edges, keyed by the action.** `(from, action) to` in
 `OrderStatus.cs` is the single source: `AllowedActions`, `AllowedTransitions` and `CanTransitionTo`
@@ -105,7 +111,7 @@ carries a `DomainErrorCode` and the API's own exceptions derive from `ApiExcepti
 `Invalid`, so FluentValidation's own names never reach the contract.
 
 **DTO names carry the shape**: `Response`, `Request`, `Summary`, `Item`, `View`. Never a bare `Dto`.
-Mapping is a static factory: `MaintenanceOrderSummary.From(order)`.
+Mapping is a static factory: `MaintenanceOrderSummary.From(order, today)`.
 
 **EF rules.** Identifiers are snake_case through `UseSnakeCaseNamingConvention()`, decided before the
 first migration because changing it later is a full-table rename. One configuration file per entity. Enums stored as strings via `HasConversion<string>()`
